@@ -15,8 +15,14 @@ public class ValidationConfigurationsForValidatePhoneNumberMethodTest {
 	}
 
 	@Test
-	public void testNameMethodWithNullString() {
-		assertThatThrownBy(() -> validationConfigurations.validatePhoneNumber(null)).isInstanceOf(NullPointerException.class)
+	public void testPhoneNumberMethodWithNullString() {
+		assertThatThrownBy(() -> validationConfigurations.validatePhoneNumber(null))
+				.isInstanceOf(NullPointerException.class).hasMessage("The phone number field cannot be empty.");
+	}
+
+	@Test
+	public void testPhoneNumberWithEmptyString() {
+		assertThatThrownBy(() -> validationConfigurations.validatePhoneNumber("")).isInstanceOf(NullPointerException.class)
 				.hasMessage("The phone number field cannot be empty.");
 	}
 
