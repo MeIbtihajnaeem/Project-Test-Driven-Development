@@ -1,7 +1,10 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.EnumUtils;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -85,6 +88,44 @@ public class ValidationConfigurations {
 		return id;
 	}
 
+	public OrderCategory validateCategory(OrderCategory category) {
+		if (category == null) {
+			throw new NullPointerException("The category field cannot be empty.");
+		}
+		return category;
+	}
+
+	public OrderStatus validateStatus(OrderStatus status) {
+		if (status == null) {
+			throw new NullPointerException("The status field cannot be empty.");
+		}
+		return status;
+	}
+
+	public <T extends Enum<T>> T validateEnum(String value, Class<T> enumType) {
+		String message = "status";
+		if (enumType == OrderCategory.class) {
+			message = "category";
+		}
+		if (value == null || value.isEmpty()) {
+			throw new NullPointerException("The " + message + " field cannot be empty.");
+		}
+		if (_containsTabs(value)) {
+			throw new IllegalArgumentException(
+					"The " + message + " cannot contain tabs. Please remove any tabs from the " + message + ".");
+		}
+		if (_containsWhitespace(value)) {
+			throw new IllegalArgumentException("The " + message
+					+ " cannot contain whitespaces. Please remove any whitespaces from the " + message + ".");
+		}
+		if (!EnumUtils.isValidEnum(enumType, value)) {
+			throw new NoSuchElementException(
+					"The specified " + message + " was not found. Please provide a valid " + message + ".");
+		}
+		value = value.toUpperCase();
+		return Enum.valueOf(enumType, value);
+	}
+
 	private boolean _containsSpecialCharacters(String str) {
 		Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
 		Matcher matcher = pattern.matcher(str);
@@ -103,18 +144,10 @@ public class ValidationConfigurations {
 		return matcher.find();
 	}
 
-	public OrderCategory validateCategory(OrderCategory category) {
-		if (category == null) {
-			throw new NullPointerException("The category field cannot be empty.");
-		}
-		return category;
-	}
-
-	public OrderStatus validateStatus(OrderStatus status) {
-		if (status == null) {
-			throw new NullPointerException("The status field cannot be empty.");
-		}
-		return status;
+	private boolean _containsWhitespace(String str) {
+		Pattern pattern = Pattern.compile("\\s");
+		Matcher matcher = pattern.matcher(str);
+		return matcher.find();
 	}
 
 }
