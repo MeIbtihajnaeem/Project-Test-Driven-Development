@@ -1,7 +1,6 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.*;
 
 import org.junit.Test;
 

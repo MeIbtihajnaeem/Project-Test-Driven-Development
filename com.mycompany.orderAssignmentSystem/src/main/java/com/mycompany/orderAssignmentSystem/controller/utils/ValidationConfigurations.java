@@ -6,6 +6,9 @@ public class ValidationConfigurations {
 		if (name == null) {
 			throw new NullPointerException("The name field cannot be empty");
 		}
+		if (name == "") {
+			throw new NullPointerException("The name field cannot be empty");
+		}
 		return null;
 	}
 
