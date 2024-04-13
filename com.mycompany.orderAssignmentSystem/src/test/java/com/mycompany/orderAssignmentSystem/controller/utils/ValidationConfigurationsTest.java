@@ -1,6 +1,7 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -69,7 +70,7 @@ public class ValidationConfigurationsTest {
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The name cannot contain numbers. Please remove any number from the name.");
 	}
-	
+
 	@Test
 	public void testNameMethodWithTabs() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
@@ -78,6 +79,14 @@ public class ValidationConfigurationsTest {
 			validationConfigurations.validateName(name);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The name cannot contain tabs. Please remove any tabs from the name.");
+	}
+
+	@Test
+	public void testNameMethodWithOneLeadingWhiteSpace() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		String name = " testName";
+//		assertThat(validationConfigurations.validateName(name)).equals("testName");
+		assertEquals("testName", validationConfigurations.validateName(name));
 	}
 
 }
