@@ -20,4 +20,14 @@ public class ValidationConfigurationsTest {
 				.hasMessage("The name field cannot be empty");
 	}
 
+	@Test
+	public void testNameMethodWithShortString() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		assertThatThrownBy(() -> {
+			String name = "a";
+			validationConfigurations.validateName(name);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The name must be at least 3 characters long. Please provide a valid name");
+	}
+
 }
