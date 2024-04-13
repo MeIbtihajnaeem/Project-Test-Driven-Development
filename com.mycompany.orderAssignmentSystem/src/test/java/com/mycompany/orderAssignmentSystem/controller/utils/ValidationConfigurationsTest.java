@@ -74,7 +74,7 @@ public class ValidationConfigurationsTest {
 	public void testNameMethodWithTabs() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
-			String name = "\\ttestName";
+			String name = "test\tName";
 			validationConfigurations.validateName(name);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The name cannot contain tabs. Please remove any tabs from the name.");

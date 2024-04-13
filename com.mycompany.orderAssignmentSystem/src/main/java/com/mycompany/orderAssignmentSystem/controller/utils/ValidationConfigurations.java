@@ -26,6 +26,10 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The name cannot contain numbers. Please remove any number from the name.");
 		}
+		if(_containsTabs(name)) {
+			throw new IllegalArgumentException(
+					"The name cannot contain tabs. Please remove any tabs from the name.");
+		}
 		return null;
 	}
 
@@ -37,6 +41,12 @@ public class ValidationConfigurations {
 
 	private boolean _containsNumbers(String str) {
 		Pattern pattern = Pattern.compile("[0-9]");
+		Matcher matcher = pattern.matcher(str);
+		return matcher.find();
+	}
+
+	private boolean _containsTabs(String str) {
+		Pattern pattern = Pattern.compile("\\t");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
 	}
