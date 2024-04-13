@@ -33,6 +33,13 @@ public class ValidationConfigurations {
 		return name;
 	}
 
+	public String validatePhoneNumber(String phoneNumber) {
+		if (phoneNumber == null || phoneNumber == "") {
+			throw new NullPointerException("The phone number field cannot be empty.");
+		}
+		return null;
+	}
+
 	private boolean _containsSpecialCharacters(String str) {
 		Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
 		Matcher matcher = pattern.matcher(str);
