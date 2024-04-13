@@ -39,5 +39,15 @@ public class ValidationConfigurationsTest {
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The name must be at least 3 characters long. Please provide a valid name");
 	}
+	
+	@Test
+	public void testNameMethodWithLargeStringGreaterThanTwentyCharachters() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		assertThatThrownBy(() -> {
+			String name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+			validationConfigurations.validateName(name);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The name cannot exceed 20 characters. Please provide a shorter name.");
+	}
 
 }
