@@ -50,4 +50,14 @@ public class ValidationConfigurationsForValidatePhoneNumberMethodTest {
 		String phoneNumber = "3401372678";
 		assertEquals(phoneNumber, validationConfigurations.validatePhoneNumber(phoneNumber));
 	}
+
+	@Test
+	public void testPhoneNumberMethodWithSpecialCharachters() {
+		String phoneNumber = "3401372@78";
+		assertThatThrownBy(() -> {
+			validationConfigurations.validatePhoneNumber(phoneNumber);
+		}).isInstanceOf(IllegalArgumentException.class).hasMessage(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
+	}
+
 }
