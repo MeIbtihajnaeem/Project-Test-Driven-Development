@@ -14,4 +14,11 @@ public class ValidationConfigurationsTest {
 				.hasMessage("The name field cannot be empty");
 	}
 
+	@Test
+	public void testNameMethodWithEmptyString() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		assertThatThrownBy(() -> validationConfigurations.validateName("")).isInstanceOf(NullPointerException.class)
+				.hasMessage("The name field cannot be empty");
+	}
+
 }
