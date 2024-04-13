@@ -1,5 +1,8 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ValidationConfigurations {
 
 	public String validateName(String name) {
@@ -12,6 +15,12 @@ public class ValidationConfigurations {
 		}
 		if (name.length() > 20) {
 			throw new IllegalArgumentException("The name cannot exceed 20 characters. Please provide a shorter name.");
+		}
+		Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
+		Matcher matcher = pattern.matcher(name);
+		if (matcher.find()) {
+			throw new IllegalArgumentException(
+					"The name cannot contain special characters. Please remove any special characters from the name.");
 		}
 		return null;
 	}
