@@ -1,6 +1,7 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,12 +45,19 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	@Test
-	public void testNameMethodWithLargeStringGreaterThanFourtyCharachters() {
+	public void testNameMethodWithLargeStringGreaterThanFiftyCharachters() {
 		assertThatThrownBy(() -> {
 			String address = "123 Main Street Near Bakary, Apt 101, Springfield, USA 12345";
 			validationConfigurations.validateAddress(address);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The Address cannot exceed 50 characters. Please provide a shorter Address.");
+	}
+
+	@Test
+	public void testNameMethodWithLargeStringEqualsToFiftyCharachters() {
+		String address = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+		assertEquals(address, validationConfigurations.validateAddress(address));
 	}
 
 }
