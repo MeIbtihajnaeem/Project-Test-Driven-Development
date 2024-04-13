@@ -87,12 +87,19 @@ public class ValidationConfigurationsTest {
 		String name = " testName";
 		assertEquals("testName", validationConfigurations.validateName(name));
 	}
-	
+
 	@Test
 	public void testNameMethodWithTwoLeadingWhiteSpace() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		String name = "  testName";
 		assertEquals("testName", validationConfigurations.validateName(name));
+	}
+
+	@Test
+	public void testNameMethodWithOneMiddleWhiteSpace() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		String name = "test Name";
+		assertEquals("test Name", validationConfigurations.validateName(name));
 	}
 
 }
