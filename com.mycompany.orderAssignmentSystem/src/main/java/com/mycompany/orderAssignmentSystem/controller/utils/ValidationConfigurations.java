@@ -26,11 +26,11 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The name cannot contain numbers. Please remove any number from the name.");
 		}
-		if(_containsTabs(name)) {
-			throw new IllegalArgumentException(
-					"The name cannot contain tabs. Please remove any tabs from the name.");
+		if (_containsTabs(name)) {
+			throw new IllegalArgumentException("The name cannot contain tabs. Please remove any tabs from the name.");
 		}
-		return null;
+		name = name.trim();
+		return name;
 	}
 
 	private boolean _containsSpecialCharacters(String str) {
