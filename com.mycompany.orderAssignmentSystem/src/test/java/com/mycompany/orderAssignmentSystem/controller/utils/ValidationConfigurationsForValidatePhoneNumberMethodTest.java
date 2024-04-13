@@ -87,4 +87,13 @@ public class ValidationConfigurationsForValidatePhoneNumberMethodTest {
 				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
 	}
 
+	@Test
+	public void testPhoneNumberMethodWithEndingWhiteSpaceCharachters() {
+		String phoneNumber = "340137207 ";
+		assertThatThrownBy(() -> {
+			validationConfigurations.validatePhoneNumber(phoneNumber);
+		}).isInstanceOf(IllegalArgumentException.class).hasMessage(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
+	}
+
 }
