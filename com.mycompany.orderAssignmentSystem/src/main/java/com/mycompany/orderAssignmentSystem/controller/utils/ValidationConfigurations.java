@@ -3,6 +3,9 @@ package com.mycompany.orderAssignmentSystem.controller.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
+
 public class ValidationConfigurations {
 
 	public String validateName(String name) {
@@ -76,9 +79,8 @@ public class ValidationConfigurations {
 		if (id == null) {
 			throw new NullPointerException("The id field cannot be empty.");
 		}
-		if(id<=0) {
-			throw new IllegalArgumentException(
-					"The id field cannot be less than 1. Please provide a valid id.");
+		if (id <= 0) {
+			throw new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id.");
 		}
 		return id;
 	}
@@ -99,6 +101,20 @@ public class ValidationConfigurations {
 		Pattern pattern = Pattern.compile("\\t");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
+	}
+
+	public OrderCategory validateCategory(OrderCategory category) {
+		if (category == null) {
+			throw new NullPointerException("The category field cannot be empty.");
+		}
+		return category;
+	}
+
+	public OrderStatus validateStatus(OrderStatus status) {
+		if (status == null) {
+			throw new NullPointerException("The status field cannot be empty.");
+		}
+		return status;
 	}
 
 }
