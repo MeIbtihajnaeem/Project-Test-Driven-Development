@@ -33,6 +33,13 @@ public class ValidationConfigurations {
 		return name;
 	}
 
+	public String validateAddress(String address) {
+		if (address == null || address == "") {
+			throw new NullPointerException("The address field cannot be empty.");
+		}
+		return address;
+	}
+
 	public String validatePhoneNumber(String phoneNumber) {
 		if (phoneNumber == null || phoneNumber == "") {
 			throw new NullPointerException("The phone number field cannot be empty.");
