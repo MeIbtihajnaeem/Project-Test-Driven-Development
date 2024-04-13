@@ -45,6 +45,10 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
 		}
+		if (phoneNumber.matches("^3[0-9]*$") == false) {
+			throw new IllegalArgumentException(
+					"The phone number must start with 3. Please provide a valid phone number.");
+		}
 		return phoneNumber;
 	}
 
