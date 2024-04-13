@@ -37,6 +37,14 @@ public class ValidationConfigurations {
 		if (address == null || address == "") {
 			throw new NullPointerException("The address field cannot be empty.");
 		}
+		if (address.length() <= 10) {
+			throw new IllegalArgumentException(
+					"The Address must be at least 10 characters long. Please provide a valid Address.");
+		}
+		if (address.length() > 50) {
+			throw new IllegalArgumentException(
+					"The Address cannot exceed 50 characters. Please provide a shorter Address.");
+		}
 		return address;
 	}
 
