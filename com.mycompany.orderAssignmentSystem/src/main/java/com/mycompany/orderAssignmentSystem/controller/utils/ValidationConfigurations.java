@@ -21,7 +21,12 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The name cannot contain special characters. Please remove any special characters from the name.");
 		}
-
+		Pattern pattern = Pattern.compile("[0-9]");
+		Matcher matcher = pattern.matcher(name);
+		if (matcher.find()) {
+			throw new IllegalArgumentException(
+					"The name cannot contain numbers. Please remove any number from the name.");
+		}
 		return null;
 	}
 
