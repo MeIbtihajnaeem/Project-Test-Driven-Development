@@ -72,6 +72,17 @@ public class ValidationConfigurations {
 		return phoneNumber;
 	}
 
+	public Long validateId(Long id) {
+		if (id == null) {
+			throw new NullPointerException("The id field cannot be empty.");
+		}
+		if(id<=0) {
+			throw new IllegalArgumentException(
+					"The id field cannot be less than 1. Please provide a valid id.");
+		}
+		return id;
+	}
+
 	private boolean _containsSpecialCharacters(String str) {
 		Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
 		Matcher matcher = pattern.matcher(str);
