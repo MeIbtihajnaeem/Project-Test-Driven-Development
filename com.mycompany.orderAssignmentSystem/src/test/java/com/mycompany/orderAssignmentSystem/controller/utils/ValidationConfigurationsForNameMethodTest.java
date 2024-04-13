@@ -3,27 +3,32 @@ package com.mycompany.orderAssignmentSystem.controller.utils;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class ValidationConfigurationsTest {
+public class ValidationConfigurationsForNameMethodTest {
+
+	private ValidationConfigurations validationConfigurations;
+
+	@Before
+	public void setup() {
+		validationConfigurations = new ValidationConfigurations();
+	}
 
 	@Test
 	public void testNameMethodWithNullString() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> validationConfigurations.validateName(null)).isInstanceOf(NullPointerException.class)
 				.hasMessage("The name field cannot be empty.");
 	}
 
 	@Test
 	public void testNameMethodWithEmptyString() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> validationConfigurations.validateName("")).isInstanceOf(NullPointerException.class)
 				.hasMessage("The name field cannot be empty.");
 	}
 
 	@Test
 	public void testNameMethodWithShortStringLessThanTwoCharachters() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "a";
 			validationConfigurations.validateName(name);
@@ -33,7 +38,6 @@ public class ValidationConfigurationsTest {
 
 	@Test
 	public void testNameMethodWithShortStringEqualsToTwoCharachters() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "ab";
 			validationConfigurations.validateName(name);
@@ -43,7 +47,6 @@ public class ValidationConfigurationsTest {
 
 	@Test
 	public void testNameMethodWithLargeStringGreaterThanTwentyCharachters() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 			validationConfigurations.validateName(name);
@@ -53,7 +56,6 @@ public class ValidationConfigurationsTest {
 
 	@Test
 	public void testNameMethodWithLargeStringEqualsToTwentyCharachters() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		String name = "aaaaaaaaaaaaaaaaaaaa";
 		assertEquals(name, validationConfigurations.validateName(name));
 
@@ -61,7 +63,6 @@ public class ValidationConfigurationsTest {
 
 	@Test
 	public void testNameMethodWithSpecialCharacters() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "testName@";
 			validationConfigurations.validateName(name);
@@ -71,7 +72,6 @@ public class ValidationConfigurationsTest {
 
 	@Test
 	public void testNameMethodWithNumbers() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "testName123";
 			validationConfigurations.validateName(name);
@@ -81,7 +81,6 @@ public class ValidationConfigurationsTest {
 
 	@Test
 	public void testNameMethodWithTabs() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "test\tName";
 			validationConfigurations.validateName(name);
@@ -91,28 +90,24 @@ public class ValidationConfigurationsTest {
 
 	@Test
 	public void testNameMethodWithOneLeadingWhiteSpace() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		String name = " testName";
 		assertEquals("testName", validationConfigurations.validateName(name));
 	}
 
 	@Test
 	public void testNameMethodWithTwoLeadingWhiteSpace() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		String name = "  testName";
 		assertEquals("testName", validationConfigurations.validateName(name));
 	}
 
 	@Test
 	public void testNameMethodWithOneMiddleWhiteSpace() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		String name = "test Name";
 		assertEquals("test Name", validationConfigurations.validateName(name));
 	}
 
 	@Test
 	public void testNameMethodWithOneEndingWhiteSpace() {
-		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		String name = "testName ";
 		assertEquals("testName", validationConfigurations.validateName(name));
 	}
