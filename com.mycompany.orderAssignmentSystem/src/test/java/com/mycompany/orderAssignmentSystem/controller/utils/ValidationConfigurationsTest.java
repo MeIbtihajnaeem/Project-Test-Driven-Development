@@ -21,7 +21,7 @@ public class ValidationConfigurationsTest {
 	}
 
 	@Test
-	public void testNameMethodWithShortString() {
+	public void testNameMethodWithShortStringLessThanTwoCharachters () {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "a";
