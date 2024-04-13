@@ -10,6 +10,9 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The name must be at least 3 characters long. Please provide a valid name");
 		}
+		if (name.length() > 20) {
+			throw new IllegalArgumentException("The name cannot exceed 20 characters. Please provide a shorter name.");
+		}
 		return null;
 	}
 
