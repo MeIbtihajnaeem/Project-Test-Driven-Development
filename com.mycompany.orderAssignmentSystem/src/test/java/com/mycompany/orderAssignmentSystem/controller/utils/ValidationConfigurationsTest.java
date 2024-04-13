@@ -54,7 +54,7 @@ public class ValidationConfigurationsTest {
 	public void testNameMethodWithSpecialCharacters() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
-			String name = "aaaaa@";
+			String name = "testName@";
 			validationConfigurations.validateName(name);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessage(
 				"The name cannot contain special characters. Please remove any special characters from the name.");
@@ -64,10 +64,20 @@ public class ValidationConfigurationsTest {
 	public void testNameMethodWithNumbers() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
-			String name = "aaaaa123";
+			String name = "testName123";
 			validationConfigurations.validateName(name);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The name cannot contain numbers. Please remove any number from the name.");
+	}
+	
+	@Test
+	public void testNameMethodWithTabs() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		assertThatThrownBy(() -> {
+			String name = "\\ttestName";
+			validationConfigurations.validateName(name);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The name cannot contain tabs. Please remove any tabs from the name.");
 	}
 
 }
