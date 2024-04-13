@@ -102,4 +102,11 @@ public class ValidationConfigurationsTest {
 		assertEquals("test Name", validationConfigurations.validateName(name));
 	}
 
+	@Test
+	public void testNameMethodWithOneEndingWhiteSpace() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		String name = "testName ";
+		assertEquals("testName", validationConfigurations.validateName(name));
+	}
+
 }
