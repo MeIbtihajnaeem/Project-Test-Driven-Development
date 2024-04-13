@@ -85,7 +85,13 @@ public class ValidationConfigurationsTest {
 	public void testNameMethodWithOneLeadingWhiteSpace() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		String name = " testName";
-//		assertThat(validationConfigurations.validateName(name)).equals("testName");
+		assertEquals("testName", validationConfigurations.validateName(name));
+	}
+	
+	@Test
+	public void testNameMethodWithTwoLeadingWhiteSpace() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		String name = "  testName";
 		assertEquals("testName", validationConfigurations.validateName(name));
 	}
 
