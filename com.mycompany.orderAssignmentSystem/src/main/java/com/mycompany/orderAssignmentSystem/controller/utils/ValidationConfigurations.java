@@ -21,9 +21,8 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The name cannot contain special characters. Please remove any special characters from the name.");
 		}
-		Pattern pattern = Pattern.compile("[0-9]");
-		Matcher matcher = pattern.matcher(name);
-		if (matcher.find()) {
+
+		if (_containsNumbers(name)) {
 			throw new IllegalArgumentException(
 					"The name cannot contain numbers. Please remove any number from the name.");
 		}
@@ -32,6 +31,12 @@ public class ValidationConfigurations {
 
 	private boolean _containsSpecialCharacters(String str) {
 		Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
+		Matcher matcher = pattern.matcher(str);
+		return matcher.find();
+	}
+
+	private boolean _containsNumbers(String str) {
+		Pattern pattern = Pattern.compile("[0-9]");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
 	}
