@@ -1,6 +1,7 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +23,31 @@ public class ValidationConfigurationsForValidatePhoneNumberMethodTest {
 
 	@Test
 	public void testPhoneNumberWithEmptyString() {
-		assertThatThrownBy(() -> validationConfigurations.validatePhoneNumber("")).isInstanceOf(NullPointerException.class)
-				.hasMessage("The phone number field cannot be empty.");
+		assertThatThrownBy(() -> validationConfigurations.validatePhoneNumber(""))
+				.isInstanceOf(NullPointerException.class).hasMessage("The phone number field cannot be empty.");
 	}
 
+	@Test
+	public void testPhoneNumberMethodWithShortStringLessThanTenCharachters() {
+		assertThatThrownBy(() -> {
+			String phoneNumber = "aaaaaaaaa";
+			validationConfigurations.validatePhoneNumber(phoneNumber);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The phone number must be 10 characters long. Please provide a valid phone number.");
+	}
+
+	@Test
+	public void testPhoneNumberMethodWithLongStringGreaterThanTenCharachters() {
+		assertThatThrownBy(() -> {
+			String phoneNumber = "aaaaaaaaaaa";
+			validationConfigurations.validatePhoneNumber(phoneNumber);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The phone number must be 10 characters long. Please provide a valid phone number.");
+	}
+
+	@Test
+	public void testPhoneNumberMethodWithLongStringEqualsTenCharachters() {
+		String phoneNumber = "3401372678";
+		assertEquals(phoneNumber, validationConfigurations.validatePhoneNumber(phoneNumber));
+	}
 }

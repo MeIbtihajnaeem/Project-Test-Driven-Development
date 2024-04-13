@@ -37,7 +37,11 @@ public class ValidationConfigurations {
 		if (phoneNumber == null || phoneNumber == "") {
 			throw new NullPointerException("The phone number field cannot be empty.");
 		}
-		return null;
+		if (phoneNumber.length() != 10) {
+			throw new IllegalArgumentException(
+					"The phone number must be 10 characters long. Please provide a valid phone number.");
+		}
+		return phoneNumber;
 	}
 
 	private boolean _containsSpecialCharacters(String str) {
