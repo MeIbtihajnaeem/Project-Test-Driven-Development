@@ -45,6 +45,11 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The Address cannot exceed 50 characters. Please provide a shorter Address.");
 		}
+		if (_containsTabs(address)) {
+			throw new IllegalArgumentException(
+					"The address cannot contain tabs. Please remove any tabs from the address.");
+		}
+		address = address.trim();
 		return address;
 	}
 
