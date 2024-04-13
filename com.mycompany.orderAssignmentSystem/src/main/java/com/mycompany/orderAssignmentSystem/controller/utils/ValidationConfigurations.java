@@ -21,6 +21,7 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException(
 					"The name cannot contain special characters. Please remove any special characters from the name.");
 		}
+
 		return null;
 	}
 
