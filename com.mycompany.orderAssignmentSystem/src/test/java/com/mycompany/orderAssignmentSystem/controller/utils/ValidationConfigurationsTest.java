@@ -52,6 +52,14 @@ public class ValidationConfigurationsTest {
 	}
 
 	@Test
+	public void testNameMethodWithLargeStringEqualsToTwentyCharachters() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		String name = "aaaaaaaaaaaaaaaaaaaa";
+		assertEquals(name, validationConfigurations.validateName(name));
+
+	}
+
+	@Test
 	public void testNameMethodWithSpecialCharacters() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
