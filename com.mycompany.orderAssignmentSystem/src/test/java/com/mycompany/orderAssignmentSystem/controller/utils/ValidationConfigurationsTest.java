@@ -21,10 +21,20 @@ public class ValidationConfigurationsTest {
 	}
 
 	@Test
-	public void testNameMethodWithShortStringLessThanTwoCharachters () {
+	public void testNameMethodWithShortStringLessThanTwoCharachters() {
 		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 		assertThatThrownBy(() -> {
 			String name = "a";
+			validationConfigurations.validateName(name);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The name must be at least 3 characters long. Please provide a valid name");
+	}
+
+	@Test
+	public void testNameMethodWithShortStringEqualsToTwoCharachters() {
+		ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+		assertThatThrownBy(() -> {
+			String name = "ab";
 			validationConfigurations.validateName(name);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The name must be at least 3 characters long. Please provide a valid name");
