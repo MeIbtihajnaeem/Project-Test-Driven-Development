@@ -48,7 +48,7 @@ public class ValidationConfigurationsForValidateNameMethodTest {
 	@Test
 	public void testNameMethodWithLargeStringGreaterThanTwentyCharachters() {
 		assertThatThrownBy(() -> {
-			String name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+			String name = "Muhammad Ibtihaj Naeem";
 			validationConfigurations.validateName(name);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The name cannot exceed 20 characters. Please provide a shorter name.");
@@ -56,7 +56,7 @@ public class ValidationConfigurationsForValidateNameMethodTest {
 
 	@Test
 	public void testNameMethodWithLargeStringEqualsToTwentyCharachters() {
-		String name = "aaaaaaaaaaaaaaaaaaaa";
+		String name = "Muhammad Ibtihaj Nae";
 		assertEquals(name, validationConfigurations.validateName(name));
 
 	}

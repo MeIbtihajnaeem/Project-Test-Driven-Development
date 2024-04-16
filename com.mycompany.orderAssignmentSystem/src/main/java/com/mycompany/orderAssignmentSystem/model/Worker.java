@@ -2,14 +2,20 @@ package com.mycompany.orderAssignmentSystem.model;
 
 import java.util.List;
 
+import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+
 public class Worker {
-	private long workerId;
+	private Long workerId;
 	private String workerName;
 	private String workerPhoneNumber;
-	private String workerCategory;
+	private OrderCategory workerCategory;
 	private List<CustomerOrder> orders;
 
-	public Worker(String workerName, String workerPhoneNumber, String workerCategory, List<CustomerOrder> orders) {
+	public Worker() {
+	};
+
+	public Worker(String workerName, String workerPhoneNumber, OrderCategory workerCategory,
+			List<CustomerOrder> orders) {
 		super();
 		this.workerName = workerName;
 		this.workerPhoneNumber = workerPhoneNumber;
@@ -17,11 +23,11 @@ public class Worker {
 		this.orders = orders;
 	}
 
-	public long getWorkerId() {
+	public Long getWorkerId() {
 		return workerId;
 	}
 
-	public void setWorkerId(long workerId) {
+	public void setWorkerId(Long workerId) {
 		this.workerId = workerId;
 	}
 
@@ -41,11 +47,11 @@ public class Worker {
 		this.workerPhoneNumber = workerPhoneNumber;
 	}
 
-	public String getWorkerCategory() {
+	public OrderCategory getWorkerCategory() {
 		return workerCategory;
 	}
 
-	public void setWorkerCategory(String workerCategory) {
+	public void setWorkerCategory(OrderCategory workerCategory) {
 		this.workerCategory = workerCategory;
 	}
 
