@@ -35,10 +35,25 @@ public class WorkerController {
 			return;
 		}
 		try {
-			String workerName = validationConfigurations.validateName(worker.getWorkerName());
-			worker.setWorkerName(workerName);
+			worker.setWorkerName(validationConfigurations.validateName(worker.getWorkerName()));
 		} catch (Exception e) {
-			LOGGER.info(e.getMessage());
+			LOGGER.error("Error validating worker name: " + e.getMessage());
+			workerView.showError(e.getMessage(), worker);
+			return;
+		}
+
+		try {
+			worker.setWorkerPhoneNumber(validationConfigurations.validatePhoneNumber(worker.getWorkerPhoneNumber()));
+		} catch (Exception e) {
+			LOGGER.error("Error validating worker phone number: " + e.getMessage());
+			workerView.showError(e.getMessage(), worker);
+			return;
+		}
+
+		try {
+			worker.setWorkerCategory(validationConfigurations.validateCategory(worker.getWorkerCategory()));
+		} catch (Exception e) {
+			LOGGER.error("Error validating worker category: " + e.getMessage());
 			workerView.showError(e.getMessage(), worker);
 			return;
 		}

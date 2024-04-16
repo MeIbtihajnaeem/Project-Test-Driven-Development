@@ -30,7 +30,7 @@ public class ValidationConfigurationsForValidatePhoneNumberMethodTest {
 	@Test
 	public void testPhoneNumberMethodWithShortStringLessThanTenCharachters() {
 		assertThatThrownBy(() -> {
-			String phoneNumber = "aaaaaaaaa";
+			String phoneNumber = "000000000";
 			validationConfigurations.validatePhoneNumber(phoneNumber);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The phone number must be 10 characters long. Please provide a valid phone number.");
@@ -39,7 +39,7 @@ public class ValidationConfigurationsForValidatePhoneNumberMethodTest {
 	@Test
 	public void testPhoneNumberMethodWithLongStringGreaterThanTenCharachters() {
 		assertThatThrownBy(() -> {
-			String phoneNumber = "aaaaaaaaaaa";
+			String phoneNumber = "00000000000";
 			validationConfigurations.validatePhoneNumber(phoneNumber);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The phone number must be 10 characters long. Please provide a valid phone number.");
@@ -106,7 +106,7 @@ public class ValidationConfigurationsForValidatePhoneNumberMethodTest {
 	}
 
 	@Test
-	public void testPhoneNumberMethodWithLeadingNumberZeroCharachters() {
+	public void testPhoneNumberMethodWithLeadingNumberExceptThree() {
 		String phoneNumber = "4401372078";
 		assertThatThrownBy(() -> {
 			validationConfigurations.validatePhoneNumber(phoneNumber);
