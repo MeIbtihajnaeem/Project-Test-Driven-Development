@@ -2,7 +2,7 @@ package com.mycompany.orderAssignmentSystem.repository;
 
 import java.util.List;
 
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
+import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 
 public interface WorkerRepository {
@@ -16,8 +16,6 @@ public interface WorkerRepository {
 
 	public Worker delete(long workerId);
 
-	public List<Worker> searchByField(String searchText, String searchType);
-
-	public List<CustomerOrder> findAllOrdersByWorkerId(long workerId);
+	public List<Worker> searchByField(String searchText, WorkerSearchOption searchOption);
 
 }
