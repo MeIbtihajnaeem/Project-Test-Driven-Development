@@ -232,4 +232,25 @@ public class WorkerController {
 		return matcher.matches();
 	}
 
+	public void fetchOrdersByWorkerId(Worker worker) {
+		Objects.requireNonNull(worker, "Worker is null");
+		try {
+			worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
+		} catch (Exception e) {
+			LOGGER.error("Error validating Worker Id: " + e.getMessage());
+			workerView.showError(e.getMessage(), worker);
+			return;
+		}
+
+		Worker existingWorker = workerRepository.findById(worker.getWorkerId());
+		if (existingWorker == null) {
+			LOGGER.error("No Worker found with ID: " + worker.getWorkerId());
+			workerView.showError("No Worker found with ID: " + worker.getWorkerId(), worker);
+			return;
+		}
+
+		workerView.showOrderByWorkerId(existingWorker.getOrders());
+
+	}
+
 }

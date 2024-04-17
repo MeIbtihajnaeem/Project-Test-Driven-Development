@@ -211,7 +211,7 @@ public class ValidationConfigurations {
 	}
 
 	private boolean _containsTabs(String str) {
-		Pattern pattern = Pattern.compile("\\t");
+		Pattern pattern = Pattern.compile("\t");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
 	}
