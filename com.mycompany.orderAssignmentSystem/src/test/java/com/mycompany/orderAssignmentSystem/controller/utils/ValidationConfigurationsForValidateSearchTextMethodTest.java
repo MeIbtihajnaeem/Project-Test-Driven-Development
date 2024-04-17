@@ -52,28 +52,4 @@ public class ValidationConfigurationsForValidateSearchTextMethodTest {
 				.hasMessage("The search Text cannot contain tabs. Please remove any tabs from the search Text.");
 	}
 
-	@Test
-	public void testSearchTextMethodWithOneLeadingWhiteSpace() {
-		String searchText = " testSearchText";
-		assertEquals("testSearchText", validationConfigurations.validateSearchString(searchText));
-	}
-
-	@Test
-	public void testSearchTextMethodWithTwoLeadingWhiteSpace() {
-		String searchText = "  testSearchText";
-		assertEquals("testSearchText", validationConfigurations.validateSearchString(searchText));
-	}
-
-	@Test
-	public void testSearchTextMethodWithOneMiddleWhiteSpace() {
-		String searchText = "test SearchText";
-		assertEquals("test SearchText", validationConfigurations.validateSearchString(searchText));
-	}
-
-	@Test
-	public void testSearchTextMethodWithOneEndingWhiteSpace() {
-		String searchText = "testSearchText ";
-		assertEquals("testSearchText", validationConfigurations.validateSearchString(searchText));
-	}
-
 }

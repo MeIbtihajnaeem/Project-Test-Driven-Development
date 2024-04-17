@@ -1,14 +1,14 @@
 package com.mycompany.orderAssignmentSystem.controller;
 
+import static java.util.Arrays.asList;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import static java.util.Arrays.asList;
-
-import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
@@ -144,7 +144,7 @@ public class WorkerController {
 			Long workerId;
 			if (!_containsOnlyNumbers(searchText)) {
 				LOGGER.error("Error Worker id Invalid: Worker id is not number");
-				workerView.showSearchError("Invalid worker id must be a number.", searchText);
+				workerView.showSearchError("Invalid worker id, it must be a number.", searchText);
 				return;
 			}
 			workerId = Long.parseLong(searchText);
@@ -158,8 +158,7 @@ public class WorkerController {
 			Worker worker = workerRepository.findById(workerId);
 			workerView.showSearchResultForWorker(asList(worker));
 			return;
-		}
-		if (searchOption == WorkerSearchOption.WORKER_NAME) {
+		} else if (searchOption == WorkerSearchOption.WORKER_NAME) {
 			String workerName;
 			try {
 				workerName = validationConfigurations.validateName(searchText);
@@ -171,9 +170,19 @@ public class WorkerController {
 			List<Worker> workers = workerRepository.findByName(workerName);
 			workerView.showSearchResultForWorker(workers);
 			return;
-		}
-
-		if (searchOption == WorkerSearchOption.WORKER_PHONE) {
+		} else if (searchOption == WorkerSearchOption.WORKER_CATEGORY) {
+			OrderCategory workerCategory;
+			try {
+				workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
+			} catch (Exception e) {
+				LOGGER.error("Error validating Search Text worker Category: " + e.getMessage());
+				workerView.showSearchError(e.getMessage(), searchText);
+				return;
+			}
+			List<Worker> workers = workerRepository.findByOrderCategory(workerCategory);
+			workerView.showSearchResultForWorker(workers);
+			return;
+		} else {
 			String workerPhoneNumber;
 			try {
 				workerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
@@ -186,20 +195,35 @@ public class WorkerController {
 			workerView.showSearchResultForWorker(asList(worker));
 			return;
 		}
+	}
 
-		if (searchOption == WorkerSearchOption.WORKER_CATEGORY) {
-			OrderCategory workerCategory;
-			try {
-				workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
-			} catch (Exception e) {
-				LOGGER.error("Error validating Search Text worker Category: " + e.getMessage());
-				workerView.showSearchError(e.getMessage(), searchText);
-				return;
-			}
-			List<Worker> workers = workerRepository.findByOrderCategory(workerCategory);
-			workerView.showSearchResultForWorker(workers);
+	public void deleteWorker(Worker worker) {
+		Objects.requireNonNull(worker, "Worker is null");
+		try {
+			worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
+		} catch (Exception e) {
+			LOGGER.error("Error validating Worker Id: " + e.getMessage());
+			workerView.showError(e.getMessage(), worker);
 			return;
 		}
+		Worker existingWorker = workerRepository.findById(worker.getWorkerId());
+		if (existingWorker == null) {
+			LOGGER.error("No Worker found with ID: " + worker.getWorkerId());
+			workerView.showError("No Worker found with ID: " + worker.getWorkerId(), worker);
+			return;
+		}
+		if (existingWorker.getOrders() != null) {
+			if (!existingWorker.getOrders().isEmpty()) {
+				LOGGER.error(
+						"Cannot delete worker with orders this worker has " + worker.getOrders().size() + " Orders");
+				workerView.showError(
+						"Cannot delete worker with orders this worker has " + worker.getOrders().size() + " Orders",
+						worker);
+				return;
+			}
+		}
+		worker = workerRepository.delete(worker);
+		workerView.workerRemoved(worker);
 	}
 
 	private boolean _containsOnlyNumbers(String str) {

@@ -1189,7 +1189,7 @@ public class WorkerControllerTest {
 		String searchText = "a";
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError("Invalid worker id must be a number.", searchText);
+		inOrder.verify(workerView).showSearchError("Invalid worker id, it must be a number.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1370,6 +1370,108 @@ public class WorkerControllerTest {
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchResultForWorker(asList(worker));
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	// Tests for delete method
+	public void testDeleteWorkerMethodWithNullWorker() {
+		try {
+			workerController.deleteWorker(null);
+			fail("Expected an NullPointerException to be thrown ");
+		} catch (NullPointerException e) {
+			assertEquals("Worker is null", e.getMessage());
+		}
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsNull() {
+		Worker worker = new Worker();
+		workerController.deleteWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("The id field cannot be empty.", worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsZero() {
+		Worker worker = new Worker();
+		worker.setWorkerId(0l);
+		workerController.deleteWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsLessThanZero() {
+		Worker worker = new Worker();
+		worker.setWorkerId(-1l);
+		workerController.deleteWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsGreaterThanZero() {
+		Worker worker = new Worker();
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
+		Worker spyWorker = spy(worker);
+		workerController.deleteWorker(spyWorker);
+		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
+		verify(spyWorker).setWorkerId(workerId);
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsValidButNoWorkerFound() {
+		Worker worker = new Worker();
+		worker.setWorkerId(1l);
+		when(workerRepository.findById(1l)).thenReturn(null);
+		workerController.deleteWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("No Worker found with ID: " + worker.getWorkerId(), worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithOrders() {
+		Worker worker = new Worker();
+		worker.setWorkerId(1l);
+		worker.setOrders(asList(new CustomerOrder()));
+		when(workerRepository.findById(1l)).thenReturn(worker);
+		workerController.deleteWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError(
+				"Cannot delete worker with orders this worker has " + worker.getOrders().size() + " Orders", worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithNullOrders() {
+		Worker worker = new Worker();
+		worker.setWorkerId(1l);
+		worker.setOrders(null);
+		when(workerRepository.findById(1l)).thenReturn(worker);
+		when(workerRepository.delete(worker)).thenReturn(worker);
+		workerController.deleteWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerRepository).delete(worker);
+		inOrder.verify(workerView).workerRemoved(worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithEmptyOrders() {
+		Worker worker = new Worker();
+		worker.setWorkerId(1l);
+		worker.setOrders(Collections.emptyList());
+		when(workerRepository.findById(1l)).thenReturn(worker);
+		when(workerRepository.delete(worker)).thenReturn(worker);
+		workerController.deleteWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerRepository).delete(worker);
+		inOrder.verify(workerView).workerRemoved(worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 }

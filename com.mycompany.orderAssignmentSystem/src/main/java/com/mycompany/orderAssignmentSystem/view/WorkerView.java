@@ -18,7 +18,7 @@ public interface WorkerView {
 
 	void showOrderByWorkerId(List<CustomerOrder> orders);
 
-//	void workerRemoved(Worker worker);
+	void workerRemoved(Worker worker);
 
 	void showError(String message, Worker worker);
 
