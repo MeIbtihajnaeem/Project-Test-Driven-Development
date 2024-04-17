@@ -461,4 +461,39 @@ public class WorkerControllerTest {
 
 	}
 
+	@Test
+	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberAlreadyExists() {
+		Worker worker = new Worker();
+		String workerName = "Muhammad Ibtihaj";
+		String workerPhoneNumber = "3401372678";
+		OrderCategory plumber = OrderCategory.PLUMBER;
+		worker.setWorkerName(workerName);
+		worker.setWorkerPhoneNumber(workerPhoneNumber);
+		worker.setWorkerCategory(plumber);
+		when(workerRepository.findByPhoneNumber(workerPhoneNumber)).thenReturn(worker);
+		workerController.createNewWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
+		inOrder.verify(workerView).showError("Worker with phone number " + workerPhoneNumber + " Already Exists",
+				worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testCreateNewWorkerMethodWhenAllFieldsAreValid() {
+		Worker worker = new Worker();
+		String workerName = "Muhammad Ibtihaj";
+		String workerPhoneNumber = "3401372678";
+		OrderCategory plumber = OrderCategory.PLUMBER;
+		worker.setWorkerName(workerName);
+		worker.setWorkerPhoneNumber(workerPhoneNumber);
+		worker.setWorkerCategory(plumber);
+		when(workerRepository.findByPhoneNumber(workerPhoneNumber)).thenReturn(null);
+		when(workerRepository.save(worker)).thenReturn(worker);
+		workerController.createNewWorker(worker);
+		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
+		inOrder.verify(workerRepository).save(worker);
+		inOrder.verify(workerView).workerAdded(worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
 }

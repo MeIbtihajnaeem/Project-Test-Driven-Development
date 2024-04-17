@@ -10,6 +10,8 @@ public interface WorkerRepository {
 
 	public Worker findById(long workerId);
 
+	public Worker findByPhoneNumber(String phoneNumber);
+
 	public Worker save(Worker worker);
 
 	public Worker modify(Worker worker);

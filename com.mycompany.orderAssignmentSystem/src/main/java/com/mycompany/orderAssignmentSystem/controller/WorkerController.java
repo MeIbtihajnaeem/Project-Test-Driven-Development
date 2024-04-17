@@ -58,6 +58,17 @@ public class WorkerController {
 			return;
 		}
 
+		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
+		if (existingWorker != null) {
+			LOGGER.error("Error validating worker phone number: Worker with phone number "
+					+ worker.getWorkerPhoneNumber() + " Already Exists");
+			workerView.showError("Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists",
+					existingWorker);
+			return;
+		}
+		worker = workerRepository.save(worker);
+		workerView.workerAdded(worker);
+		LOGGER.info("New worker created: {}", worker);
 	}
 
 }
