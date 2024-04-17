@@ -58,4 +58,66 @@ public class WorkerController {
 		LOGGER.info("New worker created: {}", worker);
 	}
 
+	public void updateWorker(Worker worker) {
+		LOGGER.info("Updating a worker");
+		Objects.requireNonNull(worker, "Worker is null");
+		try {
+			worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
+			worker.setWorkerName(validationConfigurations.validateName(worker.getWorkerName()));
+			worker.setWorkerPhoneNumber(validationConfigurations.validatePhoneNumber(worker.getWorkerPhoneNumber()));
+			worker.setWorkerCategory(validationConfigurations.validateCategory(worker.getWorkerCategory()));
+
+		} catch (Exception e) {
+			LOGGER.error("Error validating Worker: " + e.getMessage());
+			workerView.showError(e.getMessage(), worker);
+			return;
+		}
+
+		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
+		if (existingWorker != null) {
+			LOGGER.error("A Worker with this phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
+			workerView.showError("A Worker with this phone number " + worker.getWorkerPhoneNumber() + " Already Exists",
+					worker);
+			return;
+
+		}
+		Worker savedWorker = workerRepository.findById(worker.getWorkerId());
+		if (savedWorker != null) {
+			if (savedWorker.getOrders() != null) {
+				if (!savedWorker.getOrders().isEmpty()) {
+					LOGGER.error("Cannot update worker " + worker.getWorkerCategory() + " Because of existing orders");
+					workerView.showError(
+							"Cannot update worker " + worker.getWorkerCategory() + " Because of existing orders",
+							worker);
+					return;
+				}
+			}
+		}
+		worker = workerRepository.modify(worker);
+		workerView.workerModified(worker);
+		LOGGER.info("Worker Updated: {}", worker);
+
+	}
+
+	public void fetchWorkerById(Worker worker) {
+		LOGGER.info("Fetch a worker");
+		Objects.requireNonNull(worker, "Worker is null");
+
+		try {
+			worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
+		} catch (Exception e) {
+			LOGGER.error("Error validating Worker: " + e.getMessage());
+			workerView.showError(e.getMessage(), worker);
+			return;
+		}
+		Worker savedWorker = workerRepository.findById(worker.getWorkerId());
+		if (savedWorker == null) {
+			LOGGER.error("Worker with id " + worker.getWorkerId() + " Not Found.");
+			workerView.showError("Worker with id " + worker.getWorkerId() + " Not Found.", worker);
+			return;
+		}
+
+		workerView.showFetchedWorker(worker);
+	}
+
 }

@@ -111,7 +111,7 @@ public class ValidationConfigurations {
 		return phoneNumber;
 	}
 
-	public Long validateId(Long id) {
+	public long validateId(Long id) {
 		if (id == null) {
 			LOGGER.info("The id field cannot be empty.");
 

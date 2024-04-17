@@ -33,7 +33,7 @@ public class ValidationConfigurationsForValidateIdMethodTest {
 	}
 
 	@Test
-	public void testIdMethodWithPositiveIntegar() {
+	public void testIdMethodWithPositiveIntegarAndGreaterThanZero() {
 		assertThat(validationConfigurations.validateId(1l)).isPositive();
 	}
 

@@ -1,6 +1,7 @@
 package com.mycompany.orderAssignmentSystem.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 
@@ -14,13 +15,12 @@ public class Worker {
 	public Worker() {
 	};
 
-	public Worker(String workerName, String workerPhoneNumber, OrderCategory workerCategory,
-			List<CustomerOrder> orders) {
+	public Worker(Long workerId, String workerName, String workerPhoneNumber, OrderCategory workerCategory) {
 		super();
+		this.workerId = workerId;
 		this.workerName = workerName;
 		this.workerPhoneNumber = workerPhoneNumber;
 		this.workerCategory = workerCategory;
-		this.orders = orders;
 	}
 
 	public Long getWorkerId() {
@@ -67,5 +67,26 @@ public class Worker {
 		return String.format("Worker ID: %d\nWorker Name: %s\nWorker Phone Number: %s\nWorker Category: %s", workerId,
 				workerName, workerPhoneNumber, workerCategory);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(orders, workerCategory, workerId, workerName, workerPhoneNumber);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Worker other = (Worker) obj;
+		return Objects.equals(orders, other.orders) && workerCategory == other.workerCategory
+				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
+				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
+	}
+	
+	
 
 }

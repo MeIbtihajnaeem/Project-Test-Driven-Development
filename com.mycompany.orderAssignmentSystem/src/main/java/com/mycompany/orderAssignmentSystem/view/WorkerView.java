@@ -11,18 +11,18 @@ public interface WorkerView {
 
 	void workerAdded(Worker worker);
 
-	void workerModified(Long workerId, Worker worker);
+	void workerModified(Worker worker);
 
-	void workerFetch(Long workerId);
+	void showFetchedWorker(Worker worker);
 
-	void workerSearch(String searchText, WorkerSearchOption searchOption);
+//	void workerSearch(String searchText, WorkerSearchOption searchOption);
 
-	void showOrderByWorkerId(List<CustomerOrder> orders);
+//	void showOrderByWorkerId(List<CustomerOrder> orders);
 
-	void workerRemoved(Worker worker);
+//	void workerRemoved(Worker worker);
 
 	void showError(String message, Worker worker);
 
-	void showErrorWorkerNotFound(String message, Worker worker);
+//	void showErrorWorkerNotFound(String message, Worker worker);
 
 }

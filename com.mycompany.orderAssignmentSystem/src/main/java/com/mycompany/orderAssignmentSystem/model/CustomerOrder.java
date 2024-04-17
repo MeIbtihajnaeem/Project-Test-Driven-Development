@@ -17,6 +17,9 @@ public class CustomerOrder {
 	private OrderStatus orderStatus;
 	private List<Worker> workers;
 
+	public CustomerOrder() {
+		
+	}
 	public CustomerOrder(String customerName, String customerAddress, String customerPhoneNumber,
 			JDateChooser appointmentDate, String orderDescription, OrderCategory orderCategory, OrderStatus orderStatus,
 			List<Worker> workers) {
