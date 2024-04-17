@@ -153,6 +153,8 @@ public class ValidationConfigurations {
 
 			throw new NullPointerException("The " + message + " field cannot be empty.");
 		}
+		value = value.toUpperCase();
+
 		if (_containsTabs(value)) {
 			LOGGER.info("The " + message + " cannot contain tabs. Please remove any tabs from the " + message + ".");
 
@@ -172,8 +174,28 @@ public class ValidationConfigurations {
 			throw new NoSuchElementException(
 					"The specified " + message + " was not found. Please provide a valid " + message + ".");
 		}
-		value = value.toUpperCase();
 		return Enum.valueOf(enumType, value);
+	}
+
+	public String validateSearchString(String searchString) {
+		if (searchString == null || searchString == "") {
+			LOGGER.info("The search Text field cannot be empty.");
+			throw new NullPointerException("The search Text field cannot be empty.");
+		}
+		if (searchString.length() > 20) {
+			LOGGER.info("The search Text cannot exceed 20 characters. Please provide a shorter search Text.");
+
+			throw new IllegalArgumentException(
+					"The search Text cannot exceed 20 characters. Please provide a shorter search Text.");
+		}
+
+		if (_containsTabs(searchString)) {
+			LOGGER.info("The search Text cannot contain tabs. Please remove any tabs from the search Text.");
+
+			throw new IllegalArgumentException(
+					"The search Text cannot contain tabs. Please remove any tabs from the search Text.");
+		}
+		return searchString;
 	}
 
 	private boolean _containsSpecialCharacters(String str) {

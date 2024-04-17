@@ -1,11 +1,18 @@
 package com.mycompany.orderAssignmentSystem.controller;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import static java.util.Arrays.asList;
+
+import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
 import com.mycompany.orderAssignmentSystem.view.WorkerView;
@@ -118,6 +125,87 @@ public class WorkerController {
 		}
 
 		workerView.showFetchedWorker(worker);
+	}
+
+	public void searchWorker(String searchText, WorkerSearchOption searchOption) {
+		try {
+			searchText = validationConfigurations.validateSearchString(searchText);
+		} catch (Exception e) {
+			LOGGER.error("Error validating Search Text: " + e.getMessage());
+			workerView.showSearchError(e.getMessage(), searchText);
+			return;
+		}
+		if (searchOption == null) {
+			LOGGER.error("Worker Search Option is Null");
+			workerView.showSearchError("Search Option cannot be empty.", searchText);
+			return;
+		}
+		if (searchOption == WorkerSearchOption.WORKER_ID) {
+			Long workerId;
+			if (!_containsOnlyNumbers(searchText)) {
+				LOGGER.error("Error Worker id Invalid: Worker id is not number");
+				workerView.showSearchError("Invalid worker id must be a number.", searchText);
+				return;
+			}
+			workerId = Long.parseLong(searchText);
+			try {
+				workerId = validationConfigurations.validateId(workerId);
+			} catch (Exception e) {
+				LOGGER.error("Error validating Search Text Id: " + e.getMessage());
+				workerView.showSearchError(e.getMessage(), searchText);
+				return;
+			}
+			Worker worker = workerRepository.findById(workerId);
+			workerView.showSearchResultForWorker(asList(worker));
+			return;
+		}
+		if (searchOption == WorkerSearchOption.WORKER_NAME) {
+			String workerName;
+			try {
+				workerName = validationConfigurations.validateName(searchText);
+			} catch (Exception e) {
+				LOGGER.error("Error validating Search Text Name: " + e.getMessage());
+				workerView.showSearchError(e.getMessage(), searchText);
+				return;
+			}
+			List<Worker> workers = workerRepository.findByName(workerName);
+			workerView.showSearchResultForWorker(workers);
+			return;
+		}
+
+		if (searchOption == WorkerSearchOption.WORKER_PHONE) {
+			String workerPhoneNumber;
+			try {
+				workerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
+			} catch (Exception e) {
+				LOGGER.error("Error validating Search Text Phone Number: " + e.getMessage());
+				workerView.showSearchError(e.getMessage(), searchText);
+				return;
+			}
+			Worker worker = workerRepository.findByPhoneNumber(workerPhoneNumber);
+			workerView.showSearchResultForWorker(asList(worker));
+			return;
+		}
+
+		if (searchOption == WorkerSearchOption.WORKER_CATEGORY) {
+			OrderCategory workerCategory;
+			try {
+				workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
+			} catch (Exception e) {
+				LOGGER.error("Error validating Search Text worker Category: " + e.getMessage());
+				workerView.showSearchError(e.getMessage(), searchText);
+				return;
+			}
+			List<Worker> workers = workerRepository.findByOrderCategory(workerCategory);
+			workerView.showSearchResultForWorker(workers);
+			return;
+		}
+	}
+
+	private boolean _containsOnlyNumbers(String str) {
+		Pattern pattern = Pattern.compile("^-?[0-9]+$");
+		Matcher matcher = pattern.matcher(str);
+		return matcher.matches();
 	}
 
 }
