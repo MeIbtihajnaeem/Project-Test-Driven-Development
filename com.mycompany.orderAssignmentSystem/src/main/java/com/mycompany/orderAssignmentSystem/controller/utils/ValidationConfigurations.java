@@ -55,6 +55,27 @@ public class ValidationConfigurations {
 		return name;
 	}
 
+	public boolean validateStringNumber(String str) {
+		if (str == null || str == "") {
+			LOGGER.info("The text cannot be empty.");
+			throw new NullPointerException("The number cannot be empty.");
+		}
+
+		if (str.length() > 20) {
+			LOGGER.info("The number cannot exceed 20 characters. Please provide a shorter number.");
+
+			throw new IllegalArgumentException(
+					"The number cannot exceed 20 characters. Please provide a shorter number.");
+		}
+
+		Pattern pattern = Pattern.compile("^-?[0-9]+$");
+		Matcher matcher = pattern.matcher(str);
+		if (matcher.matches()) {
+			return true;
+		}
+		return false;
+	}
+
 	public String validateAddress(String address) {
 		if (address == null || address == "") {
 			LOGGER.info("The address field cannot be empty.");

@@ -4,8 +4,6 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -137,17 +135,18 @@ public class WorkerController {
 				return;
 			}
 			if (searchOption == WorkerSearchOption.WORKER_ID) {
-				Long workerId;
-				if (!_containsOnlyNumbers(searchText)) {
-					LOGGER.error("Error Worker id Invalid: Worker id is not number");
-					workerView.showSearchError("Invalid worker id, it must be a number.", searchText);
+				if (validationConfigurations.validateStringNumber(searchText)) {
+					Long workerId;
+					workerId = Long.parseLong(searchText);
+					workerId = validationConfigurations.validateId(workerId);
+					Worker worker = workerRepository.findById(workerId);
+					workerView.showSearchResultForWorker(asList(worker));
+					return;
+				} else {
+					LOGGER.error("Worker Search Option is not a number");
+					workerView.showSearchError("Please enter a valid number.", searchText);
 					return;
 				}
-				workerId = Long.parseLong(searchText);
-				workerId = validationConfigurations.validateId(workerId);
-				Worker worker = workerRepository.findById(workerId);
-				workerView.showSearchResultForWorker(asList(worker));
-				return;
 			} else if (searchOption == WorkerSearchOption.WORKER_NAME) {
 				String workerName;
 				workerName = validationConfigurations.validateName(searchText);
@@ -199,14 +198,8 @@ public class WorkerController {
 				return;
 			}
 		}
-		worker = workerRepository.delete(worker);
+		workerRepository.delete(worker);
 		workerView.workerRemoved(worker);
-	}
-
-	private boolean _containsOnlyNumbers(String str) {
-		Pattern pattern = Pattern.compile("^-?[0-9]+$");
-		Matcher matcher = pattern.matcher(str);
-		return matcher.matches();
 	}
 
 	public void fetchOrdersByWorkerId(Worker worker) {

@@ -1189,7 +1189,7 @@ public class WorkerControllerTest {
 		String searchText = "a";
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError("Invalid worker id, it must be a number.", searchText);
+		inOrder.verify(workerView).showSearchError("Please enter a valid number.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1210,6 +1210,42 @@ public class WorkerControllerTest {
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
 				searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithLeadingWhiteSpaces() {
+		String searchText = " 1";
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("Please enter a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithEndingWhiteSpaces() {
+		String searchText = "1  ";
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("Please enter a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithMiddleWhiteSpaces() {
+		String searchText = "1 0";
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("Please enter a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithSpecialCharacters() {
+		String searchText = "1@0";
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("Please enter a valid number.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1453,7 +1489,6 @@ public class WorkerControllerTest {
 		worker.setWorkerId(1l);
 		worker.setOrders(null);
 		when(workerRepository.findById(1l)).thenReturn(worker);
-		when(workerRepository.delete(worker)).thenReturn(worker);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerRepository).delete(worker);
@@ -1467,7 +1502,6 @@ public class WorkerControllerTest {
 		worker.setWorkerId(1l);
 		worker.setOrders(Collections.emptyList());
 		when(workerRepository.findById(1l)).thenReturn(worker);
-		when(workerRepository.delete(worker)).thenReturn(worker);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerRepository).delete(worker);

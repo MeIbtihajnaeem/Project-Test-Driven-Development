@@ -21,7 +21,7 @@ public interface WorkerRepository {
 
 	public Worker modify(Worker worker);
 
-	public Worker delete(Worker worker);
+	public void delete(Worker worker);
 
 	public List<Worker> searchByField(String searchText, WorkerSearchOption searchOption);
 
