@@ -130,69 +130,46 @@ public class WorkerController {
 	public void searchWorker(String searchText, WorkerSearchOption searchOption) {
 		try {
 			searchText = validationConfigurations.validateSearchString(searchText);
+
+			if (searchOption == null) {
+				LOGGER.error("Worker Search Option is Null");
+				workerView.showSearchError("Search Option cannot be empty.", searchText);
+				return;
+			}
+			if (searchOption == WorkerSearchOption.WORKER_ID) {
+				Long workerId;
+				if (!_containsOnlyNumbers(searchText)) {
+					LOGGER.error("Error Worker id Invalid: Worker id is not number");
+					workerView.showSearchError("Invalid worker id, it must be a number.", searchText);
+					return;
+				}
+				workerId = Long.parseLong(searchText);
+				workerId = validationConfigurations.validateId(workerId);
+				Worker worker = workerRepository.findById(workerId);
+				workerView.showSearchResultForWorker(asList(worker));
+				return;
+			} else if (searchOption == WorkerSearchOption.WORKER_NAME) {
+				String workerName;
+				workerName = validationConfigurations.validateName(searchText);
+				List<Worker> workers = workerRepository.findByName(workerName);
+				workerView.showSearchResultForWorker(workers);
+				return;
+			} else if (searchOption == WorkerSearchOption.WORKER_CATEGORY) {
+				OrderCategory workerCategory;
+				workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
+				List<Worker> workers = workerRepository.findByOrderCategory(workerCategory);
+				workerView.showSearchResultForWorker(workers);
+				return;
+			} else {
+				String workerPhoneNumber;
+				workerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
+				Worker worker = workerRepository.findByPhoneNumber(workerPhoneNumber);
+				workerView.showSearchResultForWorker(asList(worker));
+				return;
+			}
 		} catch (Exception e) {
 			LOGGER.error("Error validating Search Text: " + e.getMessage());
 			workerView.showSearchError(e.getMessage(), searchText);
-			return;
-		}
-		if (searchOption == null) {
-			LOGGER.error("Worker Search Option is Null");
-			workerView.showSearchError("Search Option cannot be empty.", searchText);
-			return;
-		}
-		if (searchOption == WorkerSearchOption.WORKER_ID) {
-			Long workerId;
-			if (!_containsOnlyNumbers(searchText)) {
-				LOGGER.error("Error Worker id Invalid: Worker id is not number");
-				workerView.showSearchError("Invalid worker id, it must be a number.", searchText);
-				return;
-			}
-			workerId = Long.parseLong(searchText);
-			try {
-				workerId = validationConfigurations.validateId(workerId);
-			} catch (Exception e) {
-				LOGGER.error("Error validating Search Text Id: " + e.getMessage());
-				workerView.showSearchError(e.getMessage(), searchText);
-				return;
-			}
-			Worker worker = workerRepository.findById(workerId);
-			workerView.showSearchResultForWorker(asList(worker));
-			return;
-		} else if (searchOption == WorkerSearchOption.WORKER_NAME) {
-			String workerName;
-			try {
-				workerName = validationConfigurations.validateName(searchText);
-			} catch (Exception e) {
-				LOGGER.error("Error validating Search Text Name: " + e.getMessage());
-				workerView.showSearchError(e.getMessage(), searchText);
-				return;
-			}
-			List<Worker> workers = workerRepository.findByName(workerName);
-			workerView.showSearchResultForWorker(workers);
-			return;
-		} else if (searchOption == WorkerSearchOption.WORKER_CATEGORY) {
-			OrderCategory workerCategory;
-			try {
-				workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
-			} catch (Exception e) {
-				LOGGER.error("Error validating Search Text worker Category: " + e.getMessage());
-				workerView.showSearchError(e.getMessage(), searchText);
-				return;
-			}
-			List<Worker> workers = workerRepository.findByOrderCategory(workerCategory);
-			workerView.showSearchResultForWorker(workers);
-			return;
-		} else {
-			String workerPhoneNumber;
-			try {
-				workerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
-			} catch (Exception e) {
-				LOGGER.error("Error validating Search Text Phone Number: " + e.getMessage());
-				workerView.showSearchError(e.getMessage(), searchText);
-				return;
-			}
-			Worker worker = workerRepository.findByPhoneNumber(workerPhoneNumber);
-			workerView.showSearchResultForWorker(asList(worker));
 			return;
 		}
 	}
