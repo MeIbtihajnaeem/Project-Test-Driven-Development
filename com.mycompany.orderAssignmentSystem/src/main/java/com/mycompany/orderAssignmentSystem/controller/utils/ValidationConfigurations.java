@@ -1,5 +1,8 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -144,6 +147,27 @@ public class ValidationConfigurations {
 			throw new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id.");
 		}
 		return id;
+	}
+
+	public LocalDateTime validateDate(LocalDateTime dateTime) {
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		System.out.println("currentDateTime");
+		System.out.println(currentDateTime);
+		System.out.println(dateTime);
+		if (dateTime == null) {
+			LOGGER.info("The Date field cannot be empty.");
+
+			throw new NullPointerException("The Date field cannot be empty.");
+		}
+		if (ChronoUnit.DAYS.between(currentDateTime, dateTime) < 0) {
+			LOGGER.info("Please provide a valid date that is not before today's date.");
+			throw new IllegalArgumentException("Please provide a valid date that is not before today's date.");
+		}
+		if (Period.between(currentDateTime.toLocalDate(), dateTime.toLocalDate()).getMonths() > 6) {
+			LOGGER.info("Please provide a valid date that is not 6 months after today's date.");
+			throw new IllegalArgumentException("Please provide a valid date that is not 6 months after today's date.");
+		}
+		return dateTime;
 	}
 
 	public OrderCategory validateCategory(OrderCategory category) {

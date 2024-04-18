@@ -1,28 +1,29 @@
 package com.mycompany.orderAssignmentSystem.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.toedter.calendar.JDateChooser;
 
 public class CustomerOrder {
-	private long orderId;
+	private Long orderId;
 	private String customerName;
 	private String customerAddress;
 	private String customerPhoneNumber;
-	private JDateChooser appointmentDate;
+	private LocalDateTime appointmentDate;
 	private String orderDescription;
 	private OrderCategory orderCategory;
 	private OrderStatus orderStatus;
 	private List<Worker> workers;
 
 	public CustomerOrder() {
-		
+
 	}
+
 	public CustomerOrder(String customerName, String customerAddress, String customerPhoneNumber,
-			JDateChooser appointmentDate, String orderDescription, OrderCategory orderCategory, OrderStatus orderStatus,
-			List<Worker> workers) {
+			LocalDateTime appointmentDate, String orderDescription, OrderCategory orderCategory,
+			OrderStatus orderStatus, List<Worker> workers) {
 		this.customerName = customerName;
 		this.customerAddress = customerAddress;
 		this.customerPhoneNumber = customerPhoneNumber;
@@ -33,11 +34,11 @@ public class CustomerOrder {
 		this.workers = workers;
 	}
 
-	public long getOrderId() {
+	public Long getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(long orderId) {
+	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
 
@@ -65,11 +66,11 @@ public class CustomerOrder {
 		this.customerPhoneNumber = customerPhoneNumber;
 	}
 
-	public JDateChooser getAppointmentDate() {
+	public LocalDateTime getAppointmentDate() {
 		return appointmentDate;
 	}
 
-	public void setAppointmentDate(JDateChooser appointmentDate) {
+	public void setAppointmentDate(LocalDateTime appointmentDate) {
 		this.appointmentDate = appointmentDate;
 	}
 
