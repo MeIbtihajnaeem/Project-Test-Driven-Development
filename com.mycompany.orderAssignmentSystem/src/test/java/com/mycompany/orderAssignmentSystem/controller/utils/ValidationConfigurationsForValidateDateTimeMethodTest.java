@@ -58,10 +58,9 @@ public class ValidationConfigurationsForValidateDateTimeMethodTest {
 	}
 
 	@Test
-	public void testDateTimeMethodWithAfterSixMonthDate() {
-		LocalDateTime dateTime = LocalDateTime.now();
+	public void testDateTimeMethodWithDatePlusSixMonths() {
+		LocalDateTime dateTime = LocalDateTime.now().plusMonths(6);
 		assertThat(dateTime).isEqualTo(validationConfigurations.validateDate(dateTime));
-
 	}
 
 }

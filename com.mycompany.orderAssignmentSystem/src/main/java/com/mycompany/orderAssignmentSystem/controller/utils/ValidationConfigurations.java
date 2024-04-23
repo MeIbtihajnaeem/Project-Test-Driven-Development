@@ -107,6 +107,34 @@ public class ValidationConfigurations {
 		return address;
 	}
 
+	public String validateDescription(String description) {
+		if (description == null || description == "") {
+			LOGGER.info("The description field cannot be empty.");
+
+			throw new NullPointerException("The description field cannot be empty.");
+		}
+		if (description.length() <= 10) {
+			LOGGER.info("The description must be at least 10 characters long. Please provide a valid description.");
+
+			throw new IllegalArgumentException(
+					"The description must be at least 10 characters long. Please provide a valid description.");
+		}
+		if (description.length() > 50) {
+			LOGGER.info("The description cannot exceed 50 characters. Please provide a shorter description.");
+
+			throw new IllegalArgumentException(
+					"The description cannot exceed 50 characters. Please provide a shorter description.");
+		}
+		if (_containsTabs(description)) {
+			LOGGER.info("The description cannot contain tabs. Please remove any tabs from the description.");
+
+			throw new IllegalArgumentException(
+					"The description cannot contain tabs. Please remove any tabs from the description.");
+		}
+		description = description.trim();
+		return description;
+	}
+
 	public String validatePhoneNumber(String phoneNumber) {
 		if (phoneNumber == null || phoneNumber == "") {
 			LOGGER.info("The phone number field cannot be empty.");
@@ -151,9 +179,7 @@ public class ValidationConfigurations {
 
 	public LocalDateTime validateDate(LocalDateTime dateTime) {
 		LocalDateTime currentDateTime = LocalDateTime.now();
-		System.out.println("currentDateTime");
-		System.out.println(currentDateTime);
-		System.out.println(dateTime);
+
 		if (dateTime == null) {
 			LOGGER.info("The Date field cannot be empty.");
 

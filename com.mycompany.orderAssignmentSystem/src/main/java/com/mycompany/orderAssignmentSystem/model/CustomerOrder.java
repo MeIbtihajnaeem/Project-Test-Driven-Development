@@ -1,7 +1,6 @@
 package com.mycompany.orderAssignmentSystem.model;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -15,24 +14,24 @@ public class CustomerOrder {
 	private String orderDescription;
 	private OrderCategory orderCategory;
 	private OrderStatus orderStatus;
-	private List<Worker> workers;
+	private Worker worker;
 
 	public CustomerOrder() {
 
 	}
 
-	public CustomerOrder(String customerName, String customerAddress, String customerPhoneNumber,
-			LocalDateTime appointmentDate, String orderDescription, OrderCategory orderCategory,
-			OrderStatus orderStatus, List<Worker> workers) {
-		this.customerName = customerName;
-		this.customerAddress = customerAddress;
-		this.customerPhoneNumber = customerPhoneNumber;
-		this.appointmentDate = appointmentDate;
-		this.orderDescription = orderDescription;
-		this.orderCategory = orderCategory;
-		this.orderStatus = orderStatus;
-		this.workers = workers;
-	}
+//	public CustomerOrder(String customerName, String customerAddress, String customerPhoneNumber,
+//			LocalDateTime appointmentDate, String orderDescription, OrderCategory orderCategory,
+//			OrderStatus orderStatus, Worker worker) {
+//		this.customerName = customerName;
+//		this.customerAddress = customerAddress;
+//		this.customerPhoneNumber = customerPhoneNumber;
+//		this.appointmentDate = appointmentDate;
+//		this.orderDescription = orderDescription;
+//		this.orderCategory = orderCategory;
+//		this.orderStatus = orderStatus;
+//		this.worker = worker;
+//	}
 
 	public Long getOrderId() {
 		return orderId;
@@ -98,19 +97,19 @@ public class CustomerOrder {
 		this.orderStatus = orderStatus;
 	}
 
-	public List<Worker> getWorkers() {
-		return workers;
+	public Worker getWorker() {
+		return worker;
 	}
 
-	public void setWorkers(List<Worker> workers) {
-		this.workers = workers;
+	public void setWorkers(Worker worker) {
+		this.worker = worker;
 	}
 
-	public String displayOrder() {
-		return String.format(
-				"Order ID: %d\nCustomer Name: %s\nCustomer Address: %s\nCustomer Phone Number: %s\nAppointment Date: %s\nOrder Description: %s\nOrder Category: %s\nOrder Status: %s",
-				orderId, customerName, customerAddress, customerPhoneNumber, appointmentDate, orderDescription,
-				orderCategory, orderStatus);
-	}
+//	public String displayOrder() {
+//		return String.format(
+//				"Order ID: %d\nCustomer Name: %s\nCustomer Address: %s\nCustomer Phone Number: %s\nAppointment Date: %s\nOrder Description: %s\nOrder Category: %s\nOrder Status: %s",
+//				orderId, customerName, customerAddress, customerPhoneNumber, appointmentDate, orderDescription,
+//				orderCategory, orderStatus);
+//	}
 
 }
