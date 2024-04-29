@@ -1212,7 +1212,8 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		orderController.createNewOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found", order);
+		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found",
+				order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -2650,7 +2651,8 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		orderController.updateOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found", order);
+		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found",
+				order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -2819,9 +2821,11 @@ public class OrderControllerTest {
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
+
 		CustomerOrder workerOrder = new CustomerOrder();
 		workerOrder.setOrderStatus(OrderStatus.PENDING);
 		worker.setOrders(asList(workerOrder));
+
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setAppointmentDate(appointmentDate);
@@ -2850,35 +2854,26 @@ public class OrderControllerTest {
 
 	@Test
 	public void testUpdateOrderMethodWhenWorkerOrdersHaveNoPendingOrders() {
-		CustomerOrder order = new CustomerOrder();
+		long orderId = 1L;
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
 		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
+		String actualDescription = "Please ensure all connections are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		long workerId = 1l;
+		long workerId = 1L;
+
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
-		CustomerOrder workerOrder = new CustomerOrder();
-		workerOrder.setOrderStatus(OrderStatus.COMPLETED);
-		worker.setOrders(asList(workerOrder));
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(orderCategory);
-		order.setOrderStatus(status);
-		order.setWorkers(worker);
+
+		CustomerOrder order = new CustomerOrder(orderId, customerName, address, customerPhoneNumber, appointmentDate,
+				actualDescription, orderCategory, status, worker);
 
 		Worker savedWorker = new Worker();
-		long savedWorkerId = 2l;
+		long savedWorkerId = 2L;
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -2887,10 +2882,104 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(orderRepository.modify(order)).thenReturn(order);
+
 		orderController.updateOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).modify(order);
 		inOrder.verify(orderView).orderModified(order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	// tests for fetch by order id method
+
+	@Test
+	public void testFetchOrderByIdMethodWhenOrderIsNull() {
+		orderController.fetchOrderById(null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("Order is null.", null);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testFetchOrderByIdMethodWhenOrderIdIsNull() {
+		CustomerOrder order = new CustomerOrder();
+		orderController.fetchOrderById(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testFetchOrderByIdMethodWhenOrderIdIsZero() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 0l;
+		order.setOrderId(orderId);
+		orderController.fetchOrderById(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testFetchOrderByIdMethodWhenOrderIdIsLessThenZero() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = -1l;
+		order.setOrderId(orderId);
+		orderController.fetchOrderById(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZero() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 1l;
+		order.setOrderId(orderId);
+		orderController.fetchOrderById(order);
+		CustomerOrder spyOrder = spy(order);
+		orderController.fetchOrderById(spyOrder);
+		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
+		verify(spyOrder).setOrderId(orderId);
+	}
+
+	@Test
+	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZeroAndOrderNotFound() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 1l;
+		order.setOrderId(orderId);
+		when(orderRepository.findById(orderId)).thenReturn(null);
+		orderController.fetchOrderById(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showErrorNotFound("Order with id " + order.getOrderId() + " Not Found.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZeroAndOrderFound() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 1l;
+		order.setOrderId(orderId);
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String actualDescription = "Please ensure all connections are leak-proof.";
+		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
+		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
+		OrderStatus status = OrderStatus.PENDING;
+		long workerId = 1L;
+
+		Worker worker = new Worker();
+		worker.setWorkerId(workerId);
+		worker.setWorkerCategory(workerCategory);
+
+		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
+				appointmentDate, actualDescription, orderCategory, status, worker);
+		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
+		orderController.fetchOrderById(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showFetchedOrder(savedOrder);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 

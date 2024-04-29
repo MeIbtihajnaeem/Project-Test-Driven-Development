@@ -30,65 +30,6 @@ public class OrderController {
 		this.workerRepository = workerRepository;
 	}
 
-	public void allOrders() {
-		LOGGER.info("Retrieving all workers");
-		orderView.showAllOrder(orderRepository.findAll());
-	}
-
-	public void createNewOrder(CustomerOrder order) {
-
-		try {
-
-			validateNewOrder(order);
-			Worker worker = getValidWorker(order);
-			if (worker.getOrders() == null) {
-				order = orderRepository.save(order);
-				orderView.orderAdded(order);
-				return;
-			}
-			checkForPendingOrders(worker.getOrders());
-
-			order = orderRepository.save(order);
-			orderView.orderAdded(order);
-		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating Order: " + e.getMessage());
-			orderView.showError(e.getMessage(), order);
-			return;
-		} catch (NoSuchElementException e) {
-			LOGGER.error("Error Finding: " + e.getMessage());
-			orderView.showErrorNotFound(e.getMessage(), order);
-			return;
-		}
-	}
-
-	public void updateOrder(CustomerOrder order) {
-
-		try {
-
-			validateUpdateOrder(order);
-			Worker worker = getValidWorker(order);
-			validateWorkerUnchangedForOrderUpdate(order);
-			if (worker.getOrders() == null) {
-				order = orderRepository.modify(order);
-				orderView.orderModified(order);
-				return;
-			}
-			checkForPendingOrders(worker.getOrders());
-
-			order = orderRepository.modify(order);
-			orderView.orderModified(order);
-
-		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating Order: " + e.getMessage());
-			orderView.showError(e.getMessage(), order);
-			return;
-		} catch (NoSuchElementException e) {
-			LOGGER.error("Error Finding: " + e.getMessage());
-			orderView.showErrorNotFound(e.getMessage(), order);
-			return;
-		}
-	}
-
 	private void validateNewOrder(CustomerOrder order) {
 		Objects.requireNonNull(order, "Order is null");
 		if (order.getOrderId() != null) {
@@ -136,12 +77,87 @@ public class OrderController {
 		validateOrder(order);
 	}
 
-	private CustomerOrder validateWorkerUnchangedForOrderUpdate(CustomerOrder order) {
-		CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
-		if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
-			throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
+	public void allOrders() {
+		LOGGER.info("Retrieving all workers");
+		orderView.showAllOrder(orderRepository.findAll());
+	}
+
+	public void createNewOrder(CustomerOrder order) {
+
+		try {
+
+			validateNewOrder(order);
+			Worker worker = getValidWorker(order);
+			if (worker.getOrders() == null) {
+				order = orderRepository.save(order);
+				orderView.orderAdded(order);
+				return;
+			}
+			checkForPendingOrders(worker.getOrders());
+
+			order = orderRepository.save(order);
+			orderView.orderAdded(order);
+		} catch (NullPointerException | IllegalArgumentException e) {
+			LOGGER.error("Error validating while creating Order: " + e.getMessage());
+			orderView.showError(e.getMessage(), order);
+			return;
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error Finding: " + e.getMessage());
+			orderView.showErrorNotFound(e.getMessage(), order);
+			return;
 		}
-		return savedOrder;
+	}
+
+	public void updateOrder(CustomerOrder order) {
+
+		try {
+
+			validateUpdateOrder(order);
+			Worker worker = getValidWorker(order);
+			CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
+			if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
+				throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
+			}
+			if (worker.getOrders() == null) {
+				order = orderRepository.modify(order);
+				orderView.orderModified(order);
+				return;
+			}
+			checkForPendingOrders(worker.getOrders());
+
+			order = orderRepository.modify(order);
+			orderView.orderModified(order);
+
+		} catch (NullPointerException | IllegalArgumentException e) {
+			LOGGER.error("Error validating while updating Order: " + e.getMessage());
+			orderView.showError(e.getMessage(), order);
+			return;
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error Finding: " + e.getMessage());
+			orderView.showErrorNotFound(e.getMessage(), order);
+			return;
+		}
+	}
+
+	public void fetchOrderById(CustomerOrder order) {
+		try {
+			Objects.requireNonNull(order, "Order is null.");
+			order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
+			CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
+			if (savedOrder == null) {
+				throw new NoSuchElementException("Order with id " + order.getOrderId() + " Not Found.");
+			}
+			orderView.showFetchedOrder(savedOrder);
+
+		} catch (NullPointerException | IllegalArgumentException e) {
+			LOGGER.error("Error validating while updating Order: " + e.getMessage());
+			orderView.showError(e.getMessage(), order);
+			return;
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error Finding: " + e.getMessage());
+			orderView.showErrorNotFound(e.getMessage(), order);
+			return;
+		}
 	}
 
 }
