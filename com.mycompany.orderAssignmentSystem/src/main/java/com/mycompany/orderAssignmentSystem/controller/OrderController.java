@@ -15,7 +15,7 @@ import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
 import com.mycompany.orderAssignmentSystem.view.OrderView;
 
 public class OrderController {
-	private static final Logger LOGGER = LogManager.getLogger(WorkerController.class);
+	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
 	private OrderRepository orderRepository;
 
 	private OrderView orderView;
@@ -36,50 +36,30 @@ public class OrderController {
 
 	public void createNewOrder(CustomerOrder order) {
 		Objects.requireNonNull(order, "Order is null");
-		if (order.getOrderId() != null) {
-			orderView.showError("Unable to assign a Order ID during order creation.", order);
-			return;
-		}
+
 		try {
-			order.setCustomerName(validationConfigurations.validateName(order.getCustomerName()));
-			order.setCustomerPhoneNumber(validationConfigurations.validatePhoneNumber(order.getCustomerPhoneNumber()));
-			order.setCustomerAddress(validationConfigurations.validateAddress(order.getCustomerAddress()));
-			order.setAppointmentDate(validationConfigurations.validateDate(order.getAppointmentDate()));
-			order.setOrderDescription(validationConfigurations.validateDescription(order.getOrderDescription()));
-			order.setOrderCategory(validationConfigurations.validateCategory(order.getOrderCategory()));
-			order.setOrderStatus(validationConfigurations.validateStatus(order.getOrderStatus()));
-			if (order.getWorker() == null) {
-				orderView.showError("The worker field cannot be empty.", order);
-				return;
+			if (order.getOrderId() != null) {
+				throw new IllegalArgumentException("Unable to assign a Order ID during order creation.");
 			}
-			order.getWorker().setWorkerId(validationConfigurations.validateId(order.getWorker().getWorkerId()));
+			_validateOrder(order);
+
 			if (order.getOrderStatus() != OrderStatus.PENDING) {
-				orderView.showError("The order status should be initiated with 'pending' status.", order);
-				return;
+				throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
 			}
 			Worker worker = workerRepository.findById(order.getWorker().getWorkerId());
-			if (worker == null) {
-				orderView.showError("Worker with this id " + order.getWorker().getWorkerId() + " not found", order);
-				return;
-			}
-			if (worker.getWorkerCategory() != order.getOrderCategory()) {
-				orderView.showError("Order and worker categories must align", order);
-				return;
-			}
+			_validateWorker(order, worker);
 			if (worker.getOrders() == null) {
 				order = orderRepository.save(order);
 				orderView.orderAdded(order);
 				return;
 			}
 			if (_workerContainsPendingOrders(worker.getOrders())) {
-				orderView.showError(
-						"Cannot assign a new order to this worker because they already have a pending order.", order);
-				return;
+				throw new IllegalArgumentException(
+						"Cannot assign a new order to this worker because they already have a pending order.");
 			}
 
 			order = orderRepository.save(order);
 			orderView.orderAdded(order);
-			return;
 		} catch (Exception e) {
 			LOGGER.error("Error validating Order: " + e.getMessage());
 			orderView.showError(e.getMessage(), order);
@@ -87,14 +67,60 @@ public class OrderController {
 		}
 	}
 
-	private boolean _workerContainsPendingOrders(List<CustomerOrder> orders) {
-		for (CustomerOrder ord : orders) {
-			if (ord.getOrderStatus() == OrderStatus.PENDING) {
-				return true;
+	public void updateOrder(CustomerOrder order) {
+		Objects.requireNonNull(order, "Order is null");
+
+		try {
+
+			order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
+			_validateOrder(order);
+			Worker worker = workerRepository.findById(order.getWorker().getWorkerId());
+			_validateWorker(order, worker);
+			CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
+			if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
+				throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
+			}
+			if (worker.getOrders() == null) {
+				order = orderRepository.modify(order);
+				orderView.orderModified(order);
+				return;
+			}
+			if (_workerContainsPendingOrders(worker.getOrders())) {
+				throw new IllegalArgumentException(
+						"Cannot assign a new order to this worker because they already have a pending order.");
 			}
 
+			order = orderRepository.modify(order);
+			orderView.orderModified(order);
+
+		} catch (Exception e) {
+			LOGGER.error("Error validating Order: " + e.getMessage());
+			orderView.showError(e.getMessage(), order);
+			return;
 		}
-		return false;
+	}
+
+	private void _validateOrder(CustomerOrder order) {
+		order.setCustomerName(validationConfigurations.validateName(order.getCustomerName()));
+		order.setCustomerPhoneNumber(validationConfigurations.validatePhoneNumber(order.getCustomerPhoneNumber()));
+		order.setCustomerAddress(validationConfigurations.validateAddress(order.getCustomerAddress()));
+		order.setAppointmentDate(validationConfigurations.validateDate(order.getAppointmentDate()));
+		order.setOrderDescription(validationConfigurations.validateDescription(order.getOrderDescription()));
+		order.setOrderCategory(validationConfigurations.validateCategory(order.getOrderCategory()));
+		order.setOrderStatus(validationConfigurations.validateStatus(order.getOrderStatus()));
+		Objects.requireNonNull(order.getWorker(), "The worker field cannot be empty.");
+		order.getWorker().setWorkerId(validationConfigurations.validateId(order.getWorker().getWorkerId()));
+	}
+
+	private void _validateWorker(CustomerOrder order, Worker worker) {
+		Objects.requireNonNull(worker, "Worker with this id " + order.getWorker().getWorkerId() + " not found");
+		if (worker.getWorkerCategory() != order.getOrderCategory()) {
+			throw new IllegalArgumentException("Order and worker categories must align");
+		}
+	}
+
+	private boolean _workerContainsPendingOrders(List<CustomerOrder> orders) {
+		return orders.stream().anyMatch(ord -> ord.getOrderStatus() == OrderStatus.PENDING);
 	}
 
 }

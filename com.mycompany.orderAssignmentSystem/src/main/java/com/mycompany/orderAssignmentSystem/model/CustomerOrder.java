@@ -20,18 +20,20 @@ public class CustomerOrder {
 
 	}
 
-//	public CustomerOrder(String customerName, String customerAddress, String customerPhoneNumber,
-//			LocalDateTime appointmentDate, String orderDescription, OrderCategory orderCategory,
-//			OrderStatus orderStatus, Worker worker) {
-//		this.customerName = customerName;
-//		this.customerAddress = customerAddress;
-//		this.customerPhoneNumber = customerPhoneNumber;
-//		this.appointmentDate = appointmentDate;
-//		this.orderDescription = orderDescription;
-//		this.orderCategory = orderCategory;
-//		this.orderStatus = orderStatus;
-//		this.worker = worker;
-//	}
+	public CustomerOrder(Long orderId, String customerName, String customerAddress, String customerPhoneNumber,
+			LocalDateTime appointmentDate, String orderDescription, OrderCategory orderCategory,
+			OrderStatus orderStatus, Worker worker) {
+		super();
+		this.orderId = orderId;
+		this.customerName = customerName;
+		this.customerAddress = customerAddress;
+		this.customerPhoneNumber = customerPhoneNumber;
+		this.appointmentDate = appointmentDate;
+		this.orderDescription = orderDescription;
+		this.orderCategory = orderCategory;
+		this.orderStatus = orderStatus;
+		this.worker = worker;
+	}
 
 	public Long getOrderId() {
 		return orderId;

@@ -22,6 +22,7 @@ public class Worker {
 		this.workerPhoneNumber = workerPhoneNumber;
 		this.workerCategory = workerCategory;
 	}
+	
 
 	public Long getWorkerId() {
 		return workerId;
