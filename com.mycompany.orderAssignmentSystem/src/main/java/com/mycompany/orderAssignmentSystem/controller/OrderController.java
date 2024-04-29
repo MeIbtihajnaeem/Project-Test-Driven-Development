@@ -1,6 +1,7 @@
 package com.mycompany.orderAssignmentSystem.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,72 +36,71 @@ public class OrderController {
 	}
 
 	public void createNewOrder(CustomerOrder order) {
-		Objects.requireNonNull(order, "Order is null");
 
 		try {
-			if (order.getOrderId() != null) {
-				throw new IllegalArgumentException("Unable to assign a Order ID during order creation.");
-			}
-			_validateOrder(order);
 
-			if (order.getOrderStatus() != OrderStatus.PENDING) {
-				throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
-			}
-			Worker worker = workerRepository.findById(order.getWorker().getWorkerId());
-			_validateWorker(order, worker);
+			validateNewOrder(order);
+			Worker worker = getValidWorker(order);
 			if (worker.getOrders() == null) {
 				order = orderRepository.save(order);
 				orderView.orderAdded(order);
 				return;
 			}
-			if (_workerContainsPendingOrders(worker.getOrders())) {
-				throw new IllegalArgumentException(
-						"Cannot assign a new order to this worker because they already have a pending order.");
-			}
+			checkForPendingOrders(worker.getOrders());
 
 			order = orderRepository.save(order);
 			orderView.orderAdded(order);
-		} catch (Exception e) {
+		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating Order: " + e.getMessage());
 			orderView.showError(e.getMessage(), order);
+			return;
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error Finding: " + e.getMessage());
+			orderView.showErrorNotFound(e.getMessage(), order);
 			return;
 		}
 	}
 
 	public void updateOrder(CustomerOrder order) {
-		Objects.requireNonNull(order, "Order is null");
 
 		try {
 
-			order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
-			_validateOrder(order);
-			Worker worker = workerRepository.findById(order.getWorker().getWorkerId());
-			_validateWorker(order, worker);
-			CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
-			if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
-				throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
-			}
+			validateUpdateOrder(order);
+			Worker worker = getValidWorker(order);
+			validateWorkerUnchangedForOrderUpdate(order);
 			if (worker.getOrders() == null) {
 				order = orderRepository.modify(order);
 				orderView.orderModified(order);
 				return;
 			}
-			if (_workerContainsPendingOrders(worker.getOrders())) {
-				throw new IllegalArgumentException(
-						"Cannot assign a new order to this worker because they already have a pending order.");
-			}
+			checkForPendingOrders(worker.getOrders());
 
 			order = orderRepository.modify(order);
 			orderView.orderModified(order);
 
-		} catch (Exception e) {
+		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating Order: " + e.getMessage());
 			orderView.showError(e.getMessage(), order);
+			return;
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error Finding: " + e.getMessage());
+			orderView.showErrorNotFound(e.getMessage(), order);
 			return;
 		}
 	}
 
-	private void _validateOrder(CustomerOrder order) {
+	private void validateNewOrder(CustomerOrder order) {
+		Objects.requireNonNull(order, "Order is null");
+		if (order.getOrderId() != null) {
+			throw new IllegalArgumentException("Unable to assign a Order ID during order creation.");
+		}
+		validateOrder(order);
+		if (order.getOrderStatus() != OrderStatus.PENDING) {
+			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
+		}
+	}
+
+	private void validateOrder(CustomerOrder order) {
 		order.setCustomerName(validationConfigurations.validateName(order.getCustomerName()));
 		order.setCustomerPhoneNumber(validationConfigurations.validatePhoneNumber(order.getCustomerPhoneNumber()));
 		order.setCustomerAddress(validationConfigurations.validateAddress(order.getCustomerAddress()));
@@ -112,15 +112,36 @@ public class OrderController {
 		order.getWorker().setWorkerId(validationConfigurations.validateId(order.getWorker().getWorkerId()));
 	}
 
-	private void _validateWorker(CustomerOrder order, Worker worker) {
-		Objects.requireNonNull(worker, "Worker with this id " + order.getWorker().getWorkerId() + " not found");
+	private Worker getValidWorker(CustomerOrder order) {
+		Worker worker = workerRepository.findById(order.getWorker().getWorkerId());
+		if (worker == null) {
+			throw new NoSuchElementException("Worker with this id " + order.getWorker().getWorkerId() + " not found");
+		}
 		if (worker.getWorkerCategory() != order.getOrderCategory()) {
 			throw new IllegalArgumentException("Order and worker categories must align");
 		}
+		return worker;
 	}
 
-	private boolean _workerContainsPendingOrders(List<CustomerOrder> orders) {
-		return orders.stream().anyMatch(ord -> ord.getOrderStatus() == OrderStatus.PENDING);
+	private void checkForPendingOrders(List<CustomerOrder> orders) {
+		if (orders.stream().anyMatch(ord -> ord.getOrderStatus() == OrderStatus.PENDING)) {
+			throw new IllegalArgumentException(
+					"Cannot assign a new order to this worker because they already have a pending order.");
+		}
+	}
+
+	private void validateUpdateOrder(CustomerOrder order) {
+		Objects.requireNonNull(order, "Order is null");
+		order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
+		validateOrder(order);
+	}
+
+	private CustomerOrder validateWorkerUnchangedForOrderUpdate(CustomerOrder order) {
+		CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
+		if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
+			throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
+		}
+		return savedOrder;
 	}
 
 }

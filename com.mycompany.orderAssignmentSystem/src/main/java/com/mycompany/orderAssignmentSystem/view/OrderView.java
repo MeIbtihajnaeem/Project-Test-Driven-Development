@@ -19,5 +19,7 @@ public interface OrderView {
 
 	void showError(String message, CustomerOrder order);
 
+	void showErrorNotFound(String message, CustomerOrder order);
+
 	void showSearchError(String message, String searchText);
 }

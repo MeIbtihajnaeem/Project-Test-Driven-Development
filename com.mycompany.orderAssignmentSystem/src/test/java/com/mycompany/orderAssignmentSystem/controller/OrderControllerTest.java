@@ -2,8 +2,6 @@ package com.mycompany.orderAssignmentSystem.controller;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -83,12 +81,11 @@ public class OrderControllerTest {
 // Tests for create order method
 	@Test
 	public void testCreateOrderMethodWhenNullCustomerOrder() {
-		try {
-			orderController.createNewOrder(null);
-			fail("Expected an NullPointerException to be thrown ");
-		} catch (NullPointerException e) {
-			assertEquals("Order is null", e.getMessage());
-		}
+
+		orderController.createNewOrder(null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("Order is null", null);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
@@ -1215,7 +1212,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		orderController.createNewOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Worker with this id " + worker.getWorkerId() + " not found", order);
+		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -1400,12 +1397,9 @@ public class OrderControllerTest {
 	// tests for method update order
 	@Test
 	public void testUpdateOrderMethodWhenNullCustomerOrder() {
-		try {
-			orderController.updateOrder(null);
-			fail("Expected an NullPointerException to be thrown ");
-		} catch (NullPointerException e) {
-			assertEquals("Order is null", e.getMessage());
-		}
+		orderController.updateOrder(null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("Order is null", null);
 	}
 
 	@Test
@@ -2656,7 +2650,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		orderController.updateOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Worker with this id " + worker.getWorkerId() + " not found", order);
+		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
