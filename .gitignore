@@ -2,5 +2,4 @@
 *~
 **/.DS_Store
 *.log
-*.xml
 **/failed-gui-tests/
