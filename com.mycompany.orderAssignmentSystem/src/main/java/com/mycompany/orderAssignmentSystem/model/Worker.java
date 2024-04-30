@@ -69,10 +69,6 @@ public class Worker {
 //				workerName, workerPhoneNumber, workerCategory);
 //	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(orders, workerCategory, workerId, workerName, workerPhoneNumber);
-	}
 
 //	@Override
 //	public boolean equals(Object obj) {

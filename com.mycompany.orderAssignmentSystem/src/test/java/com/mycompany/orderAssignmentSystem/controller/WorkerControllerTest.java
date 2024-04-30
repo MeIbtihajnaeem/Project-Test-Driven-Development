@@ -79,12 +79,10 @@ public class WorkerControllerTest {
 
 	@Test
 	public void testCreateNewWorkerMethodWhenNullWorker() {
-		try {
-			workerController.createNewWorker(null);
-			fail("Expected an NullPointerException to be thrown ");
-		} catch (NullPointerException e) {
-			assertEquals("Worker is null", e.getMessage());
-		}
+		workerController.createNewWorker(null);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("Worker is null", null);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
@@ -504,12 +502,10 @@ public class WorkerControllerTest {
 	// Tests for update worker method
 	@Test
 	public void testUpdateWorkerMethodWhenNullWorker() {
-		try {
-			workerController.updateWorker(null);
-			fail("Expected an NullPointerException to be thrown ");
-		} catch (NullPointerException e) {
-			assertEquals("Worker is null", e.getMessage());
-		}
+		workerController.updateWorker(null);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("Worker is null", null);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
@@ -977,8 +973,7 @@ public class WorkerControllerTest {
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(differentWorker);
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
-		inOrder.verify(workerView).showError("A Worker with this phone number " + phoneNumber + " Already Exists",
-				worker);
+		inOrder.verify(workerView).showError("Worker with phone number " + phoneNumber + " Already Exists", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -998,7 +993,7 @@ public class WorkerControllerTest {
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
 		inOrder.verify(workerView).showError(
-				"Cannot update worker " + worker.getWorkerCategory() + " Because of existing orders", worker);
+				"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1049,12 +1044,10 @@ public class WorkerControllerTest {
 
 	@Test
 	public void testFetchWorkerMethodWhenNullWorker() {
-		try {
-			workerController.fetchWorkerById(null);
-			fail("Expected an NullPointerException to be thrown ");
-		} catch (NullPointerException e) {
-			assertEquals("Worker is null", e.getMessage());
-		}
+		workerController.fetchWorkerById(null);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("Worker is null", null);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
@@ -1110,7 +1103,7 @@ public class WorkerControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		workerController.fetchWorkerById(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("Worker with id " + worker.getWorkerId() + " Not Found.", worker);
+		inOrder.verify(workerView).showErrorNotFound("Worker with id " + worker.getWorkerId() + " Not Found.", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1466,7 +1459,7 @@ public class WorkerControllerTest {
 		when(workerRepository.findById(1l)).thenReturn(null);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("No Worker found with ID: " + worker.getWorkerId(), worker);
+		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1567,7 +1560,7 @@ public class WorkerControllerTest {
 		when(workerRepository.findById(1l)).thenReturn(null);
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("No Worker found with ID: " + worker.getWorkerId(), worker);
+		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
