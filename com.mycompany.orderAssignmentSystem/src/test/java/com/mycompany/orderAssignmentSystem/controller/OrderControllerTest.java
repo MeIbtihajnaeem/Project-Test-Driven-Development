@@ -2982,5 +2982,81 @@ public class OrderControllerTest {
 		inOrder.verify(orderView).showFetchedOrder(savedOrder);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
+	// Tests for delete order
 
+	@Test
+	public void testDeleteOrderMethodWhenNullCustomerOrder() {
+
+		orderController.deleteOrder(null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("Order is null", null);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testDeleteOrderMethodWhenNullCustomerOrderIdIsNull() {
+		CustomerOrder order = new CustomerOrder();
+		orderController.deleteOrder(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testDeleteOrderMethodWhenNullCustomerOrderIdIsZero() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 0l;
+		order.setOrderId(orderId);
+		orderController.deleteOrder(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testDeleteOrderMethodWhenNullCustomerOrderIdIsLessThanZero() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = -1l;
+		order.setOrderId(orderId);
+		orderController.deleteOrder(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testDeleteWorkerMethodWhenWorkerIdIsGreaterThanZero() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 1l;
+		order.setOrderId(orderId);
+		CustomerOrder spyOrder = spy(order);
+		orderController.deleteOrder(spyOrder);
+		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
+		verify(spyOrder).setOrderId(orderId);
+	}
+
+	@Test
+	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidButNoOrderFoundWithId() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 1l;
+		order.setOrderId(orderId);
+		when(orderRepository.findById(orderId)).thenReturn(null);
+		orderController.deleteOrder(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showErrorNotFound("No Order found with ID: " + order.getOrderId(), order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidAndOrderFound() {
+		CustomerOrder order = new CustomerOrder();
+		long orderId = 1l;
+		order.setOrderId(orderId);
+		when(orderRepository.findById(orderId)).thenReturn(order);
+		orderController.deleteOrder(order);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderRepository).delete(order);
+		inOrder.verify(orderView).orderRemoved(order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
 }

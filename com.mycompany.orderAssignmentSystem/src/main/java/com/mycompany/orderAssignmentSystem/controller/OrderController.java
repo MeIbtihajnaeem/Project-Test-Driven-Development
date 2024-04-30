@@ -122,6 +122,28 @@ public class OrderController {
 		}
 	}
 
+	public void deleteOrder(CustomerOrder order) {
+		try {
+			Objects.requireNonNull(order, "Order is null");
+			order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
+			CustomerOrder existingOrder = orderRepository.findById(order.getOrderId());
+			if (existingOrder == null) {
+				throw new NoSuchElementException("No Order found with ID: " + order.getOrderId());
+			}
+			orderRepository.delete(order);
+			orderView.orderRemoved(order);
+		} catch (NullPointerException | IllegalArgumentException e) {
+			LOGGER.error("Error validating while updating Order: " + e.getMessage());
+			orderView.showError(e.getMessage(), order);
+			return;
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error Finding: " + e.getMessage());
+			orderView.showErrorNotFound(e.getMessage(), order);
+			return;
+		}
+
+	}
+
 	private void validateNewOrder(CustomerOrder order) {
 		Objects.requireNonNull(order, "Order is null");
 		if (order.getOrderId() != null) {

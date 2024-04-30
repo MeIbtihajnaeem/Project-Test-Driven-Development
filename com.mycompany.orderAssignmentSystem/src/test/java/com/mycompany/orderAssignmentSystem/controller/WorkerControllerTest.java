@@ -2,8 +2,6 @@ package com.mycompany.orderAssignmentSystem.controller;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -1404,12 +1402,10 @@ public class WorkerControllerTest {
 
 	// Tests for delete method
 	public void testDeleteWorkerMethodWithNullWorker() {
-		try {
-			workerController.deleteWorker(null);
-			fail("Expected an NullPointerException to be thrown ");
-		} catch (NullPointerException e) {
-			assertEquals("Worker is null", e.getMessage());
-		}
+		workerController.deleteWorker(null);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("Worker is null", null);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
@@ -1505,12 +1501,10 @@ public class WorkerControllerTest {
 	// Tests for search order by worker id
 
 	public void testFetchOrdersByWorkerIdMethodWithNullWorker() {
-		try {
-			workerController.fetchOrdersByWorkerId(null);
-			fail("Expected an NullPointerException to be thrown ");
-		} catch (NullPointerException e) {
-			assertEquals("Worker is null", e.getMessage());
-		}
+		workerController.fetchOrdersByWorkerId(null);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showError("Worker is null", null);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
