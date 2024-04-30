@@ -68,9 +68,6 @@ public class WorkerController {
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
 			workerView.showError(e.getMessage(), worker);
-		} catch (NoSuchElementException e) {
-			LOGGER.error("Error finding worker: {}", e.getMessage());
-			workerView.showErrorNotFound(e.getMessage(), worker);
 		}
 	}
 

@@ -1,7 +1,6 @@
 package com.mycompany.orderAssignmentSystem.model;
 
 import java.util.List;
-import java.util.Objects;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 
@@ -22,7 +21,6 @@ public class Worker {
 		this.workerPhoneNumber = workerPhoneNumber;
 		this.workerCategory = workerCategory;
 	}
-	
 
 	public Long getWorkerId() {
 		return workerId;
@@ -69,7 +67,6 @@ public class Worker {
 //				workerName, workerPhoneNumber, workerCategory);
 //	}
 
-
 //	@Override
 //	public boolean equals(Object obj) {
 //		if (this == obj)
@@ -83,7 +80,5 @@ public class Worker {
 //				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
 //				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
 //	}
-	
-	
 
 }
