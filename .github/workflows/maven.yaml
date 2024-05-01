@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env: 
-      workdir: ./
+      workdir: ./com.mycompany.orderAssignmentSystem
     strategy:
       matrix:
         include:
