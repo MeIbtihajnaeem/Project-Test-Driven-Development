@@ -57,7 +57,10 @@ public class WorkerController {
 			validateUpdateWorker(worker);
 
 			Worker savedWorker = workerRepository.findById(worker.getWorkerId());
-			if (savedWorker != null && savedWorker.getOrders() != null && !savedWorker.getOrders().isEmpty()) {
+			if (savedWorker == null) {
+				throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
+			}
+			if (savedWorker.getOrders() != null && !savedWorker.getOrders().isEmpty()) {
 				throw new IllegalArgumentException(
 						"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
 			}
@@ -68,6 +71,9 @@ public class WorkerController {
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
 			workerView.showError(e.getMessage(), worker);
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error finding worker: {}", e.getMessage());
+			workerView.showErrorNotFound(e.getMessage(), worker);
 		}
 	}
 

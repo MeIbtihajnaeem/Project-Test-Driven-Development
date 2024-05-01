@@ -1038,6 +1038,26 @@ public class WorkerControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
+	@Test
+	public void testUpdateWorkerMethodWhenWorkerNotFound() {
+		String phoneNumber = "3401372678";
+
+		String workerName = "Muhammad Ibtihaj";
+		OrderCategory category = OrderCategory.PLUMBER;
+		long workerId = 1l;
+
+		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
+		worker.setOrders(Collections.emptyList());
+
+		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
+		when(workerRepository.findById(workerId)).thenReturn(null);
+		workerController.updateWorker(worker);
+
+		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
+		inOrder.verify(workerView).showErrorNotFound("No Worker found with id: " + worker.getWorkerId(), worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
 	// Tests for fetch worker method
 
 	@Test
