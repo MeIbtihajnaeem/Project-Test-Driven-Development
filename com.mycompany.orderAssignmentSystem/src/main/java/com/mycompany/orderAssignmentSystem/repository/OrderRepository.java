@@ -1,6 +1,6 @@
 package com.mycompany.orderAssignmentSystem.repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
@@ -18,18 +18,14 @@ public interface OrderRepository {
 
 	public CustomerOrder findById(long orderId);
 
-	public CustomerOrder findByCustomerName(String name);
+	public List<CustomerOrder> findByCustomerName(String name);
 
-	public CustomerOrder findByCustomerAddress(String address);
+	public List<CustomerOrder> findByCustomerPhoneNumber(String phoneNumber);
 
-	public CustomerOrder findByCustomerPhoneNumber(String phoneNumber);
+	public List<CustomerOrder> findByDate(LocalDate date);
 
-	public CustomerOrder findByDate(LocalDateTime date);
+	public List<CustomerOrder> findByOrderCategory(OrderCategory category);
 
-	public CustomerOrder findByDescription(String description);
-
-	public CustomerOrder findByOrderCategory(OrderCategory category);
-
-	public CustomerOrder findByOrderStatus(OrderStatus status);
+	public List<CustomerOrder> findByOrderStatus(OrderStatus status);
 
 }

@@ -147,14 +147,14 @@ public class WorkerController {
 			case WORKER_ID:
 				workers = asList(searchByWorkerId(searchText));
 				break;
-			case WORKER_NAME:
-				workers = searchByWorkerName(searchText);
+			case WORKER_PHONE:
+				workers = asList(searchByWorkerPhoneNumber(searchText));
 				break;
 			case WORKER_CATEGORY:
 				workers = searchByWorkerCategory(searchText);
 				break;
 			default:
-				workers = asList(searchByWorkerPhoneNumber(searchText));
+				workers = searchByWorkerName(searchText);
 				break;
 			}
 			workerView.showSearchResultForWorker(workers);
@@ -189,16 +189,14 @@ public class WorkerController {
 	}
 
 	private Worker searchByWorkerId(String searchText) {
-		if (validationConfigurations.validateStringNumber(searchText)) {
-			Long workerId;
-			workerId = Long.parseLong(searchText);
-			workerId = validationConfigurations.validateId(workerId);
-			Worker worker = workerRepository.findById(workerId);
-			return worker;
-
-		} else {
-			throw new IllegalArgumentException("Please enter a valid number.");
+		Long workerId = validationConfigurations.validateStringNumber(searchText);
+		workerId = Long.parseLong(searchText);
+		workerId = validationConfigurations.validateId(workerId);
+		Worker worker = workerRepository.findById(workerId);
+		if (worker == null) {
+			throw new NoSuchElementException("No result found with id: " + workerId);
 		}
+		return worker;
 	}
 
 	private Worker validateWorkerExistence(Worker worker) {

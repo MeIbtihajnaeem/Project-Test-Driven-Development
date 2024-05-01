@@ -1,7 +1,9 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
@@ -58,25 +60,30 @@ public class ValidationConfigurations {
 		return name;
 	}
 
-	public boolean validateStringNumber(String str) {
+	public long validateStringNumber(String str) {
 		if (str == null || str == "") {
 			LOGGER.info("The text cannot be empty.");
 			throw new NullPointerException("The number cannot be empty.");
 		}
-
 		if (str.length() > 20) {
 			LOGGER.info("The number cannot exceed 20 characters. Please provide a shorter number.");
 
 			throw new IllegalArgumentException(
 					"The number cannot exceed 20 characters. Please provide a shorter number.");
 		}
+		if (_containsWhitespace(str)) {
+			LOGGER.info("The number cannot contains whitespace. Please provide a valid number.");
+
+			throw new IllegalArgumentException("The number cannot contains whitespace. Please provide a valid number.");
+		}
 
 		Pattern pattern = Pattern.compile("^-?[0-9]+$");
 		Matcher matcher = pattern.matcher(str);
-		if (matcher.matches()) {
-			return true;
+		if (!matcher.matches()) {
+			throw new IllegalArgumentException("Please enter a valid number.");
 		}
-		return false;
+		return Long.parseLong(str);
+
 	}
 
 	public String validateAddress(String address) {
@@ -182,7 +189,6 @@ public class ValidationConfigurations {
 
 		if (dateTime == null) {
 			LOGGER.info("The Date field cannot be empty.");
-
 			throw new NullPointerException("The Date field cannot be empty.");
 		}
 		if (ChronoUnit.DAYS.between(currentDateTime, dateTime) < 0) {
@@ -193,7 +199,34 @@ public class ValidationConfigurations {
 			LOGGER.info("Please provide a valid date that is not 6 months after today's date.");
 			throw new IllegalArgumentException("Please provide a valid date that is not 6 months after today's date.");
 		}
+
 		return dateTime;
+	}
+
+	public LocalDate validateStringDate(String dateString) {
+
+		String pattern = "dd-MM-yyyy";
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+
+		if (dateString == null) {
+			throw new NullPointerException("Date cannot be null.");
+		}
+		if (dateString == "") {
+			throw new NullPointerException("Date cannot be empty.");
+		}
+		if (dateString.length() <= 9) {
+			throw new IllegalArgumentException("Date must not be less then 10 characters.");
+		}
+		if (dateString.length() > 10) {
+			throw new IllegalArgumentException("Date must not be greater then 10 characters.");
+		}
+		try {
+			LocalDate dateTime = LocalDate.parse(dateString, formatter);
+			return dateTime;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Please ensure that the date follows the format" + pattern);
+		}
+
 	}
 
 	public OrderCategory validateCategory(OrderCategory category) {

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
@@ -3057,6 +3059,595 @@ public class OrderControllerTest {
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).delete(order);
 		inOrder.verify(orderView).orderRemoved(order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	// tests for search options
+	@Test
+	public void testSearchOrderMethodWhenSearchTextIsNull() {
+		orderController.searchOrder(null, null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("The search Text field cannot be empty.", null);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testSearchOrderMethodWhenSearchTextIsEmpty() {
+		String searchText = "";
+		orderController.searchOrder(searchText, null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("The search Text field cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testSearchOrderMethodWhenSearchTextIsLargeStringGreaterThanTwentyCharachters() {
+		String searchText = "Muhammad Ibtihaj Naeem";
+		orderController.searchOrder(searchText, null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The search Text cannot exceed 20 characters. Please provide a shorter search Text.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testSearchOrderMethodWhenSearchTextIsWithTabs() {
+		String searchText = "Muhammad\tIbtihaj";
+		orderController.searchOrder(searchText, null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The search Text cannot contain tabs. Please remove any tabs from the search Text.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testSearchOrderMethodWhenSearchTextIsValidStringAndSearchOptionIsNull() {
+		String searchText = "1";
+		orderController.searchOrder(searchText, null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Search Option cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_NonInteger() {
+		String searchText = "a";
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Please enter a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_Zero() {
+		String searchText = "0";
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_NegativeIntegar() {
+		String searchText = "-1";
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButWithLeadingWhiteSpaces() {
+		String searchText = " 1";
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView)
+				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButWithEndingWhiteSpaces() {
+		String searchText = "1 ";
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView)
+				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButWithMiddleWhiteSpaces() {
+		String searchText = "1 0";
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView)
+				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButOrderNotFound() {
+		String searchText = "1";
+		long orderId = 1l;
+		when(orderRepository.findById(orderId)).thenReturn(null);
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No result found with id: " + orderId, searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberAndOrderFound() {
+		String searchText = "1";
+		long orderId = 1l;
+		CustomerOrder order = new CustomerOrder();
+		when(orderRepository.findById(orderId)).thenReturn(order);
+		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchResultForOrder(asList(order));
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_NonInteger() {
+		String searchText = "a";
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Please enter a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_Zero() {
+		String searchText = "0";
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_NegativeIntegar() {
+		String searchText = "-1";
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWithLeadingWhiteSpaces() {
+		String searchText = " 1";
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView)
+				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWithEndingWhiteSpaces() {
+		String searchText = "1 ";
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView)
+				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWithMiddleWhiteSpaces() {
+		String searchText = "1 0";
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView)
+				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWorkerNotFound() {
+		String searchText = "1";
+		long workerId = 1l;
+		when(workerRepository.findById(workerId)).thenReturn(null);
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No result found with id: " + workerId, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButOrdersAreNull() {
+		String searchText = "1";
+		long workerId = 1l;
+		Worker worker = new Worker();
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with worker id: " + workerId, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButOrdersAreEmpty() {
+		String searchText = "1";
+		long workerId = 1l;
+		Worker worker = new Worker();
+		worker.setOrders(Collections.emptyList());
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with worker id: " + workerId, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberAndOrderFound() {
+		String searchText = "1";
+		long workerId = 1l;
+		Worker worker = new Worker();
+		CustomerOrder order = new CustomerOrder();
+		worker.setOrders(asList(order));
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchResultForOrder(asList(order));
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_StringLessThanTenCharacters() {
+
+		String searchText = "000000";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The phone number must be 10 characters long. Please provide a valid phone number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_StringGreaterThanTenCharachters() {
+		String searchText = "000000000000000000";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The phone number must be 10 characters long. Please provide a valid phone number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithAlphabetCharachters() {
+		String searchText = "3401372a78";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithMiddleWhiteSpaceCharachters() {
+		String searchText = "3401372 78";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithSpecialCharacters() {
+		String searchText = "3401372@78";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithLeadingWhiteSpaceCharachters() {
+		String searchText = " 340137278";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithLeadingNumberExceptThree() {
+		String searchText = "4401372078";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The phone number must start with 3. Please provide a valid phone number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_ValidPhoneNumber_ButOrdersAreNull() {
+		String searchText = "3401372678";
+		when(orderRepository.findByCustomerPhoneNumber(searchText)).thenReturn(null);
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with phone number: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_ValidPhoneNumber_ButOrdersAreEmpty() {
+		String searchText = "3401372678";
+		when(orderRepository.findByCustomerPhoneNumber(searchText)).thenReturn(Collections.emptyList());
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with phone number: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_ValidPhoneNumber() {
+		String searchText = "3401372678";
+		CustomerOrder order = new CustomerOrder();
+		when(orderRepository.findByCustomerPhoneNumber(searchText)).thenReturn(asList(order));
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchResultForOrder(asList(order));
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_StringLessThanTwoCharachters() {
+
+		String searchText = "a";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The name must be at least 3 characters long. Please provide a valid name.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_StringEqualsToTwoCharachters() {
+
+		String searchText = "ab";
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The name must be at least 3 characters long. Please provide a valid name.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_ValidName_ButOrdersAreNull() {
+		String searchText = "Muhammad";
+		when(orderRepository.findByCustomerName(searchText)).thenReturn(null);
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with Customer name: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_ValidName_ButOrdersAreEmpty() {
+		String searchText = "Muhammad";
+		when(orderRepository.findByCustomerName(searchText)).thenReturn(Collections.emptyList());
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with Customer name: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_ValidName_OrderFound() {
+		String searchText = "Muhammad";
+		CustomerOrder customerOrder = new CustomerOrder();
+		when(orderRepository.findByCustomerName(searchText)).thenReturn(asList(customerOrder));
+		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchResultForOrder(asList(customerOrder));
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_WithWhiteSpace() {
+		String searchText = " Pending ";
+		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The status cannot contain whitespaces. Please remove any whitespaces from the status.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_WithUnavailableStatus() {
+		String searchText = "DELETED";
+		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("The specified status was not found. Please provide a valid status.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_ValidStatus_ButOrdersAreNull() {
+		OrderStatus status = OrderStatus.PENDING;
+		String searchText = status.toString();
+		when(orderRepository.findByOrderStatus(status)).thenReturn(null);
+		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with status: " + searchText.toUpperCase(),
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_ValidStatus_ButOrdersAreEmpty() {
+		OrderStatus status = OrderStatus.PENDING;
+		String searchText = status.toString();
+		when(orderRepository.findByOrderStatus(status)).thenReturn(Collections.emptyList());
+
+		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with status: " + searchText.toUpperCase(),
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_ValidStatus_AndOrdersFound() {
+		OrderStatus status = OrderStatus.PENDING;
+		String searchText = status.toString();
+		CustomerOrder customerOrder = new CustomerOrder();
+		when(orderRepository.findByOrderStatus(status)).thenReturn(asList(customerOrder));
+		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchResultForOrder(asList(customerOrder));
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_WithWhiteSpace() {
+		String searchText = " Plumber ";
+		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError(
+				"The category cannot contain whitespaces. Please remove any whitespaces from the category.",
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_WithUnavailableCategory() {
+		String searchText = "Manager";
+		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView)
+				.showSearchError("The specified category was not found. Please provide a valid category.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_ValidCategory_ButOrdersAreNull() {
+		OrderCategory status = OrderCategory.PLUMBER;
+		String searchText = status.toString();
+		when(orderRepository.findByOrderCategory(status)).thenReturn(null);
+		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with category: " + searchText.toUpperCase(),
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_ValidCategory_ButOrdersAreEmpty() {
+		OrderCategory status = OrderCategory.PLUMBER;
+		String searchText = status.toString();
+		when(orderRepository.findByOrderCategory(status)).thenReturn(Collections.emptyList());
+
+		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with category: " + searchText.toUpperCase(),
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_ValidCategory_AndOrdersFound() {
+		OrderCategory status = OrderCategory.PLUMBER;
+		String searchText = status.toString();
+		CustomerOrder customerOrder = new CustomerOrder();
+		when(orderRepository.findByOrderCategory(status)).thenReturn(asList(customerOrder));
+		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchResultForOrder(asList(customerOrder));
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_StringLessThenNineLength() {
+		String searchText = "12/12/";
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Date must not be less then 10 characters.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_StringEqualToNineLength() {
+		String searchText = "12/12/202";
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Date must not be less then 10 characters.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_StringGreaterThenNineLength() {
+		String searchText = "12/12/20224";
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Date must not be greater then 10 characters.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_WithInValidStringDate() {
+		String searchText = "12/12-2024";
+		String pattern = "dd-MM-yyyy";
+
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Please ensure that the date follows the format" + pattern,
+				searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_ButOrdersAreNull() {
+		String searchText = "30-12-2024";
+		LocalDate date = LocalDate.of(2024, 12, 30);
+
+		when(orderRepository.findByDate(date)).thenReturn(null);
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with date: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_ButOrdersAreEmpty() {
+		String searchText = "30-12-2024";
+		LocalDate date = LocalDate.of(2024, 12, 30);
+
+		when(orderRepository.findByDate(date)).thenReturn(Collections.emptyList());
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("No orders found with date: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_AndOrdersFound() {
+		String searchText = "30-12-2024";
+		LocalDate date = LocalDate.of(2024, 12, 30);
+		CustomerOrder order = new CustomerOrder();
+		when(orderRepository.findByDate(date)).thenReturn(asList(order));
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+
+		inOrder.verify(orderView).showSearchResultForOrder(asList(order));
+
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 }

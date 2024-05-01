@@ -1,5 +1,9 @@
 package com.mycompany.orderAssignmentSystem.controller;
 
+import static java.util.Arrays.asList;
+
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -8,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
@@ -142,6 +148,129 @@ public class OrderController {
 			return;
 		}
 
+	}
+
+	public void searchOrder(String searchText, OrderSearchOptions searchOption) {
+		LOGGER.info("Search orders by search Options");
+		try {
+			searchText = validationConfigurations.validateSearchString(searchText);
+			if (searchOption == null) {
+				throw new NullPointerException("Search Option cannot be empty.");
+			}
+			List<CustomerOrder> orders = Collections.emptyList();
+
+			switch (searchOption) {
+			case ORDER_ID:
+				orders = asList(searchByOrderId(searchText));
+				break;
+			case WORKER_ID:
+				orders = searchByWorkerId(searchText);
+				break;
+			case CUSTOMER_PHONE:
+				orders = searchByCustomerPhoneNumber(searchText);
+				break;
+			case DATE:
+				orders = searchByDate(searchText);
+				break;
+			case STATUS:
+				orders = searchByStatus(searchText);
+				break;
+			case CATEGORY:
+				orders = searchByCategory(searchText);
+				break;
+			default:
+				orders = searchByCustomerName(searchText);
+				break;
+			}
+			orderView.showSearchResultForOrder(orders);
+			LOGGER.info("Order Searched: {}", orders);
+
+		} catch (Exception e) {
+			LOGGER.error("Error validating Search Text: " + e.getMessage());
+			orderView.showSearchError(e.getMessage(), searchText);
+			return;
+		}
+
+	}
+
+	private List<CustomerOrder> searchByDate(String searchText) {
+		LocalDate date;
+		date = validationConfigurations.validateStringDate(searchText);
+
+		List<CustomerOrder> orders = orderRepository.findByDate(date);
+		if (orders == null || orders.isEmpty()) {
+			throw new NoSuchElementException("No orders found with date: " + searchText);
+		}
+		return orders;
+	}
+
+	private List<CustomerOrder> searchByCategory(String searchText) {
+		OrderCategory category;
+		category = validationConfigurations.validateEnum(searchText, OrderCategory.class);
+		List<CustomerOrder> orders = orderRepository.findByOrderCategory(category);
+		if (orders == null || orders.isEmpty()) {
+			throw new NoSuchElementException("No orders found with category: " + category);
+		}
+		return orders;
+	}
+
+	private List<CustomerOrder> searchByStatus(String searchText) {
+		OrderStatus status;
+		status = validationConfigurations.validateEnum(searchText, OrderStatus.class);
+		List<CustomerOrder> orders = orderRepository.findByOrderStatus(status);
+		if (orders == null || orders.isEmpty()) {
+			throw new NoSuchElementException("No orders found with status: " + status);
+		}
+		return orders;
+	}
+
+	private List<CustomerOrder> searchByCustomerName(String searchText) {
+		String customerName;
+		customerName = validationConfigurations.validateName(searchText);
+		List<CustomerOrder> orders = orderRepository.findByCustomerName(customerName);
+		if (orders == null || orders.isEmpty()) {
+			throw new NoSuchElementException("No orders found with Customer name: " + customerName);
+		}
+		return orders;
+	}
+
+	private List<CustomerOrder> searchByCustomerPhoneNumber(String searchText) {
+		String customerPhoneNumber;
+		customerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
+		List<CustomerOrder> orders = orderRepository.findByCustomerPhoneNumber(customerPhoneNumber);
+		if (orders == null || orders.isEmpty()) {
+			throw new NoSuchElementException("No orders found with phone number: " + customerPhoneNumber);
+		}
+		return orders;
+	}
+
+	private List<CustomerOrder> searchByWorkerId(String searchText) {
+		Long workerId = validateId(searchText);
+		Worker worker = workerRepository.findById(workerId);
+		if (worker == null) {
+			throw new NoSuchElementException("No result found with id: " + workerId);
+		}
+		List<CustomerOrder> orders = worker.getOrders();
+		if (orders == null || orders.isEmpty()) {
+			throw new NoSuchElementException("No orders found with worker id: " + workerId);
+		}
+		return orders;
+	}
+
+	private CustomerOrder searchByOrderId(String searchText) {
+		Long orderId = validateId(searchText);
+		CustomerOrder order = orderRepository.findById(orderId);
+		if (order == null) {
+			throw new NoSuchElementException("No result found with id: " + orderId);
+		}
+		return order;
+	}
+
+	private Long validateId(String searchText) {
+		Long id = validationConfigurations.validateStringNumber(searchText);
+		id = Long.parseLong(searchText);
+		id = validationConfigurations.validateId(id);
+		return id;
 	}
 
 	private void validateNewOrder(CustomerOrder order) {

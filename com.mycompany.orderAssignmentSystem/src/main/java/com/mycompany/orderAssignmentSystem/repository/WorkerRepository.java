@@ -3,7 +3,6 @@ package com.mycompany.orderAssignmentSystem.repository;
 import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 
 public interface WorkerRepository {
@@ -23,6 +22,6 @@ public interface WorkerRepository {
 
 	public void delete(Worker worker);
 
-	public List<Worker> searchByField(String searchText, WorkerSearchOption searchOption);
+//	public List<Worker> searchByField(String searchText, WorkerSearchOption searchOption);
 
 }
