@@ -1306,6 +1306,26 @@ public class WorkerControllerTest {
 	}
 
 	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndSearchTextIsValidNameButWorkersFoundAreNull() {
+		String searchText = "Muhammad";
+		when(workerRepository.findByName(searchText)).thenReturn(null);
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_NAME);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("No result found with Worker Name: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndSearchTextIsValidNameButWorkersFoundAreEmpty() {
+		String searchText = "Muhammad";
+		when(workerRepository.findByName(searchText)).thenReturn(Collections.emptyList());
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_NAME);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("No result found with Worker Name: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndSearchTextIsValidName() {
 		String searchText = "Muhammad";
 		Worker worker = new Worker();
@@ -1392,6 +1412,16 @@ public class WorkerControllerTest {
 	}
 
 	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsValidPhoneNumberButWorkerFoundIsNull() {
+		String searchText = "3401372678";
+		when(workerRepository.findByPhoneNumber(searchText)).thenReturn(null);
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("No result found with phone number: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsValidPhoneNumber() {
 		String searchText = "3401372678";
 		Worker worker = new Worker();
@@ -1424,8 +1454,31 @@ public class WorkerControllerTest {
 	}
 
 	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsValidCategoryButWorkersFoundAreNull() {
+		OrderCategory category = OrderCategory.PLUMBER;
+		String searchText = category.toString();
+		when(workerRepository.findByOrderCategory(category)).thenReturn(null);
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("No result found with category: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsValidCategoryButWorkersFoundAreEmptyList() {
+		OrderCategory category = OrderCategory.PLUMBER;
+		String searchText = category.toString();
+		when(workerRepository.findByOrderCategory(category)).thenReturn(Collections.emptyList());
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("No result found with category: " + searchText, searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsValidCategory() {
-		String searchText = "Plumber";
+		OrderCategory category = OrderCategory.PLUMBER;
+		String searchText = category.toString();
 		Worker worker = new Worker();
 		when(workerRepository.findByOrderCategory(OrderCategory.PLUMBER)).thenReturn(asList(worker));
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);

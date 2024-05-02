@@ -177,6 +177,9 @@ public class WorkerController {
 		String workerPhoneNumber;
 		workerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
 		Worker worker = workerRepository.findByPhoneNumber(workerPhoneNumber);
+		if (worker == null) {
+			throw new NoSuchElementException("No result found with phone number: " + searchText);
+		}
 		return worker;
 	}
 
@@ -184,6 +187,9 @@ public class WorkerController {
 		OrderCategory workerCategory;
 		workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
 		List<Worker> workers = workerRepository.findByOrderCategory(workerCategory);
+		if (workers == null || workers.isEmpty()) {
+			throw new NoSuchElementException("No result found with category: " + searchText);
+		}
 		return workers;
 	}
 
@@ -191,6 +197,9 @@ public class WorkerController {
 		String workerName;
 		workerName = validationConfigurations.validateName(searchText);
 		List<Worker> workers = workerRepository.findByName(workerName);
+		if (workers == null || workers.isEmpty()) {
+			throw new NoSuchElementException("No result found with Worker Name: " + searchText);
+		}
 		return workers;
 	}
 
