@@ -592,6 +592,13 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testDeleteButtonShouldDelegateToWorkerControllerRemoveWorker() {
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RuntimeException(e);
+		}
 		long workerId = 1L;
 		long workerId2 = 2L;
 
