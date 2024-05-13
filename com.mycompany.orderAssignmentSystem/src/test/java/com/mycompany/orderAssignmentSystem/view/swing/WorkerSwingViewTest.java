@@ -108,7 +108,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenWorkerIdWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndAddButtonShouldBeDisable() {
 		window.textBox("txtWorkerId").enterText("1");
 		window.textBox("txtWorkerName").enterText("Naeem");
@@ -118,7 +117,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndAddButtonShouldBeEnable() {
 		window.textBox("txtWorkerName").enterText("Naeem");
 		window.textBox("txtWorkerPhone").enterText("3401372678");
@@ -127,7 +125,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenSearchStringAndSearchOptionIsNotEmptyAndSearchButtonShouldBeEnabled() {
 		window.textBox("txtSearchWorker").enterText("Naeem");
 		window.comboBox("cmbSearchByOptions").selectItem(0);
@@ -135,21 +132,18 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenSearchStringAndSearchOptionIsEmptyAndSearchButtonShouldBeDisabled() {
 		window.textBox("txtSearchWorker").enterText(" ");
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireDisabled();
 	}
 
 	@Test
-	@GUITest
 	public void testWhenSearchStringAndSearchOptionsIsEmptyAndClearWorkerButtonShouldBeDisabled() {
 		window.textBox("txtSearchWorker").enterText(" ");
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireDisabled();
 	}
 
 	@Test
-	@GUITest
 	public void testWhenSearchStringAndSearchOptionsIsNotEmptyAndClearWorkerButtonShouldBeEnabled() {
 		window.textBox("txtSearchWorker").enterText("Naeem");
 		window.comboBox("cmbSearchByOptions").selectItem(0);
@@ -157,21 +151,18 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenSearchOrderByWorkerIdStringIsNotEmptyAndSearchOrderButtonShouldBeEnabled() {
 		window.textBox("txtOrdersByWorkerId").enterText("1");
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireEnabled();
 	}
 
 	@Test
-	@GUITest
 	public void testWhenSearchOrderByWorkerIdStringIsEmptyAndSearchOrderButtonShouldBeDisabled() {
 		window.textBox("txtOrdersByWorkerId").enterText(" ");
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
 	}
 
 	@Test
-	@GUITest
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndUpdateButtonShouldBeDisable() {
 		window.textBox("txtWorkerName").enterText("Naeem");
 		window.textBox("txtWorkerPhone").enterText("3401372678");
@@ -180,7 +171,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenWorkerIdWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndUpdateButtonShouldBeEnable() {
 		window.textBox("txtWorkerId").enterText("1");
 		window.textBox("txtWorkerName").enterText("Naeem");
@@ -190,7 +180,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndFetchButtonShouldBeDisable() {
 		window.textBox("txtWorkerName").enterText("Naeem");
 		window.textBox("txtWorkerPhone").enterText("3401372678");
@@ -198,7 +187,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenWorkerIdIsNotEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsEmptyAndFetchButtonShouldBeEnable() {
 		window.textBox("txtWorkerId").enterText("1");
 		window.button(JButtonMatcher.withName("btnFetch")).requireEnabled();
@@ -207,7 +195,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenEitherNameOrCategoryOrPhoneNumberAreBlankThenAddButtonShouldBeDisabled() {
 		JTextComponentFixture name = window.textBox("txtWorkerName");
 		JTextComponentFixture phoneNumber = window.textBox("txtWorkerPhone");
@@ -227,7 +214,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenEitherSearchStringOrSearchOptionAreBlankThenSearchWorkerButtonShouldBeDisabled() {
 		JTextComponentFixture txtSearch = window.textBox("txtSearchWorker");
 		txtSearch.enterText(" ");
@@ -243,7 +229,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenEitherSearchStringOrSearchOptionAreBlankThenClearSearchButtonShouldBeDisabled() {
 		JTextComponentFixture txtSearch = window.textBox("txtSearchWorker");
 		txtSearch.enterText(" ");
@@ -259,7 +244,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenEitherNameOrCategoryOrPhoneNumberOrOrderIdAreBlankThenUpdateButtonShouldBeDisabled() {
 		JTextComponentFixture orderId = window.textBox("txtWorkerId");
 		JTextComponentFixture name = window.textBox("txtWorkerName");
@@ -283,7 +267,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testWhenEitherNameOrPhoneNumberOrOrderIdAreBlankThenFetchButtonShouldBeDisabled() {
 		JTextComponentFixture orderId = window.textBox("txtWorkerId");
 		JTextComponentFixture name = window.textBox("txtWorkerName");
@@ -311,7 +294,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	// However, when run as part of a test collection, it fails due to an issue that
 	// is currently unknown to me.
 	@Test
-	@GUITest
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAWorkerIsSelected() {
 		try {
 			Thread.sleep(5000);
@@ -590,38 +572,38 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(workerController).getAllWorkers();
 	}
 
-//	@Test
-//	public void testDeleteButtonShouldDelegateToWorkerControllerRemoveWorker() {
-//
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			Thread.currentThread().interrupt();
-//			throw new RuntimeException(e);
-//		}
-//		long workerId = 1L;
-//		long workerId2 = 2L;
-//
-//		String name = "Naeem";
-//		String name2 = "Bob";
-//		String phoneNumber = "3401372678";
-//		String phoneNumber2 = "3401372679";
-//		int categoryIndex = 0;
-//
-//		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
-//
-//		Worker worker1 = new Worker(workerId, name, phoneNumber, category);
-//		Worker worker2 = new Worker(workerId2, name2, phoneNumber2, category);
-//
-//		GuiActionRunner.execute(() -> {
-//			DefaultListModel<Worker> listOrderModel = workerSwingView.getWorkerListModel();
-//			listOrderModel.addElement(worker1);
-//			listOrderModel.addElement(worker2);
-//		});
-//		window.list("listWorkers").selectItem(1);
-//		window.button(JButtonMatcher.withName("btnDelete")).click();
-//		verify(workerController).deleteWorker(worker2);
-//	}
+	@Test
+	public void testDeleteButtonShouldDelegateToWorkerControllerRemoveWorker() {
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RuntimeException(e);
+		}
+		long workerId = 1L;
+		long workerId2 = 2L;
+
+		String name = "Naeem";
+		String name2 = "Bob";
+		String phoneNumber = "3401372678";
+		String phoneNumber2 = "3401372679";
+		int categoryIndex = 0;
+
+		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
+
+		Worker worker1 = new Worker(workerId, name, phoneNumber, category);
+		Worker worker2 = new Worker(workerId2, name2, phoneNumber2, category);
+
+		GuiActionRunner.execute(() -> {
+			DefaultListModel<Worker> listOrderModel = workerSwingView.getWorkerListModel();
+			listOrderModel.addElement(worker1);
+			listOrderModel.addElement(worker2);
+		});
+		window.list("listWorkers").selectItem(1);
+		window.button(JButtonMatcher.withName("btnDelete")).click();
+		verify(workerController).deleteWorker(worker2);
+	}
 
 	@Test
 	public void testSearcOrderButtonShouldDelegateToWorkerControllerSearchOrderByWorkerId() {

@@ -69,11 +69,10 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					WorkerSwingView frame = new WorkerSwingView();
-					frame.setExtendedState(JFrame.NORMAL); // Set the extended state to normal
-
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -511,6 +510,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	@Override
 	public void showAllWorkers(List<Worker> worker) {
 		resetAllSearchStates();
+
 		worker.stream().forEach(workerListModel::addElement);
 		resetErrorLabel();
 	}
