@@ -21,6 +21,8 @@
 		<jdate.version>1.4</jdate.version>
 		<mockito.version>4.11.0</mockito.version>
 		<log4j.version>2.23.1</log4j.version>
+		<assertj-swing-junit-version>3.17.1</assertj-swing-junit-version>
+
 	</properties>
 
 	<dependencies>
@@ -56,6 +58,12 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-swing-junit</artifactId>
+			<version>${assertj-swing-junit-version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>

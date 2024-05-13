@@ -101,6 +101,7 @@ public class OrderSwingView extends JFrame {
 		panelContent.add(lblWorkerId);
 
 		txtOrderId = new JTextField();
+		txtOrderId.setName("txtOrderId");
 		txtOrderId.setFont(textFieldFontSize);
 		txtOrderId.setColumns(10);
 		txtOrderId.setBounds(266, 22, 250, 20);
@@ -123,6 +124,7 @@ public class OrderSwingView extends JFrame {
 		panelContent.add(lblCustomerName);
 
 		txtCustomerName = new JTextField();
+		txtCustomerName.setName("txtCustomerName");
 		txtCustomerName.setFont(textFieldFontSize);
 		txtCustomerName.setColumns(10);
 		txtCustomerName.setBounds(266, 50, 250, 20);

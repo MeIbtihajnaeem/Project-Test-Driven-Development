@@ -1,6 +1,7 @@
 package com.mycompany.orderAssignmentSystem.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 
@@ -62,23 +63,31 @@ public class Worker {
 		this.orders = orders;
 	}
 
+	// Removing hashCode or equals method will result in failure of
+	// WorkerSwingViewTest because of comparing objects when add, update, delete etc
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(orders, workerCategory, workerId, workerName, workerPhoneNumber);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Worker other = (Worker) obj;
+		return Objects.equals(orders, other.orders) && workerCategory == other.workerCategory
+				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
+				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
+	}
+
 //	public String displayWorker() {
 //		return String.format("Worker ID: %d\nWorker Name: %s\nWorker Phone Number: %s\nWorker Category: %s", workerId,
 //				workerName, workerPhoneNumber, workerCategory);
-//	}
-
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		Worker other = (Worker) obj;
-//		return Objects.equals(orders, other.orders) && workerCategory == other.workerCategory
-//				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
-//				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
 //	}
 
 }

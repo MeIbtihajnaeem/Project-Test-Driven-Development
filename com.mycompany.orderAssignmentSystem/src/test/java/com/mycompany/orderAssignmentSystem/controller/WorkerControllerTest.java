@@ -1599,7 +1599,7 @@ public class WorkerControllerTest {
 		Worker worker = new Worker();
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be empty.", worker);
+		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be empty.", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1609,7 +1609,7 @@ public class WorkerControllerTest {
 		worker.setWorkerId(0l);
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
+		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be less than 1. Please provide a valid id.", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1619,7 +1619,7 @@ public class WorkerControllerTest {
 		worker.setWorkerId(-1l);
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
+		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be less than 1. Please provide a valid id.", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 

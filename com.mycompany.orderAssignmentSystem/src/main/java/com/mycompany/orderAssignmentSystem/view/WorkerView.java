@@ -26,6 +26,6 @@ public interface WorkerView {
 
 	void showSearchError(String message, String searchText);
 
-//	void showErrorWorkerNotFound(String message, Worker worker);
+	void showSearchOrderByWorkerIdError(String message, Worker worker);
 
 }
