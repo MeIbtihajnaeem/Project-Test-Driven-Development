@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         include:
-        - java: 8
+        - java: 1.8
           additional-maven-args: "-Pmutation-testing-with-coverage"
         - java: 11
     name: Build with Java ${{ matrix.java }}
