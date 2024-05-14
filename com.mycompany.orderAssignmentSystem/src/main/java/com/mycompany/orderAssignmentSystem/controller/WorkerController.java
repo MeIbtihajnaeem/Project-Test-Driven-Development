@@ -1,3 +1,6 @@
+/*
+ * WorkerController: Controller class responsible for handling worker-related operations.
+ */
 package com.mycompany.orderAssignmentSystem.controller;
 
 import static java.util.Arrays.asList;
@@ -17,23 +20,47 @@ import com.mycompany.orderAssignmentSystem.model.Worker;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
 import com.mycompany.orderAssignmentSystem.view.WorkerView;
 
+/**
+ * Controller class responsible for handling worker-related operations.
+ */
 public class WorkerController {
 
+	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LogManager.getLogger(WorkerController.class);
+
+	/** The worker repository. */
 	private WorkerRepository workerRepository;
+
+	/** The worker view. */
 	private WorkerView workerView;
+
+	/** The validation configurations. */
 	private ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 
+	/**
+	 * Instantiates a new worker controller.
+	 *
+	 * @param workerRepository the worker repository
+	 * @param workerView       the worker view
+	 */
 	public WorkerController(WorkerRepository workerRepository, WorkerView workerView) {
 		this.workerRepository = workerRepository;
 		this.workerView = workerView;
 	}
 
+	/**
+	 * Retrieves all workers from the repository and displays them.
+	 */
 	public void getAllWorkers() {
 		LOGGER.info("Retrieving all workers");
 		workerView.showAllWorkers(workerRepository.findAll());
 	}
 
+	/**
+	 * Creates a new worker and adds it to the repository.
+	 *
+	 * @param worker the worker to be added
+	 */
 	public void createNewWorker(Worker worker) {
 		LOGGER.info("Creating a new worker");
 
@@ -50,6 +77,11 @@ public class WorkerController {
 		}
 	}
 
+	/**
+	 * Updates an existing worker in the repository.
+	 *
+	 * @param worker the worker to be updated
+	 */
 	public void updateWorker(Worker worker) {
 		LOGGER.info("Updating a worker");
 
@@ -77,6 +109,11 @@ public class WorkerController {
 		}
 	}
 
+	/**
+	 * Fetches a worker by its ID.
+	 *
+	 * @param worker the worker to be fetched
+	 */
 	public void fetchWorkerById(Worker worker) {
 		LOGGER.info("Fetch a worker");
 
@@ -98,6 +135,11 @@ public class WorkerController {
 		}
 	}
 
+	/**
+	 * Deletes a worker from the repository.
+	 *
+	 * @param worker the worker to be deleted
+	 */
 	public void deleteWorker(Worker worker) {
 		LOGGER.info("Delete a worker");
 
@@ -120,6 +162,11 @@ public class WorkerController {
 		}
 	}
 
+	/**
+	 * Fetches orders associated with a worker by their ID.
+	 *
+	 * @param worker the worker whose orders are to be fetched
+	 */
 	public void fetchOrdersByWorkerId(Worker worker) {
 		LOGGER.info("Fetch a orders by worker Id");
 
@@ -138,6 +185,14 @@ public class WorkerController {
 
 	}
 
+	/**
+	 * Searches for workers based on the specified search option and text.
+	 *
+	 * @param searchText   the text to search for
+	 * @param searchOption the option to search by. Available options: WORKER_ID,
+	 *                     WORKER_NAME, WORKER_PHONE, WORKER_CATEGORY. If null, an
+	 *                     exception is thrown.
+	 */
 	public void searchWorker(String searchText, WorkerSearchOption searchOption) {
 		LOGGER.info("Search workers by search Options");
 
@@ -173,6 +228,12 @@ public class WorkerController {
 		}
 	}
 
+	/**
+	 * Searches for a worker by their phone number.
+	 *
+	 * @param searchText the phone number to search for
+	 * @return the worker with the specified phone number
+	 */
 	private Worker searchByWorkerPhoneNumber(String searchText) {
 		String workerPhoneNumber;
 		workerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
@@ -183,6 +244,12 @@ public class WorkerController {
 		return worker;
 	}
 
+	/**
+	 * Searches for workers by their category.
+	 *
+	 * @param searchText the category to search for
+	 * @return the list of workers with the specified category
+	 */
 	private List<Worker> searchByWorkerCategory(String searchText) {
 		OrderCategory workerCategory;
 		workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
@@ -193,6 +260,12 @@ public class WorkerController {
 		return workers;
 	}
 
+	/**
+	 * Searches for workers by their name.
+	 *
+	 * @param searchText the name to search for
+	 * @return the list of workers with the specified name
+	 */
 	private List<Worker> searchByWorkerName(String searchText) {
 		String workerName;
 		workerName = validationConfigurations.validateName(searchText);
@@ -203,6 +276,12 @@ public class WorkerController {
 		return workers;
 	}
 
+	/**
+	 * Searches for a worker by their ID.
+	 *
+	 * @param searchText the ID to search for
+	 * @return the worker with the specified ID
+	 */
 	private Worker searchByWorkerId(String searchText) {
 		Long workerId = validationConfigurations.validateStringNumber(searchText);
 		workerId = Long.parseLong(searchText);
@@ -214,6 +293,12 @@ public class WorkerController {
 		return worker;
 	}
 
+	/**
+	 * Validates the existence of a worker.
+	 *
+	 * @param worker the worker to validate
+	 * @return the worker if found
+	 */
 	private Worker validateWorkerExistence(Worker worker) {
 		Worker existingWorker = workerRepository.findById(worker.getWorkerId());
 		if (existingWorker == null) {
@@ -222,16 +307,31 @@ public class WorkerController {
 		return existingWorker;
 	}
 
+	/**
+	 * Validates the worker and its ID.
+	 *
+	 * @param worker the worker to validate
+	 */
 	private void validateWorkerAndWorkerId(Worker worker) {
 		Objects.requireNonNull(worker, "Worker is null");
 		worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
 	}
 
+	/**
+	 * Validates the worker for fetching.
+	 *
+	 * @param worker the worker to validate
+	 */
 	private void validateWorkerForFetch(Worker worker) {
 		validateWorkerAndWorkerId(worker);
 
 	}
 
+	/**
+	 * Validates a new worker.
+	 *
+	 * @param worker the worker to validate
+	 */
 	private void validateNewWorker(Worker worker) {
 		Objects.requireNonNull(worker, "Worker is null");
 		if (worker.getWorkerId() != null) {
@@ -242,12 +342,22 @@ public class WorkerController {
 
 	}
 
+	/**
+	 * Validates the fields of a worker.
+	 *
+	 * @param worker the worker to validate
+	 */
 	private void validateWorkerFields(Worker worker) {
 		worker.setWorkerName(validationConfigurations.validateName(worker.getWorkerName()));
 		worker.setWorkerPhoneNumber(validationConfigurations.validatePhoneNumber(worker.getWorkerPhoneNumber()));
 		worker.setWorkerCategory(validationConfigurations.validateCategory(worker.getWorkerCategory()));
 	}
 
+	/**
+	 * Validates an update to an existing worker.
+	 *
+	 * @param worker the worker to validate
+	 */
 	private void validateUpdateWorker(Worker worker) {
 		validateWorkerAndWorkerId(worker);
 		validateWorkerFields(worker);
@@ -255,6 +365,11 @@ public class WorkerController {
 
 	}
 
+	/**
+	 * Validates the existence of an existing worker.
+	 *
+	 * @param worker the worker to validate
+	 */
 	private void validateExistingWorker(Worker worker) {
 		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
 		if (existingWorker != null) {

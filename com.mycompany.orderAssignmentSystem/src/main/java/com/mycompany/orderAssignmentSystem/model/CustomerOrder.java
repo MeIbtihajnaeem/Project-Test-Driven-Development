@@ -1,3 +1,8 @@
+/*
+ * CustomerOrder: Represents an order placed by a customer in the system.
+ * This class holds information about an order, including customer details, appointment date, order description, category, status, and the assigned worker.
+ */
+
 package com.mycompany.orderAssignmentSystem.model;
 
 import java.time.LocalDateTime;
@@ -5,21 +10,58 @@ import java.time.LocalDateTime;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 
+/**
+ * Represents an order placed by a customer in the system.
+ */
 public class CustomerOrder {
+
+	/** The order id. */
 	private Long orderId;
+
+	/** The customer name. */
 	private String customerName;
+
+	/** The customer address. */
 	private String customerAddress;
+
+	/** The customer phone number. */
 	private String customerPhoneNumber;
+
+	/** The appointment date. */
 	private LocalDateTime appointmentDate;
+
+	/** The order description. */
 	private String orderDescription;
+
+	/** The order category. */
 	private OrderCategory orderCategory;
+
+	/** The order status. */
 	private OrderStatus orderStatus;
+
+	/** The worker assigned to the order. */
 	private Worker worker;
 
+	/**
+	 * Default constructor.
+	 */
 	public CustomerOrder() {
 
 	}
 
+	/**
+	 * Parameterized constructor.
+	 *
+	 * @param orderId             the order id
+	 * @param customerName        the customer name
+	 * @param customerAddress     the customer address
+	 * @param customerPhoneNumber the customer phone number
+	 * @param appointmentDate     the appointment date
+	 * @param orderDescription    the order description
+	 * @param orderCategory       the order category
+	 * @param orderStatus         the order status
+	 * @param worker              the worker assigned to the order
+	 */
 	public CustomerOrder(Long orderId, String customerName, String customerAddress, String customerPhoneNumber,
 			LocalDateTime appointmentDate, String orderDescription, OrderCategory orderCategory,
 			OrderStatus orderStatus, Worker worker) {
@@ -35,83 +77,166 @@ public class CustomerOrder {
 		this.worker = worker;
 	}
 
+	/**
+	 * Gets the order id.
+	 *
+	 * @return the order id
+	 */
 	public Long getOrderId() {
 		return orderId;
 	}
 
+	/**
+	 * Sets the order id.
+	 *
+	 * @param orderId the new order id
+	 */
 	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
 
+	/**
+	 * Gets the customer name.
+	 *
+	 * @return the customer name
+	 */
 	public String getCustomerName() {
 		return customerName;
 	}
 
+	/**
+	 * Sets the customer name.
+	 *
+	 * @param customerName the new customer name
+	 */
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
 	}
 
+	/**
+	 * Gets the customer address.
+	 *
+	 * @return the customer address
+	 */
 	public String getCustomerAddress() {
 		return customerAddress;
 	}
 
+	/**
+	 * Sets the customer address.
+	 *
+	 * @param customerAddress the new customer address
+	 */
 	public void setCustomerAddress(String customerAddress) {
 		this.customerAddress = customerAddress;
 	}
 
+	/**
+	 * Gets the customer phone number.
+	 *
+	 * @return the customer phone number
+	 */
 	public String getCustomerPhoneNumber() {
 		return customerPhoneNumber;
 	}
 
+	/**
+	 * Sets the customer phone number.
+	 *
+	 * @param customerPhoneNumber the new customer phone number
+	 */
 	public void setCustomerPhoneNumber(String customerPhoneNumber) {
 		this.customerPhoneNumber = customerPhoneNumber;
 	}
 
+	/**
+	 * Gets the appointment date.
+	 *
+	 * @return the appointment date
+	 */
 	public LocalDateTime getAppointmentDate() {
 		return appointmentDate;
 	}
 
+	/**
+	 * Sets the appointment date.
+	 *
+	 * @param appointmentDate the new appointment date
+	 */
 	public void setAppointmentDate(LocalDateTime appointmentDate) {
 		this.appointmentDate = appointmentDate;
 	}
 
+	/**
+	 * Gets the order description.
+	 *
+	 * @return the order description
+	 */
 	public String getOrderDescription() {
 		return orderDescription;
 	}
 
+	/**
+	 * Sets the order description.
+	 *
+	 * @param orderDescription the new order description
+	 */
 	public void setOrderDescription(String orderDescription) {
 		this.orderDescription = orderDescription;
 	}
 
+	/**
+	 * Gets the order category.
+	 *
+	 * @return the order category
+	 */
 	public OrderCategory getOrderCategory() {
 		return orderCategory;
 	}
 
+	/**
+	 * Sets the order category.
+	 *
+	 * @param orderCategory the new order category
+	 */
 	public void setOrderCategory(OrderCategory orderCategory) {
 		this.orderCategory = orderCategory;
 	}
 
+	/**
+	 * Gets the order status.
+	 *
+	 * @return the order status
+	 */
 	public OrderStatus getOrderStatus() {
 		return orderStatus;
 	}
 
+	/**
+	 * Sets the order status.
+	 *
+	 * @param orderStatus the new order status
+	 */
 	public void setOrderStatus(OrderStatus orderStatus) {
 		this.orderStatus = orderStatus;
 	}
 
+	/**
+	 * Gets the worker assigned to the order.
+	 *
+	 * @return the worker
+	 */
 	public Worker getWorker() {
 		return worker;
 	}
 
-	public void setWorkers(Worker worker) {
+	/**
+	 * Sets the worker assigned to the order.
+	 *
+	 * @param worker the new worker
+	 */
+	public void setWorker(Worker worker) {
 		this.worker = worker;
 	}
-
-//	public String displayOrder() {
-//		return String.format(
-//				"Order ID: %d\nCustomer Name: %s\nCustomer Address: %s\nCustomer Phone Number: %s\nAppointment Date: %s\nOrder Description: %s\nOrder Category: %s\nOrder Status: %s",
-//				orderId, customerName, customerAddress, customerPhoneNumber, appointmentDate, orderDescription,
-//				orderCategory, orderStatus);
-//	}
 
 }

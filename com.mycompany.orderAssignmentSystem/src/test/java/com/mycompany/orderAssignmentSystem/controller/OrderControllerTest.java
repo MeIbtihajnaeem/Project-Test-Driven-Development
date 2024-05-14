@@ -96,7 +96,7 @@ public class OrderControllerTest {
 		order.setOrderId(1l);
 		orderController.createNewOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Unable to assign a Order ID during order creation.", order);
+		inOrder.verify(orderView).showError("Unable to assign an order ID during order creation.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -1064,7 +1064,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		orderController.createNewOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1091,7 +1091,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		orderController.createNewOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1118,7 +1118,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		orderController.createNewOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1147,7 +1147,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(spyWorker);
+		order.setWorker(spyWorker);
 
 		orderController.createNewOrder(order);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(1l);
@@ -1176,7 +1176,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 
 		orderController.createNewOrder(order);
@@ -1209,12 +1209,12 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		orderController.createNewOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found",
+		inOrder.verify(orderView).showErrorNotFound("Worker with this ID " + worker.getWorkerId() + " not found",
 				order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
@@ -1243,7 +1243,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.createNewOrder(order);
@@ -1276,7 +1276,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
@@ -1311,7 +1311,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
@@ -1348,7 +1348,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
@@ -1386,7 +1386,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
@@ -2526,7 +2526,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		orderController.updateOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -2555,7 +2555,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		orderController.updateOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -2584,7 +2584,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		orderController.updateOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -2615,7 +2615,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
-		order.setWorkers(spyWorker);
+		order.setWorker(spyWorker);
 
 		orderController.updateOrder(order);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(1l);
@@ -2648,12 +2648,12 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		orderController.updateOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showErrorNotFound("Worker with this id " + worker.getWorkerId() + " not found",
+		inOrder.verify(orderView).showErrorNotFound("Worker with this ID " + worker.getWorkerId() + " not found",
 				order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
@@ -2683,7 +2683,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.updateOrder(order);
@@ -2742,7 +2742,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		Worker savedWorker = new Worker();
 		long savedWorkerId = 2l;
@@ -2787,7 +2787,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 
 		Worker savedWorker = new Worker();
 		long savedWorkerId = 2l;
@@ -2835,7 +2835,7 @@ public class OrderControllerTest {
 		order.setOrderDescription(actualDescription);
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
-		order.setWorkers(worker);
+		order.setWorker(worker);
 		Worker savedWorker = new Worker();
 		long savedWorkerId = 2l;
 		savedWorker.setWorkerId(savedWorkerId);
@@ -2953,7 +2953,7 @@ public class OrderControllerTest {
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showErrorNotFound("Order with id " + order.getOrderId() + " Not Found.", order);
+		inOrder.verify(orderView).showErrorNotFound("Order with ID " + order.getOrderId() + " not found.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -3045,7 +3045,7 @@ public class OrderControllerTest {
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showErrorNotFound("No Order found with ID: " + order.getOrderId(), order);
+		inOrder.verify(orderView).showErrorNotFound("No order found with ID: " + order.getOrderId(), order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -3105,7 +3105,7 @@ public class OrderControllerTest {
 		String searchText = "1";
 		orderController.searchOrder(searchText, null);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("Search Option cannot be empty.", searchText);
+		inOrder.verify(orderView).showSearchError("Search option cannot be empty.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -3175,7 +3175,7 @@ public class OrderControllerTest {
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("No result found with id: " + orderId, searchText);
+		inOrder.verify(orderView).showSearchError("No result found with ID: " + orderId, searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -3257,7 +3257,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("No result found with id: " + workerId, searchText);
+		inOrder.verify(orderView).showSearchError("No result found with ID: " + workerId, searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -3269,7 +3269,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("No orders found with worker id: " + workerId, searchText);
+		inOrder.verify(orderView).showSearchError("No orders found with worker ID: " + workerId, searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -3282,7 +3282,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("No orders found with worker id: " + workerId, searchText);
+		inOrder.verify(orderView).showSearchError("No orders found with worker ID: " + workerId, searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -3434,7 +3434,7 @@ public class OrderControllerTest {
 		when(orderRepository.findByCustomerName(searchText)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("No orders found with Customer name: " + searchText, searchText);
+		inOrder.verify(orderView).showSearchError("No orders found with customer name: " + searchText, searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -3444,7 +3444,7 @@ public class OrderControllerTest {
 		when(orderRepository.findByCustomerName(searchText)).thenReturn(Collections.emptyList());
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("No orders found with Customer name: " + searchText, searchText);
+		inOrder.verify(orderView).showSearchError("No orders found with customer name: " + searchText, searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 

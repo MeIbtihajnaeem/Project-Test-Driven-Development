@@ -1,15 +1,31 @@
+/*
+ * WorkerSearchOption: Enumeration representing different search options for workers.
+ */
 package com.mycompany.orderAssignmentSystem.enumerations;
 
+/**
+ * Enumeration representing different search options for workers.
+ */
 public enum WorkerSearchOption {
-	WORKER_ID, WORKER_NAME, WORKER_PHONE, WORKER_CATEGORY;
 
-//	private final String displayName;
+	/**
+	 * Search by worker ID.
+	 */
+	WORKER_ID,
 
-//	WorkerSearchOption(String displayName) {
-//		this.displayName = displayName;
-//	}
+	/**
+	 * Search by worker name.
+	 */
+	WORKER_NAME,
 
-//	public String getDisplayName() {
-//		return displayName;
-//	}
+	/**
+	 * Search by worker phone number.
+	 */
+	WORKER_PHONE,
+
+	/**
+	 * Search by worker category.
+	 */
+	WORKER_CATEGORY;
+
 }

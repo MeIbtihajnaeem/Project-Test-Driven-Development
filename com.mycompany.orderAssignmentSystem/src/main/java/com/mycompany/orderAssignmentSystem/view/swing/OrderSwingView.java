@@ -267,7 +267,7 @@ public class OrderSwingView extends JFrame {
 		JComboBox cmbOrderStatus = new JComboBox();
 		cmbOrderStatus.setBounds(266, 230, 250, 20);
 		panelContent.add(cmbOrderStatus);
-		
+
 		JButton btnFetch_1 = new JButton("Fetch");
 		btnFetch_1.setFont(new Font("Arial", Font.PLAIN, 14));
 		btnFetch_1.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -275,21 +275,21 @@ public class OrderSwingView extends JFrame {
 		btnFetch_1.setBounds(528, 20, 120, 30);
 		btnFetch_1.setOpaque(true); // Set content area filled property
 		panelContent.add(btnFetch_1);
-		
+
 		JLabel searchErrorLbl = new JLabel("Search Error");
 		searchErrorLbl.setForeground(Color.RED);
 		searchErrorLbl.setIconTextGap(8);
 		searchErrorLbl.setFont(new Font("Arial", Font.BOLD, 14));
 		searchErrorLbl.setBounds(61, 346, 651, 32);
 		panelContent.add(searchErrorLbl);
-		
+
 		JLabel showErrorLbl = new JLabel("Search Error");
 		showErrorLbl.setIconTextGap(8);
 		showErrorLbl.setForeground(Color.RED);
 		showErrorLbl.setFont(new Font("Arial", Font.BOLD, 14));
 		showErrorLbl.setBounds(21, 289, 651, 20);
 		panelContent.add(showErrorLbl);
-		
+
 		JButton btnClearSearch = new JButton("Clear");
 		btnClearSearch.setOpaque(true);
 		btnClearSearch.setFont(new Font("Arial", Font.PLAIN, 14));

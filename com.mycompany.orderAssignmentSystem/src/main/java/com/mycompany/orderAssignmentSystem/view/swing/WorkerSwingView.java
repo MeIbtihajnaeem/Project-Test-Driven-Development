@@ -35,37 +35,94 @@ import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 import com.mycompany.orderAssignmentSystem.view.WorkerView;
 
+/**
+ * The WorkerSwingView class represents the graphical user interface for
+ * managing workers and their orders.
+ */
 public class WorkerSwingView extends JFrame implements WorkerView {
 
+	/** Unique identifier for serialization.. */
 	private static final long serialVersionUID = 2L;
+
+	/** The content pane. */
 	private JPanel contentPane;
+
+	/** The txt worker id. */
 	private JTextField txtWorkerId;
+
+	/** The txt worker name. */
 	private JTextField txtWorkerName;
+
+	/** The txt worker phone. */
 	private JTextField txtWorkerPhone;
+
+	/** The txt search worker. */
 	private JTextField txtSearchWorker;
+
+	/** The txt orders by worker id. */
 	private JTextField txtOrdersByWorkerId;
+
+	/** The worker controller. */
 	private WorkerController workerController;
+
+	/** The cmb worker category. */
 	private JComboBox<OrderCategory> cmbWorkerCategory;
+
+	/** The btn add. */
 	private JButton btnAdd;
+
+	/** The btn update. */
 	private JButton btnUpdate;
+
+	/** The btn fetch. */
 	private JButton btnFetch;
+
+	/** The btn delete. */
 	private JButton btnDelete;
+
+	/** The cmb search by options. */
 	private JComboBox<WorkerSearchOption> cmbSearchByOptions;
+
+	/** The btn search worker. */
 	private JButton btnSearchWorker;
+
+	/** The worker list model. */
 	private DefaultListModel<Worker> workerListModel;
+
+	/** The order list model. */
 	private DefaultListModel<CustomerOrder> orderListModel;
+
+	/** The list workers. */
 	private JList<Worker> listWorkers;
+
+	/** The list orders. */
 	private JList<CustomerOrder> listOrders;
+
+	/** The btn clear search worker. */
 	private JButton btnClearSearchWorker;
+
+	/** The btn search order. */
 	private JButton btnSearchOrder;
+
+	/** The show error while add, update or fetch has error. */
 	private JLabel showErrorLbl;
+
+	/** The show error while search worker has error. */
 	private JLabel showErrorLblSearchWorker;
+
+	/** The show error while search order has error. */
 	private JLabel showErrorLblSearchOrder;
+
+	/** The show error while worker not found error. */
 	private JLabel showErrorNotFoundLbl;
+
+	/** The scroll pane. */
 	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -80,16 +137,22 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		});
 	}
 
+	/**
+	 * Gets the worker list model.
+	 *
+	 * @return the worker list model
+	 */
 	DefaultListModel<Worker> getWorkerListModel() {
 		return workerListModel;
 	}
 
+	/**
+	 * Gets the order list model.
+	 *
+	 * @return the order list model
+	 */
 	DefaultListModel<CustomerOrder> getOrderListModel() {
 		return orderListModel;
-	}
-
-	public JComboBox<OrderCategory> getCmbWorkerCategory() {
-		return cmbWorkerCategory;
 	}
 
 	/**
@@ -397,14 +460,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		listWorkers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listWorkers.setName("listWorkers");
 		scrollPane.setViewportView(listWorkers);
-//		GridBagConstraints gbc_listWorkers = new GridBagConstraints();
-//		gbc_listWorkers.gridwidth = 4;
-//		gbc_listWorkers.insets = new Insets(0, 0, 5, 5);
-//		gbc_listWorkers.fill = GridBagConstraints.BOTH;
-//		gbc_listWorkers.gridx = 0;
-//		gbc_listWorkers.gridy = 9;
-//		contentPane.add(listWorkers, gbc_listWorkers);
-
 		btnDelete = new JButton("Delete");
 		btnDelete.setOpaque(true);
 		btnDelete.setName("btnDelete");
@@ -522,7 +577,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 					workerController.searchWorker(searchText, searchOption);
 				} else if (e.getSource() == btnClearSearchWorker) {
 					workerController.getAllWorkers();
-				} else if (e.getSource() == btnDelete) {
+				} else {
 					workerController.deleteWorker(listWorkers.getSelectedValue());
 
 				}
@@ -540,10 +595,18 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 	}
 
+	/**
+	 * Sets the worker controller.
+	 *
+	 * @param workerController the new worker controller
+	 */
 	public void setWorkerController(WorkerController workerController) {
 		this.workerController = workerController;
 	}
 
+	/**
+	 * Handle button and combo box states.
+	 */
 	private void handleButtonAndComboBoxStates() {
 		boolean isWorkerIdEmpty = txtWorkerId.getText().trim().isEmpty();
 		boolean isWorkerNameEmpty = txtWorkerName.getText().trim().isEmpty();
@@ -558,6 +621,9 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		}
 	}
 
+	/**
+	 * Handle search worker and clear button states.
+	 */
 	private void handleSearchWorkerAndClearButtonStates() {
 		boolean isSearchWorkerTextEmpty = txtSearchWorker.getText().trim().isEmpty();
 		boolean isSearchOptionEmpty = cmbSearchByOptions.getSelectedItem() == null;
@@ -565,11 +631,19 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnClearSearchWorker.setEnabled(!isSearchWorkerTextEmpty && !isSearchOptionEmpty);
 	}
 
+	/**
+	 * Handle search order by worker id button states.
+	 */
 	private void handleSearchOrderByWorkerIdButtonStates() {
 		boolean isOrdersByWorkerId = txtOrdersByWorkerId.getText().trim().isEmpty();
 		btnSearchOrder.setEnabled(!isOrdersByWorkerId);
 	}
 
+	/**
+	 * Show all workers.
+	 *
+	 * @param worker the worker
+	 */
 	@Override
 	public void showAllWorkers(List<Worker> worker) {
 		resetAllSearchStates();
@@ -578,12 +652,22 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		resetErrorLabel();
 	}
 
+	/**
+	 * Worker added.
+	 *
+	 * @param worker the worker
+	 */
 	@Override
 	public void workerAdded(Worker worker) {
 		workerListModel.addElement(worker);
 		resetErrorLabel();
 	}
 
+	/**
+	 * Worker modified.
+	 *
+	 * @param worker the worker
+	 */
 	@Override
 	public void workerModified(Worker worker) {
 		for (int i = 0; i < workerListModel.getSize(); i++) {
@@ -597,6 +681,11 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		}
 	}
 
+	/**
+	 * Show fetched worker.
+	 *
+	 * @param worker the worker
+	 */
 	@Override
 	public void showFetchedWorker(Worker worker) {
 		txtWorkerName.setText(worker.getWorkerName());
@@ -605,6 +694,11 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		resetErrorLabel();
 	}
 
+	/**
+	 * Show search result for worker.
+	 *
+	 * @param workers the workers
+	 */
 	@Override
 	public void showSearchResultForWorker(List<Worker> workers) {
 		workerListModel.removeAllElements();
@@ -612,6 +706,11 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		resetErrorLabel();
 	}
 
+	/**
+	 * Show order by worker id.
+	 *
+	 * @param orders the orders
+	 */
 	@Override
 	public void showOrderByWorkerId(List<CustomerOrder> orders) {
 		orderListModel.removeAllElements();
@@ -619,32 +718,64 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		resetErrorLabel();
 	}
 
+	/**
+	 * Worker removed.
+	 *
+	 * @param worker the worker
+	 */
 	@Override
 	public void workerRemoved(Worker worker) {
 		workerListModel.removeElement(worker);
 		resetErrorLabel();
 	}
 
+	/**
+	 * Show error.
+	 *
+	 * @param message the message
+	 * @param worker  the worker
+	 */
 	@Override
 	public void showError(String message, Worker worker) {
 		showErrorLbl.setText(message + ": " + worker);
 	}
 
+	/**
+	 * Show error not found.
+	 *
+	 * @param message the message
+	 * @param worker  the worker
+	 */
 	@Override
 	public void showErrorNotFound(String message, Worker worker) {
 		showErrorNotFoundLbl.setText(message + ": " + worker);
 	}
 
+	/**
+	 * Show search error.
+	 *
+	 * @param message    the message
+	 * @param searchText the search text
+	 */
 	@Override
 	public void showSearchError(String message, String searchText) {
 		showErrorLblSearchWorker.setText(message + ": " + searchText);
 	}
 
+	/**
+	 * Show search order by worker id error.
+	 *
+	 * @param message the message
+	 * @param worker  the worker
+	 */
 	@Override
 	public void showSearchOrderByWorkerIdError(String message, Worker worker) {
 		showErrorLblSearchOrder.setText(message + ": " + worker);
 	}
 
+	/**
+	 * Reset error label.
+	 */
 	private void resetErrorLabel() {
 		showErrorLbl.setText(" ");
 		showErrorNotFoundLbl.setText(" ");
@@ -652,6 +783,9 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		showErrorLblSearchOrder.setText(" ");
 	}
 
+	/**
+	 * Reset all search states.
+	 */
 	private void resetAllSearchStates() {
 		txtSearchWorker.setText(" ");
 		txtOrdersByWorkerId.setText(" ");

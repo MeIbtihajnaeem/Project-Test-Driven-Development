@@ -1,3 +1,6 @@
+/*
+ * This class represents the controller responsible for managing orders within the system.
+ */
 package com.mycompany.orderAssignmentSystem.controller;
 
 import static java.util.Arrays.asList;
@@ -21,26 +24,52 @@ import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
 import com.mycompany.orderAssignmentSystem.view.OrderView;
 
+/**
+ * The Class OrderController.
+ */
 public class OrderController {
+
+	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
+
+	/** The order repository. */
 	private OrderRepository orderRepository;
 
+	/** The order view. */
 	private OrderView orderView;
 
+	/** The worker repository. */
 	private WorkerRepository workerRepository;
+
+	/** The validation configurations. */
 	private ValidationConfigurations validationConfigurations = new ValidationConfigurations();
 
+	/**
+	 * Instantiates a new order controller.
+	 *
+	 * @param orderRepository  the order repository
+	 * @param orderView        the order view
+	 * @param workerRepository the worker repository
+	 */
 	public OrderController(OrderRepository orderRepository, OrderView orderView, WorkerRepository workerRepository) {
 		this.orderRepository = orderRepository;
 		this.orderView = orderView;
 		this.workerRepository = workerRepository;
 	}
 
+	/**
+	 * Retrieves all orders.
+	 */
 	public void allOrders() {
 		LOGGER.info("Retrieving all orders");
 		orderView.showAllOrder(orderRepository.findAll());
 	}
 
+	/**
+	 * Creates a new order.
+	 *
+	 * @param order the order
+	 */
 	public void createNewOrder(CustomerOrder order) {
 		LOGGER.info("Creating a new order");
 
@@ -70,8 +99,13 @@ public class OrderController {
 		}
 	}
 
+	/**
+	 * Updates an order.
+	 *
+	 * @param order the order
+	 */
 	public void updateOrder(CustomerOrder order) {
-		LOGGER.info("Updating a order");
+		LOGGER.info("Updating an order");
 
 		try {
 
@@ -104,17 +138,22 @@ public class OrderController {
 		}
 	}
 
+	/**
+	 * Fetches an order by its ID.
+	 *
+	 * @param order the order
+	 */
 	public void fetchOrderById(CustomerOrder order) {
-		LOGGER.info("Fetching order by id");
+		LOGGER.info("Fetching order by ID");
 
 		try {
 			Objects.requireNonNull(order, "Order is null.");
 			order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
 			CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
 			if (savedOrder == null) {
-				throw new NoSuchElementException("Order with id " + order.getOrderId() + " Not Found.");
+				throw new NoSuchElementException("Order with ID " + order.getOrderId() + " not found.");
 			}
-			LOGGER.info("Order Fetched by order id: {}", order);
+			LOGGER.info("Order fetched by order ID: {}", order);
 			orderView.showFetchedOrder(savedOrder);
 
 		} catch (NullPointerException | IllegalArgumentException e) {
@@ -128,13 +167,18 @@ public class OrderController {
 		}
 	}
 
+	/**
+	 * Deletes an order.
+	 *
+	 * @param order the order
+	 */
 	public void deleteOrder(CustomerOrder order) {
 		try {
 			Objects.requireNonNull(order, "Order is null");
 			order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
 			CustomerOrder existingOrder = orderRepository.findById(order.getOrderId());
 			if (existingOrder == null) {
-				throw new NoSuchElementException("No Order found with ID: " + order.getOrderId());
+				throw new NoSuchElementException("No order found with ID: " + order.getOrderId());
 			}
 			orderRepository.delete(order);
 			orderView.orderRemoved(order);
@@ -150,12 +194,20 @@ public class OrderController {
 
 	}
 
+	/**
+	 * Searches for orders based on the specified search text and option.
+	 *
+	 * @param searchText   the search text
+	 * @param searchOption the search option. Available options: ORDER_ID,
+	 *                     CUSTOMER_NAME, CUSTOMER_PHONE, DATE, CATEGORY, STATUS,
+	 *                     WORKER_ID. If null, an exception is thrown.
+	 */
 	public void searchOrder(String searchText, OrderSearchOptions searchOption) {
-		LOGGER.info("Search orders by search Options");
+		LOGGER.info("Searching orders by search options");
 		try {
 			searchText = validationConfigurations.validateSearchString(searchText);
 			if (searchOption == null) {
-				throw new NullPointerException("Search Option cannot be empty.");
+				throw new NullPointerException("Search option cannot be empty.");
 			}
 			List<CustomerOrder> orders = Collections.emptyList();
 
@@ -183,16 +235,22 @@ public class OrderController {
 				break;
 			}
 			orderView.showSearchResultForOrder(orders);
-			LOGGER.info("Order Searched: {}", orders);
+			LOGGER.info("Order searched: {}", orders);
 
 		} catch (Exception e) {
-			LOGGER.error("Error validating Search Text: " + e.getMessage());
+			LOGGER.error("Error validating search text: " + e.getMessage());
 			orderView.showSearchError(e.getMessage(), searchText);
 			return;
 		}
 
 	}
 
+	/**
+	 * Searches for orders by date.
+	 *
+	 * @param searchText the search text
+	 * @return the list of orders
+	 */
 	private List<CustomerOrder> searchByDate(String searchText) {
 		LocalDate date;
 		date = validationConfigurations.validateStringDate(searchText);
@@ -204,6 +262,12 @@ public class OrderController {
 		return orders;
 	}
 
+	/**
+	 * Searches for orders by category.
+	 *
+	 * @param searchText the search text
+	 * @return the list of orders
+	 */
 	private List<CustomerOrder> searchByCategory(String searchText) {
 		OrderCategory category;
 		category = validationConfigurations.validateEnum(searchText, OrderCategory.class);
@@ -214,6 +278,12 @@ public class OrderController {
 		return orders;
 	}
 
+	/**
+	 * Searches for orders by status.
+	 *
+	 * @param searchText the search text
+	 * @return the list of orders
+	 */
 	private List<CustomerOrder> searchByStatus(String searchText) {
 		OrderStatus status;
 		status = validationConfigurations.validateEnum(searchText, OrderStatus.class);
@@ -224,16 +294,28 @@ public class OrderController {
 		return orders;
 	}
 
+	/**
+	 * Searches for orders by customer name.
+	 *
+	 * @param searchText the search text
+	 * @return the list of orders
+	 */
 	private List<CustomerOrder> searchByCustomerName(String searchText) {
 		String customerName;
 		customerName = validationConfigurations.validateName(searchText);
 		List<CustomerOrder> orders = orderRepository.findByCustomerName(customerName);
 		if (orders == null || orders.isEmpty()) {
-			throw new NoSuchElementException("No orders found with Customer name: " + customerName);
+			throw new NoSuchElementException("No orders found with customer name: " + customerName);
 		}
 		return orders;
 	}
 
+	/**
+	 * Searches for orders by customer phone number.
+	 *
+	 * @param searchText the search text
+	 * @return the list of orders
+	 */
 	private List<CustomerOrder> searchByCustomerPhoneNumber(String searchText) {
 		String customerPhoneNumber;
 		customerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
@@ -244,28 +326,46 @@ public class OrderController {
 		return orders;
 	}
 
+	/**
+	 * Searches for orders by worker ID.
+	 *
+	 * @param searchText the search text
+	 * @return the list of orders
+	 */
 	private List<CustomerOrder> searchByWorkerId(String searchText) {
 		Long workerId = validateId(searchText);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
-			throw new NoSuchElementException("No result found with id: " + workerId);
+			throw new NoSuchElementException("No result found with ID: " + workerId);
 		}
 		List<CustomerOrder> orders = worker.getOrders();
 		if (orders == null || orders.isEmpty()) {
-			throw new NoSuchElementException("No orders found with worker id: " + workerId);
+			throw new NoSuchElementException("No orders found with worker ID: " + workerId);
 		}
 		return orders;
 	}
 
+	/**
+	 * Searches for an order by its ID.
+	 *
+	 * @param searchText the search text
+	 * @return the customer order
+	 */
 	private CustomerOrder searchByOrderId(String searchText) {
 		Long orderId = validateId(searchText);
 		CustomerOrder order = orderRepository.findById(orderId);
 		if (order == null) {
-			throw new NoSuchElementException("No result found with id: " + orderId);
+			throw new NoSuchElementException("No result found with ID: " + orderId);
 		}
 		return order;
 	}
 
+	/**
+	 * Validates an ID.
+	 *
+	 * @param searchText the search text
+	 * @return the ID as a Long
+	 */
 	private Long validateId(String searchText) {
 		Long id = validationConfigurations.validateStringNumber(searchText);
 		id = Long.parseLong(searchText);
@@ -273,10 +373,15 @@ public class OrderController {
 		return id;
 	}
 
+	/**
+	 * Validates a new order.
+	 *
+	 * @param order the order
+	 */
 	private void validateNewOrder(CustomerOrder order) {
 		Objects.requireNonNull(order, "Order is null");
 		if (order.getOrderId() != null) {
-			throw new IllegalArgumentException("Unable to assign a Order ID during order creation.");
+			throw new IllegalArgumentException("Unable to assign an order ID during order creation.");
 		}
 		validateOrder(order);
 		if (order.getOrderStatus() != OrderStatus.PENDING) {
@@ -284,6 +389,11 @@ public class OrderController {
 		}
 	}
 
+	/**
+	 * Validates an order.
+	 *
+	 * @param order the order
+	 */
 	private void validateOrder(CustomerOrder order) {
 		order.setCustomerName(validationConfigurations.validateName(order.getCustomerName()));
 		order.setCustomerPhoneNumber(validationConfigurations.validatePhoneNumber(order.getCustomerPhoneNumber()));
@@ -296,10 +406,16 @@ public class OrderController {
 		order.getWorker().setWorkerId(validationConfigurations.validateId(order.getWorker().getWorkerId()));
 	}
 
+	/**
+	 * Retrieves a valid worker for the order.
+	 *
+	 * @param order the order
+	 * @return the valid worker
+	 */
 	private Worker getValidWorker(CustomerOrder order) {
 		Worker worker = workerRepository.findById(order.getWorker().getWorkerId());
 		if (worker == null) {
-			throw new NoSuchElementException("Worker with this id " + order.getWorker().getWorkerId() + " not found");
+			throw new NoSuchElementException("Worker with this ID " + order.getWorker().getWorkerId() + " not found");
 		}
 		if (worker.getWorkerCategory() != order.getOrderCategory()) {
 			throw new IllegalArgumentException("Order and worker categories must align");
@@ -307,6 +423,11 @@ public class OrderController {
 		return worker;
 	}
 
+	/**
+	 * Checks for pending orders.
+	 *
+	 * @param orders the orders
+	 */
 	private void checkForPendingOrders(List<CustomerOrder> orders) {
 		if (orders.stream().anyMatch(ord -> ord.getOrderStatus() == OrderStatus.PENDING)) {
 			throw new IllegalArgumentException(
@@ -314,6 +435,11 @@ public class OrderController {
 		}
 	}
 
+	/**
+	 * Validates an update order.
+	 *
+	 * @param order the order
+	 */
 	private void validateUpdateOrder(CustomerOrder order) {
 		Objects.requireNonNull(order, "Order is null");
 		order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
