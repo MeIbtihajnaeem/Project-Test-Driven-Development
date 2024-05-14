@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
 
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -16,6 +15,7 @@ import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JComboBoxFixture;
+import org.assertj.swing.fixture.JListFixture;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
@@ -35,9 +35,10 @@ import com.mycompany.orderAssignmentSystem.model.Worker;
 public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	private FrameFixture window;
 
-	private WorkerSwingView workerSwingView;
+	private NewWorkerSwingView workerSwingView;
 	@Mock
 	private WorkerController workerController;
+
 	private AutoCloseable closeable;
 
 	@Override
@@ -45,13 +46,12 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		closeable = MockitoAnnotations.openMocks(this);
 
 		GuiActionRunner.execute(() -> {
-			workerSwingView = new WorkerSwingView();
+			workerSwingView = new NewWorkerSwingView();
 			workerSwingView.setWorkerController(workerController);
 			return workerSwingView;
 		});
 		window = new FrameFixture(robot(), workerSwingView);
 		window.show();
-		window.target().setExtendedState(JFrame.NORMAL);
 
 	}
 
@@ -293,22 +293,23 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	// test runs individually,
 	// However, when run as part of a test collection, it fails due to an issue that
 	// is currently unknown to me.
+	// Adding delay solves the problem temporarily for some machines
 	@Test
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAWorkerIsSelected() {
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new RuntimeException(e);
-		}
-		GuiActionRunner.execute(() -> {
-			workerSwingView.getWorkerListModel()
-					.addElement(new Worker(1L, "Naeem Ibtihaj", "3401372678", OrderCategory.PLUMBER));
-		});
-		window.list("listWorkers").selectItem(0);
+		JListFixture list = window.list("listWorkers");
 		JButtonFixture deleteButton = window.button(JButtonMatcher.withName("btnDelete"));
+		Worker worker = new Worker(1l, "Naeem Ibtihaj", "3401372678", OrderCategory.PLUMBER);
+
+		GuiActionRunner.execute(() -> {
+
+			workerSwingView.getWorkerListModel().addElement(worker);
+
+		});
+
+		list.selectItem(0);
+
 		deleteButton.requireEnabled();
-		window.list("listWorkers").clearSelection();
+		list.clearSelection();
 		deleteButton.requireDisabled();
 	}
 
