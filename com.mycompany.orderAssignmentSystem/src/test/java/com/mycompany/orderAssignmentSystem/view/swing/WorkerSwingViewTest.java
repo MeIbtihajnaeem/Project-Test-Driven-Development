@@ -35,7 +35,7 @@ import com.mycompany.orderAssignmentSystem.model.Worker;
 public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	private FrameFixture window;
 
-	private NewWorkerSwingView workerSwingView;
+	private WorkerSwingView workerSwingView;
 	@Mock
 	private WorkerController workerController;
 
@@ -46,7 +46,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		closeable = MockitoAnnotations.openMocks(this);
 
 		GuiActionRunner.execute(() -> {
-			workerSwingView = new NewWorkerSwingView();
+			workerSwingView = new WorkerSwingView();
 			workerSwingView.setWorkerController(workerController);
 			return workerSwingView;
 		});

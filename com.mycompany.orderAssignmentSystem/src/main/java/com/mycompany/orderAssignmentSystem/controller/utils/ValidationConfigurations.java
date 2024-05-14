@@ -1,3 +1,6 @@
+/*
+ * ValidationConfigurations: Utility class for input validation.
+ */
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import java.time.LocalDate;
@@ -17,9 +20,21 @@ import com.mycompany.orderAssignmentSystem.controller.WorkerController;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 
+/**
+ * Utility class for validating input fields.
+ */
 public class ValidationConfigurations {
+
+	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LogManager.getLogger(WorkerController.class);
 
+	/**
+	 * Validate name.
+	 *
+	 * @param name the name
+	 * @return the string
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public String validateName(String name) {
 		if (name == null || name == "") {
 			LOGGER.info("The name field cannot be empty.");
@@ -60,6 +75,13 @@ public class ValidationConfigurations {
 		return name;
 	}
 
+	/**
+	 * Validates a numeric string.
+	 * 
+	 * @param str the string to validate
+	 * @return the validated numeric value
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public long validateStringNumber(String str) {
 		if (str == null || str == "") {
 			LOGGER.info("The text cannot be empty.");
@@ -86,6 +108,13 @@ public class ValidationConfigurations {
 
 	}
 
+	/**
+	 * Validates an address.
+	 *
+	 * @param address the address to validate
+	 * @return the validated address
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public String validateAddress(String address) {
 		if (address == null || address == "") {
 			LOGGER.info("The address field cannot be empty.");
@@ -114,6 +143,13 @@ public class ValidationConfigurations {
 		return address;
 	}
 
+	/**
+	 * Validates a description.
+	 *
+	 * @param description the description to validate
+	 * @return the validated description
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public String validateDescription(String description) {
 		if (description == null || description == "") {
 			LOGGER.info("The description field cannot be empty.");
@@ -142,6 +178,13 @@ public class ValidationConfigurations {
 		return description;
 	}
 
+	/**
+	 * Validates a phone number.
+	 *
+	 * @param phoneNumber the phone number to validate
+	 * @return the validated phone number
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public String validatePhoneNumber(String phoneNumber) {
 		if (phoneNumber == null || phoneNumber == "") {
 			LOGGER.info("The phone number field cannot be empty.");
@@ -170,6 +213,13 @@ public class ValidationConfigurations {
 		return phoneNumber;
 	}
 
+	/**
+	 * Validates an ID.
+	 *
+	 * @param id the ID to validate
+	 * @return the validated ID
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public long validateId(Long id) {
 		if (id == null) {
 			LOGGER.info("The id field cannot be empty.");
@@ -184,6 +234,13 @@ public class ValidationConfigurations {
 		return id;
 	}
 
+	/**
+	 * Validates a date.
+	 *
+	 * @param dateTime the date to validate
+	 * @return the validated date
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public LocalDateTime validateDate(LocalDateTime dateTime) {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -203,6 +260,13 @@ public class ValidationConfigurations {
 		return dateTime;
 	}
 
+	/**
+	 * Validates a string date.
+	 *
+	 * @param dateString the string date to validate
+	 * @return the validated date
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public LocalDate validateStringDate(String dateString) {
 
 		String pattern = "dd-MM-yyyy";
@@ -229,6 +293,13 @@ public class ValidationConfigurations {
 
 	}
 
+	/**
+	 * Validates an order category.
+	 *
+	 * @param category the category to validate
+	 * @return the validated category
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public OrderCategory validateCategory(OrderCategory category) {
 		if (category == null) {
 			LOGGER.info("The category field cannot be empty.");
@@ -238,6 +309,13 @@ public class ValidationConfigurations {
 		return category;
 	}
 
+	/**
+	 * Validates an order status.
+	 *
+	 * @param status the status to validate
+	 * @return the validated status
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public OrderStatus validateStatus(OrderStatus status) {
 		if (status == null) {
 			LOGGER.info("The status field cannot be empty.");
@@ -247,6 +325,15 @@ public class ValidationConfigurations {
 		return status;
 	}
 
+	/**
+	 * Validates an enum value.
+	 *
+	 * @param <T>      the generic type of the enum
+	 * @param value    the value to validate
+	 * @param enumType the enum type
+	 * @return the validated enum value
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public <T extends Enum<T>> T validateEnum(String value, Class<T> enumType) {
 		String message = "status";
 		if (enumType == OrderCategory.class) {
@@ -281,6 +368,13 @@ public class ValidationConfigurations {
 		return Enum.valueOf(enumType, value);
 	}
 
+	/**
+	 * Validates a search string.
+	 *
+	 * @param searchString the search string to validate
+	 * @return the validated search string
+	 * @throws IllegalArgumentException if validation fails
+	 */
 	public String validateSearchString(String searchString) {
 		if (searchString == null || searchString == "") {
 			LOGGER.info("The search Text field cannot be empty.");
@@ -302,24 +396,48 @@ public class ValidationConfigurations {
 		return searchString;
 	}
 
+	/**
+	 * Checks if a string contains special characters.
+	 *
+	 * @param str the string to check
+	 * @return true, if the string contains special characters, false otherwise
+	 */
 	private boolean _containsSpecialCharacters(String str) {
 		Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
 	}
 
+	/**
+	 * Checks if a string contains numbers.
+	 *
+	 * @param str the string to check
+	 * @return true, if the string contains numbers, false otherwise
+	 */
 	private boolean _containsNumbers(String str) {
 		Pattern pattern = Pattern.compile("[0-9]");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
 	}
 
+	/**
+	 * Checks if a string contains tabs.
+	 *
+	 * @param str the string to check
+	 * @return true, if the string contains tabs, false otherwise
+	 */
 	private boolean _containsTabs(String str) {
 		Pattern pattern = Pattern.compile("\t");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
 	}
 
+	/**
+	 * Checks if a string contains whitespace.
+	 *
+	 * @param str the string to check
+	 * @return true, if the string contains whitespace, false otherwise
+	 */
 	private boolean _containsWhitespace(String str) {
 		Pattern pattern = Pattern.compile("\\s");
 		Matcher matcher = pattern.matcher(str);
