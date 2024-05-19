@@ -185,7 +185,7 @@ public class OrderControllerTest {
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+//		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getCustomerPhoneNumber()).isEqualTo(customerPhoneNumber);
@@ -245,8 +245,6 @@ public class OrderControllerTest {
 
 		CustomerOrder spyOrder = spy(order);
 
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
 		when(validationConfigurations.validateAddress(customerAddress)).thenReturn(customerAddress);
 
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
@@ -310,9 +308,7 @@ public class OrderControllerTest {
 		order.setAppointmentDate(appointmentDate);
 
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+
 		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getAppointmentDate()).isEqualTo(appointmentDate);
@@ -380,10 +376,7 @@ public class OrderControllerTest {
 		order.setCustomerAddress(address);
 		order.setOrderDescription(description);
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+
 		when(validationConfigurations.validateDescription(description)).thenReturn(description);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getOrderDescription()).isEqualTo(description);
@@ -454,11 +447,6 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
 		when(validationConfigurations.validateCategory(category)).thenReturn(category);
 
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
@@ -535,12 +523,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
-		when(validationConfigurations.validateCategory(category)).thenReturn(category);
+
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
@@ -653,11 +636,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(spyWorker);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+
 		when(validationConfigurations.validateCategory(category)).thenReturn(category);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -720,11 +699,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+
 		when(validationConfigurations.validateCategory(category)).thenReturn(category);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -765,11 +740,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(null);
 
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -806,11 +777,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -847,11 +814,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -890,11 +853,6 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -935,11 +893,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -981,11 +935,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
@@ -998,14 +948,6 @@ public class OrderControllerTest {
 	}
 
 	// Update
-
-//	@Test
-//	public void testUpdateOrderMethodWhenOrderIdIsNull() {
-//		CustomerOrder order = new CustomerOrder();
-//		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
-//		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-//		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
-//	}
 
 	@Test
 	public void testCreateOrderMethodWhenOperationUpdateAndValidateIdThrowsNullPointerException() {
@@ -1090,15 +1032,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
-		when(validationConfigurations.validateCategory(category)).thenReturn(category);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
-		when(workerRepository.findById(workerId)).thenReturn(worker);
+
 		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.UPDATE);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
@@ -1133,15 +1067,6 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
-		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showErrorNotFound("Worker with this ID " + worker.getWorkerId() + " not found",
@@ -1177,16 +1102,6 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
-		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
-		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1211,16 +1126,8 @@ public class OrderControllerTest {
 				actualDescription, orderCategory, status, worker);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
 				appointmentDate, actualDescription, orderCategory, status, worker);
-		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
@@ -1264,18 +1171,9 @@ public class OrderControllerTest {
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
 				appointmentDate, actualDescription, orderCategory, status, savedWorker);
 
-		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-
 		when(orderRepository.save(order)).thenReturn(order);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
@@ -1322,14 +1220,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(orderRepository.save(order)).thenReturn(order);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
@@ -1379,14 +1270,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(orderRepository.save(order)).thenReturn(order);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
@@ -1427,15 +1311,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(orderRepository.save(order)).thenReturn(order);
-
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
-		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
-		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
-		when(validationConfigurations.validateAddress(address)).thenReturn(address);
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
-		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);

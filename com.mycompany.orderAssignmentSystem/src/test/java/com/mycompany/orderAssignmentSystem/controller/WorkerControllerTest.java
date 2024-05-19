@@ -335,10 +335,8 @@ public class WorkerControllerTest {
 		long workerId = 1l;
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
-		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
-		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(differentWorker);
 		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
@@ -356,9 +354,7 @@ public class WorkerControllerTest {
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
-		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
-		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		worker.setOrders(asList(new CustomerOrder()));
 		when(workerRepository.findById(workerId)).thenReturn(worker);
@@ -379,9 +375,7 @@ public class WorkerControllerTest {
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
-		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
-		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(workerRepository.save(worker)).thenReturn(worker);
@@ -403,9 +397,7 @@ public class WorkerControllerTest {
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
-		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
-		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		worker.setOrders(Collections.emptyList());
 		when(workerRepository.findById(workerId)).thenReturn(worker);
@@ -429,9 +421,7 @@ public class WorkerControllerTest {
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 		worker.setOrders(Collections.emptyList());
 		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
-		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
-		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
