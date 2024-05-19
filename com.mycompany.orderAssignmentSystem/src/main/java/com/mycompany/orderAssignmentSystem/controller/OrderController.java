@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -68,70 +69,76 @@ public class OrderController {
 		orderView.showAllOrder(orderRepository.findAll());
 	}
 
+	private void add(CustomerOrder order) {
+		if (order.getOrderId() != null) {
+			throw new IllegalArgumentException("Unable to assign an order ID during order creation.");
+		}
+		if (order.getOrderStatus() != OrderStatus.PENDING) {
+			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
+		}
+		Worker worker = getValidWorker(order);
+		if (worker.getOrders() == null) {
+			order = orderRepository.save(order);
+			orderView.orderAdded(order);
+			LOGGER.info("New order created: {}", order);
+			return;
+		}
+		checkForPendingOrders(worker.getOrders());
+
+		order = orderRepository.save(order);
+		orderView.orderAdded(order);
+		LOGGER.info("New order created: {}", order);
+	}
+
+	private void update(CustomerOrder order) {
+		order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
+
+		Worker worker = getValidWorker(order);
+		CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
+		if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
+			throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
+		}
+		if (worker.getOrders() == null) {
+			order = orderRepository.save(order);
+			orderView.orderModified(order);
+			LOGGER.info("Order Updated: {}", order);
+			return;
+		}
+		checkForPendingOrders(worker.getOrders());
+
+		order = orderRepository.save(order);
+		orderView.orderModified(order);
+		LOGGER.info("Order Updated: {}", order);
+	}
+
 	/**
 	 * Creates a new order.
 	 *
 	 * @param order the order
 	 */
-	public void createNewOrder(CustomerOrder order) {
-		LOGGER.info("Creating a new order");
-
+	public void createOrUpdateOrder(CustomerOrder order, OperationType operation) {
 		try {
-			validateNewOrder(order);
-			Worker worker = getValidWorker(order);
-			if (worker.getOrders() == null) {
-				order = orderRepository.save(order);
-				orderView.orderAdded(order);
-				LOGGER.info("New order created: {}", order);
-				return;
-			}
-			checkForPendingOrders(worker.getOrders());
+			Objects.requireNonNull(operation, "Operation Type is null");
+			Objects.requireNonNull(order, "Order is null");
+			validateOrder(order);
 
-			order = orderRepository.save(order);
-			orderView.orderAdded(order);
-			LOGGER.info("New order created: {}", order);
+			switch (operation) {
+
+			case ADD:
+				LOGGER.info("Creating a new order");
+				add(order);
+				break;
+			case UPDATE:
+				LOGGER.info("Updating an existing order");
+				update(order);
+				break;
+			default:
+				LOGGER.info("This operation is not allowed.");
+				throw new IllegalArgumentException("This operation is not allowed here");
+			}
 
 		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while creating Order: " + e.getMessage());
-			orderView.showError(e.getMessage(), order);
-			return;
-		} catch (NoSuchElementException e) {
-			LOGGER.error("Error Finding: " + e.getMessage());
-			orderView.showErrorNotFound(e.getMessage(), order);
-			return;
-		}
-	}
-
-	/**
-	 * Updates an order.
-	 *
-	 * @param order the order
-	 */
-	public void updateOrder(CustomerOrder order) {
-		LOGGER.info("Updating an order");
-
-		try {
-
-			validateUpdateOrder(order);
-			Worker worker = getValidWorker(order);
-			CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
-			if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
-				throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
-			}
-			if (worker.getOrders() == null) {
-				order = orderRepository.modify(order);
-				orderView.orderModified(order);
-				LOGGER.info("Order Updated: {}", order);
-				return;
-			}
-			checkForPendingOrders(worker.getOrders());
-
-			order = orderRepository.modify(order);
-			orderView.orderModified(order);
-			LOGGER.info("Order Updated: {}", order);
-
-		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while updating Order: " + e.getMessage());
+			LOGGER.error("Error validating while creating or updating Order: " + e.getMessage());
 			orderView.showError(e.getMessage(), order);
 			return;
 		} catch (NoSuchElementException e) {
@@ -233,9 +240,11 @@ public class OrderController {
 			case CATEGORY:
 				orders = searchByCategory(searchText);
 				break;
-			default:
+			case CUSTOMER_NAME:
 				orders = searchByCustomerName(searchText);
 				break;
+			default:
+				throw new IllegalArgumentException("This operation is not allowed");
 			}
 			orderView.showSearchResultForOrder(orders);
 			LOGGER.info("Order searched: {}", orders);
@@ -371,25 +380,8 @@ public class OrderController {
 	 */
 	private Long validateId(String searchText) {
 		Long id = validationConfigurations.validateStringNumber(searchText);
-		id = Long.parseLong(searchText);
 		id = validationConfigurations.validateId(id);
 		return id;
-	}
-
-	/**
-	 * Validates a new order.
-	 *
-	 * @param order the order
-	 */
-	private void validateNewOrder(CustomerOrder order) {
-		Objects.requireNonNull(order, "Order is null");
-		if (order.getOrderId() != null) {
-			throw new IllegalArgumentException("Unable to assign an order ID during order creation.");
-		}
-		validateOrder(order);
-		if (order.getOrderStatus() != OrderStatus.PENDING) {
-			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
-		}
 	}
 
 	/**
@@ -436,17 +428,6 @@ public class OrderController {
 			throw new IllegalArgumentException(
 					"Cannot assign a new order to this worker because they already have a pending order.");
 		}
-	}
-
-	/**
-	 * Validates an update order.
-	 *
-	 * @param order the order
-	 */
-	private void validateUpdateOrder(CustomerOrder order) {
-		Objects.requireNonNull(order, "Order is null");
-		order.setOrderId(validationConfigurations.validateId(order.getOrderId()));
-		validateOrder(order);
 	}
 
 }

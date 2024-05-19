@@ -9,6 +9,10 @@ package com.mycompany.orderAssignmentSystem.enumerations;
 public enum OrderSearchOptions {
 
 	/**
+	 * Search by None.
+	 */
+	None,
+	/**
 	 * Search by order ID.
 	 */
 	ORDER_ID,

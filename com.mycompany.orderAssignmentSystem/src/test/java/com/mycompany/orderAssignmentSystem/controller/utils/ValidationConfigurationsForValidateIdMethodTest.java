@@ -40,4 +40,11 @@ public class ValidationConfigurationsForValidateIdMethodTest {
 		assertThat(validationConfigurations.validateId(1l)).isPositive();
 	}
 
+	@Test
+	public void testIdMethodWithIdEqualsLong() {
+		long number = 1l;
+		assertThat(validationConfigurations.validateId(number)).isEqualTo(number);
+
+	}
+
 }

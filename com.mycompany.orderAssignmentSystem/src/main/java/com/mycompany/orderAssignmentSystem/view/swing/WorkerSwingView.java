@@ -30,6 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.mycompany.orderAssignmentSystem.controller.WorkerController;
+import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
 import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
@@ -204,13 +205,13 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 					worker.setWorkerName(txtWorkerName.getText());
 					worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
 					worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
-					workerController.createNewWorker(worker);
+					workerController.createOrUpdateWorker(worker, OperationType.ADD);
 				} else if (e.getSource() == btnUpdate) {
 					worker.setWorkerId(Long.parseLong(txtWorkerId.getText()));
 					worker.setWorkerName(txtWorkerName.getText());
 					worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
 					worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
-					workerController.updateWorker(worker);
+					workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
 				} else if (e.getSource() == btnFetch) {
 					worker.setWorkerId(Long.parseLong(txtWorkerId.getText()));
 					workerController.fetchWorkerById(worker);

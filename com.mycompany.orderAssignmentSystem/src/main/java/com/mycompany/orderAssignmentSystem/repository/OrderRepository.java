@@ -31,14 +31,6 @@ public interface OrderRepository {
 	public CustomerOrder save(CustomerOrder order);
 
 	/**
-	 * Updates an existing customer order.
-	 *
-	 * @param order the customer order to be modified
-	 * @return the modified customer order
-	 */
-	public CustomerOrder modify(CustomerOrder order);
-
-	/**
 	 * Deletes a customer order from the system.
 	 *
 	 * @param order the customer order to be deleted

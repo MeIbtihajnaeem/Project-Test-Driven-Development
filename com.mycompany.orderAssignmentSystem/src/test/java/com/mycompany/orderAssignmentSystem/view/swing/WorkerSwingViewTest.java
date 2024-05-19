@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.mycompany.orderAssignmentSystem.controller.WorkerController;
+import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
@@ -635,7 +636,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		worker.setWorkerName(name);
 		worker.setWorkerPhoneNumber(phoneNumber);
 		worker.setWorkerCategory(category);
-		verify(workerController).createNewWorker(worker);
+		verify(workerController).createOrUpdateWorker(worker, OperationType.ADD);
 	}
 
 	/**
@@ -666,7 +667,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 		Worker updatedWorker = new Worker(workerId, updatedName, phoneNumber, category);
-		verify(workerController).updateWorker(updatedWorker);
+		verify(workerController).createOrUpdateWorker(updatedWorker, OperationType.UPDATE);
 	}
 
 	/**

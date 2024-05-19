@@ -47,9 +47,16 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	@Test
+	public void testAddressMethodWithLargeStringEqualsToElevenCharachters() {
+		String address = "1234 Main S";
+
+		assertEquals(address, validationConfigurations.validateAddress(address));
+	}
+
+	@Test
 	public void testAddressMethodWithLargeStringGreaterThanFiftyCharachters() {
 		assertThatThrownBy(() -> {
-			String address = "123 Main Street Near Bakary, Apt 101, Springfield, USA 12345";
+			String address = "123 Main Street Near Bakary, Apt 10, Springfield, 1";
 			validationConfigurations.validateAddress(address);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The Address cannot exceed 50 characters. Please provide a shorter Address.");

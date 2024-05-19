@@ -2,6 +2,11 @@ package com.mycompany.orderAssignmentSystem.controller;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -23,6 +28,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -84,211 +90,85 @@ public class OrderControllerTest {
 		verify(orderView).showAllOrder(null);
 	}
 
-// Tests for create order method
+	// Tests for create order method
+	@Test
+	public void testCreateOrderMethodWhenNullOperationType() {
+		orderController.createOrUpdateOrder(null, null);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("Operation Type is null", null);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
 	@Test
 	public void testCreateOrderMethodWhenNullCustomerOrder() {
-
-		orderController.createNewOrder(null);
+		orderController.createOrUpdateOrder(null, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("Order is null", null);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerOrderIdIsNotNull() {
-		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(1l);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Unable to assign an order ID during order creation.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameIsEmpty() {
+	public void testCreateOrderMethodWhenValidateNameThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		order.setCustomerName("");
-		orderController.createNewOrder(order);
+		doThrow(new NullPointerException("The name field cannot be empty.")).when(validationConfigurations)
+				.validateName(anyString());
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The name field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerOrderIsShortStringLessThanTwoCharachters() {
+	public void testCreateOrderMethodWhenValidateNameThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("a");
-		orderController.createNewOrder(order);
+		order.setCustomerName("Muhammad@Ibtihaj");
+		doThrow(new IllegalArgumentException("The name field cannot contain Special characters."))
+				.when(validationConfigurations).validateName(anyString());
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name must be at least 3 characters long. Please provide a valid name.",
-				order);
+		inOrder.verify(orderView).showError("The name field cannot contain Special characters.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerNameIsShortStringEqualsToTwoCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("ab");
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name must be at least 3 characters long. Please provide a valid name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameIsLargeStringEqualsToTwentyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj Naeem");
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot exceed 20 characters. Please provide a shorter name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameIsLargeStringGreaterThanTwentyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj Naeem");
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot exceed 20 characters. Please provide a shorter name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateNewOrderMethodWhenCustomerNameIsLargeStringEqualsToTwentyCharachters() {
+	public void testCreateNewOrderMethodWhenValidateNameReturnsValidName() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj Nae";
 		order.setCustomerName(customerName);
 		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getCustomerName()).isEqualTo(customerName);
 		verify(spyOrder).setCustomerName(customerName);
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerNameWithSpecialCharacters() {
+	public void testCreateOrderMethodWhenValidatePhoneNumberThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad@Ibtihaj");
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The name cannot contain special characters. Please remove any special characters from the name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameWithNumbers() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad1Ibtihaj");
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot contain numbers. Please remove any number from the name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameWithTabs() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad\tIbtihaj");
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot contain tabs. Please remove any tabs from the name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameWithOneLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String actualCustomerName = " MuhammadIbtihaj";
-		String expectedCustomerName = "MuhammadIbtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameWithTwoLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String actualCustomerName = "  MuhammadIbtihaj";
-		String expectedCustomerName = "MuhammadIbtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameWithOneMiddleWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String actualCustomerName = "Muhammad Ibtihaj";
-		String expectedCustomerName = "Muhammad Ibtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerNameWithOneEndingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String actualCustomerName = "Muhammad Ibtihaj ";
-		String expectedCustomerName = "Muhammad Ibtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The phone number field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsEmpty() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
+		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "";
 		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
+		order.setCustomerName(customerName);
+		doThrow(new NullPointerException("The phone number field cannot be empty.")).when(validationConfigurations)
+				.validatePhoneNumber(anyString());
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The phone number field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsShortStringLessThanTenCharachters() {
+	public void testCreateOrderMethodWhenValidatePhoneNumberThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
+		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "000000";
 		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
+		order.setCustomerName(customerName);
+		doThrow(new IllegalArgumentException(
+				"The phone number must be 10 characters long. Please provide a valid phone number."))
+				.when(validationConfigurations).validatePhoneNumber(anyString());
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView)
 				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", order);
@@ -296,144 +176,24 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsLongStringGreaterThanTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "00000000000";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateNewOrderMethodWhenCustomerPhoneNumberIsLongStringEqualsTenCharachters() {
+	public void testCreateNewOrderMethodWhenValidatePhoneNumberReturnsValidPhoneNumber() {
 		CustomerOrder order = new CustomerOrder();
 
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
-
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
+
 		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getCustomerPhoneNumber()).isEqualTo(customerPhoneNumber);
 		verify(spyOrder).setCustomerPhoneNumber(customerPhoneNumber);
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsWithSpecialCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372@78";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsWithAlphabetCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372a78";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsWithMiddleWhiteSpaceCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372 78";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsWithLeadingWhiteSpaceCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = " 340137278";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsWithEndingWhiteSpaceCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "340137278 ";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberIsWithTabsCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "340137\t278";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerPhoneNumberWithLeadingNumberExceptThree() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "4340137278";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The phone number must start with 3. Please provide a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372678";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The address field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsEmpty() {
+	public void testCreateOrderMethodWhenValidateAddressThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -442,23 +202,30 @@ public class OrderControllerTest {
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setCustomerAddress(customerAddress);
-		orderController.createNewOrder(order);
+		doThrow(new NullPointerException("The address field cannot be empty.")).when(validationConfigurations)
+				.validateAddress(anyString());
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The address field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsWithShortStringLessThanTenCharachters() {
+	public void testCreateOrderMethodWhenValidateAddressThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
-		String customerAddress = "42 Will";
+		String customerAddress = "";
 
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setCustomerAddress(customerAddress);
-		orderController.createNewOrder(order);
+		doThrow(new IllegalArgumentException(
+				"The Address must be at least 10 characters long. Please provide a valid Address."))
+				.when(validationConfigurations).validateAddress(anyString());
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView)
 				.showError("The Address must be at least 10 characters long. Please provide a valid Address.", order);
@@ -466,41 +233,7 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsShortStringEqualsToTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "42 Willowa";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The Address must be at least 10 characters long. Please provide a valid Address.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsLargeStringGreaterThanFiftyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street Near Bakary, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The Address cannot exceed 50 characters. Please provide a shorter Address.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsWithLargeStringEqualsToFiftyCharachters() {
+	public void testCreateOrderMethodWhenValidateAddressReturnsValidAddress() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -511,117 +244,18 @@ public class OrderControllerTest {
 		order.setCustomerAddress(customerAddress);
 
 		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
+
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(customerAddress)).thenReturn(customerAddress);
+
+		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getCustomerAddress()).isEqualTo(customerAddress);
 		verify(spyOrder).setCustomerAddress(customerAddress);
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsWithTabs() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "1234 Main Street\t Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The address cannot contain tabs. Please remove any tabs from the address.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsWithOneLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String actualAddress = " 123 Main Street , Apt 101, Springfield, USA 12345";
-		String expectedAddress = "123 Main Street , Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(actualAddress);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(expectedAddress);
-		verify(spyOrder).setCustomerAddress(expectedAddress);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsWithTwoLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String actualAddress = "  123 Main Street, Apt 101, Springfield, USA 12345";
-		String expectedAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(actualAddress);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(expectedAddress);
-		verify(spyOrder).setCustomerAddress(expectedAddress);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsWithOneMiddleWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "1234 Main Street , Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(address);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(address);
-		verify(spyOrder).setCustomerAddress(address);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerAddressIsWithOneEndingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String actualAddress = "123 Main Street, Apt 101, Springfield, USA 12345 ";
-		String expectedAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(actualAddress);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(expectedAddress);
-		verify(spyOrder).setCustomerAddress(expectedAddress);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenAppointmentDateIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The Date field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenAppointmentDateAsPreviousTwoDaysDate() {
+	public void testCreateOrderMethodWhenValidateDateThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -632,32 +266,38 @@ public class OrderControllerTest {
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setCustomerAddress(customerAddress);
 		order.setAppointmentDate(appointmentDate);
-		orderController.createNewOrder(order);
+		doThrow(new NullPointerException("Date field cannot be empty.")).when(validationConfigurations)
+				.validateDate(any(LocalDateTime.class));
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Please provide a valid date that is not before today's date.", order);
+		inOrder.verify(orderView).showError("Date field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenAppointmentDateAsPreviousOneDaysDate() {
+	public void testCreateOrderMethodWhenValidateDateThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().minusDays(1);
+		LocalDateTime appointmentDate = LocalDateTime.now().minusDays(2);
 
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setCustomerAddress(customerAddress);
 		order.setAppointmentDate(appointmentDate);
-		orderController.createNewOrder(order);
+		doThrow(new IllegalArgumentException("Please provide a valid date that is not before today's date."))
+				.when(validationConfigurations).validateDate(any(LocalDateTime.class));
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("Please provide a valid date that is not before today's date.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerDateIsWithCurrentDate() {
+	public void testCreateOrderMethodWhenValidateDateReturnsValidDate() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -670,70 +310,17 @@ public class OrderControllerTest {
 		order.setAppointmentDate(appointmentDate);
 
 		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getAppointmentDate()).isEqualTo(appointmentDate);
 		verify(spyOrder).setAppointmentDate(appointmentDate);
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerDateIsEqualToAfterSixMonthDate() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().plusMonths(6);
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(address);
-		order.setAppointmentDate(appointmentDate);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getAppointmentDate()).isEqualTo(appointmentDate);
-		verify(spyOrder).setAppointmentDate(appointmentDate);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenAppointmentDateAsAfterSevenMonthDate() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().plusMonths(7);
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		order.setAppointmentDate(appointmentDate);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Please provide a valid date that is not 6 months after today's date.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The description field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsEmpty() {
+	public void testCreateOrderMethodWhenValidateDescriptionThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -745,26 +332,34 @@ public class OrderControllerTest {
 		order.setAppointmentDate(appointmentDate);
 		order.setCustomerAddress(address);
 		order.setOrderDescription(description);
-		orderController.createNewOrder(order);
+
+		doThrow(new NullPointerException("The description field cannot be empty.")).when(validationConfigurations)
+				.validateDescription(anyString());
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The description field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsWithShortStringLessThanTenCharachters() {
+	public void testCreateOrderMethodWhenValidateDescriptionThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
 		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "repair";
+		String description = "";
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setAppointmentDate(appointmentDate);
 		order.setCustomerAddress(address);
 		order.setOrderDescription(description);
-		orderController.createNewOrder(order);
+		doThrow(new IllegalArgumentException(
+				"The description must be at least 10 characters long. Please provide a valid description."))
+				.when(validationConfigurations).validateDescription(anyString());
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError(
 				"The description must be at least 10 characters long. Please provide a valid description.", order);
@@ -772,48 +367,7 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsShortStringEqualsToTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "change pip";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		orderController.createNewOrder(order);
-
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The description must be at least 10 characters long. Please provide a valid description.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsLargeStringGreaterThanFiftyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "Please ensure the pipes are tightly sealed and all connections are leak-proof. Thank you!";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The description cannot exceed 50 characters. Please provide a shorter description.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsWithLargeStringEqualsToFiftyCharachters() {
+	public void testCreateOrderMethodWhenValidateDescriptionReturnsValidDescription() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -825,138 +379,66 @@ public class OrderControllerTest {
 		order.setAppointmentDate(appointmentDate);
 		order.setCustomerAddress(address);
 		order.setOrderDescription(description);
-
 		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(description)).thenReturn(description);
+		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getOrderDescription()).isEqualTo(description);
 		verify(spyOrder).setOrderDescription(description);
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsWithTabs() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "Please ensure all connection \t are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The description cannot contain tabs. Please remove any tabs from the description.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsWithOneLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = " Please ensure all connection are leak-proof.";
-		String expectedDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(expectedDescription);
-		verify(spyOrder).setOrderDescription(expectedDescription);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsWithTwoLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "  Please ensure all connection are leak-proof.";
-		String expectedDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(expectedDescription);
-		verify(spyOrder).setOrderDescription(expectedDescription);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsWithOneMiddleWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(actualDescription);
-		verify(spyOrder).setOrderDescription(actualDescription);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerDescriptionIsWithOneEndingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof. ";
-		String expectedDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(expectedDescription);
-		verify(spyOrder).setOrderDescription(expectedDescription);
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenCustomerCategoryIsNull() {
+	public void testCreateOrderMethodWhenValidateCategoryThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
 		LocalDateTime appointmentDate = LocalDateTime.now();
 		String description = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setAppointmentDate(appointmentDate);
 		order.setCustomerAddress(address);
 		order.setOrderDescription(description);
-		orderController.createNewOrder(order);
+		order.setOrderCategory(category);
+		doThrow(new NullPointerException("The category field cannot be empty.")).when(validationConfigurations)
+				.validateCategory(any(OrderCategory.class));
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The category field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerCategoryIsNotNull() {
+	public void testCreateOrderMethodWhenValidateCategoryThrowsIllegalArgumentException() {
+		CustomerOrder order = new CustomerOrder();
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String description = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
+		order.setCustomerName(customerName);
+		order.setCustomerPhoneNumber(customerPhoneNumber);
+		order.setAppointmentDate(appointmentDate);
+		order.setCustomerAddress(address);
+		order.setOrderDescription(description);
+		order.setOrderCategory(category);
+		doThrow(new IllegalArgumentException("The category field does not match.")).when(validationConfigurations)
+				.validateCategory(any(OrderCategory.class));
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The category field does not match.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testCreateOrderMethodWhenValidateCategoryReturnsValidCategory() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -972,13 +454,20 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 
 		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(category)).thenReturn(category);
+
+		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getOrderCategory()).isEqualTo(category);
 		verify(spyOrder).setOrderCategory(category);
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerStatusIsNull() {
+	public void testCreateOrderMethodWhenValidateStatusThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -993,15 +482,41 @@ public class OrderControllerTest {
 		order.setCustomerAddress(address);
 		order.setOrderDescription(description);
 		order.setOrderCategory(category);
-
-		orderController.createNewOrder(order);
+		doThrow(new NullPointerException("The status field cannot be empty.")).when(validationConfigurations)
+				.validateStatus(any());
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The status field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenCustomerStatusIsNotNull() {
+	public void testCreateOrderMethodWhenValidateStatusThrowsIllegalArgumentException() {
+		CustomerOrder order = new CustomerOrder();
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String description = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
+
+		order.setCustomerName(customerName);
+		order.setCustomerPhoneNumber(customerPhoneNumber);
+		order.setAppointmentDate(appointmentDate);
+		order.setCustomerAddress(address);
+		order.setOrderDescription(description);
+		order.setOrderCategory(category);
+		order.setOrderStatus(OrderStatus.PENDING);
+		doThrow(new IllegalArgumentException("The status field does not match.")).when(validationConfigurations)
+				.validateStatus(any(OrderStatus.class));
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("The status field does not match.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testCreateOrderMethodWhenValidateStatusReturnsValidStatus() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -1020,7 +535,15 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 
 		CustomerOrder spyOrder = spy(order);
-		orderController.createNewOrder(spyOrder);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(category)).thenReturn(category);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+
+		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getOrderStatus()).isEqualTo(status);
 		verify(spyOrder).setOrderStatus(status);
 	}
@@ -1044,14 +567,14 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 
-		orderController.createNewOrder(order);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The worker field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenWorkerIdIsNull() {
+	public void testCreateOrderMethodWhenValidateIdThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -1069,15 +592,16 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-
-		orderController.createNewOrder(order);
+		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
+				.validateId(any());
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenWorkerIdIsZero() {
+	public void testCreateOrderMethodWhenValidateIdThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -1087,7 +611,8 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		worker.setWorkerId(0l);
+		long workerId = 0l;
+		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setAppointmentDate(appointmentDate);
@@ -1096,15 +621,16 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-
-		orderController.createNewOrder(order);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenWorkerIdIsNegativeNumber() {
+	public void testCreateOrderMethodWhenValidateIdReturnsValidWorkerId() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -1114,34 +640,8 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		worker.setWorkerId(-1l);
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-		order.setOrderStatus(status);
-		order.setWorker(worker);
-
-		orderController.createNewOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testCreateOrderMethodWhenWorkerIdIsPositiveNumber() {
-		CustomerOrder order = new CustomerOrder();
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		OrderStatus status = OrderStatus.PENDING;
-		Worker worker = new Worker();
-		worker.setWorkerId(1l);
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
 
 		Worker spyWorker = spy(worker);
 		order.setCustomerName(customerName);
@@ -1152,11 +652,48 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(spyWorker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(category)).thenReturn(category);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
-		orderController.createNewOrder(order);
-		assertThat(spyWorker.getWorkerId()).isEqualTo(1l);
-		verify(spyWorker).setWorkerId(1l);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
+		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
+		verify(spyWorker).setWorkerId(workerId);
 
+	}
+
+	@Test
+	public void testCreateOrderMethodWhenCustomerOrderIdIsNotNullForOperationAdd() {
+		CustomerOrder order = new CustomerOrder();
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String actualDescription = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
+		OrderStatus status = OrderStatus.PENDING;
+		Worker worker = new Worker();
+		long orderId = 1l;
+		long workerId = orderId;
+		worker.setWorkerId(workerId);
+		order.setOrderId(orderId);
+		order.setCustomerName(customerName);
+		order.setCustomerPhoneNumber(customerPhoneNumber);
+		order.setAppointmentDate(appointmentDate);
+		order.setCustomerAddress(address);
+		order.setOrderDescription(actualDescription);
+		order.setOrderCategory(category);
+		order.setOrderStatus(status);
+		order.setWorker(worker);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("Unable to assign an order ID during order creation.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
@@ -1181,9 +718,19 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
+
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(category)).thenReturn(category);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 
-		orderController.createNewOrder(order);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The order status should be initiated with 'pending' status.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
@@ -1216,7 +763,17 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
-		orderController.createNewOrder(order);
+
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showErrorNotFound("Worker with this ID " + worker.getWorkerId() + " not found",
 				order);
@@ -1248,9 +805,17 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		orderController.createNewOrder(order);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("Order and worker categories must align", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
@@ -1281,10 +846,18 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
-		orderController.createNewOrder(order);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
 		inOrder.verify(orderView).orderAdded(order);
@@ -1316,10 +889,18 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
-		orderController.createNewOrder(order);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
 		inOrder.verify(orderView).orderAdded(order);
@@ -1353,10 +934,18 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
-		orderController.createNewOrder(order);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError(
 				"Cannot assign a new order to this worker because they already have a pending order.", order);
@@ -1391,1240 +980,130 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
-		orderController.createNewOrder(order);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
 		inOrder.verify(orderView).orderAdded(order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
-	// tests for method update order
-	@Test
-	public void testUpdateOrderMethodWhenNullCustomerOrder() {
-		orderController.updateOrder(null);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Order is null", null);
-	}
+	// Update
+
+//	@Test
+//	public void testUpdateOrderMethodWhenOrderIdIsNull() {
+//		CustomerOrder order = new CustomerOrder();
+//		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
+//		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+//		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
+//	}
 
 	@Test
-	public void testUpdateOrderMethodWhenOrderIdIsNull() {
+	public void testCreateOrderMethodWhenOperationUpdateAndValidateIdThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
-		orderController.updateOrder(order);
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String actualDescription = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
+		OrderStatus status = OrderStatus.PENDING;
+		Worker worker = new Worker();
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
+		order.setCustomerName(customerName);
+		order.setCustomerPhoneNumber(customerPhoneNumber);
+		order.setAppointmentDate(appointmentDate);
+		order.setCustomerAddress(address);
+		order.setOrderDescription(actualDescription);
+		order.setOrderCategory(category);
+		order.setOrderStatus(status);
+		order.setWorker(worker);
+		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
+				.validateId(any());
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testUpdateOrderMethodWhenOrderIdIsZero() {
+	public void testCreateOrderMethodWhenOperationUpdateAndValidateIdThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String actualDescription = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
+		OrderStatus status = OrderStatus.PENDING;
+		Worker worker = new Worker();
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
+		order.setCustomerName(customerName);
+		order.setCustomerPhoneNumber(customerPhoneNumber);
+		order.setAppointmentDate(appointmentDate);
+		order.setCustomerAddress(address);
+		order.setOrderDescription(actualDescription);
+		order.setOrderCategory(category);
+		order.setOrderStatus(status);
+		order.setWorker(worker);
 		order.setOrderId(0l);
-		orderController.updateOrder(order);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void testUpdateOrderMethodWhenOrderIdIsLessThanZero() {
+	public void testUpdateOrderMethodWhenValidateIdReturnsValidIdForOperationUpdate() {
 		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(-1l);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenOrderIdIsGreaterThanZero() {
-		CustomerOrder order = new CustomerOrder();
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String actualDescription = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
+		OrderStatus status = OrderStatus.PENDING;
+		Worker worker = new Worker();
 		long orderId = 1l;
+		long workerId = 2l;
+		worker.setWorkerId(workerId);
+		order.setCustomerName(customerName);
+		order.setCustomerPhoneNumber(customerPhoneNumber);
+		order.setAppointmentDate(appointmentDate);
+		order.setCustomerAddress(address);
+		order.setOrderDescription(actualDescription);
+		order.setOrderCategory(category);
+		order.setOrderStatus(status);
+		order.setWorker(worker);
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(category)).thenReturn(category);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(spyOrder, OperationType.UPDATE);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
-		;
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameIsEmpty() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerOrderIsShortStringLessThanTwoCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("a");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name must be at least 3 characters long. Please provide a valid name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameIsShortStringEqualsToTwoCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("ab");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name must be at least 3 characters long. Please provide a valid name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameIsLargeStringEqualsToTwentyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj Naeem");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot exceed 20 characters. Please provide a shorter name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameIsLargeStringGreaterThanTwentyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj Naeem");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot exceed 20 characters. Please provide a shorter name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateNewOrderMethodWhenCustomerNameIsLargeStringEqualsToTwentyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj Nae";
-		order.setCustomerName(customerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(customerName);
-		verify(spyOrder).setCustomerName(customerName);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameWithSpecialCharacters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad@Ibtihaj");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The name cannot contain special characters. Please remove any special characters from the name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameWithNumbers() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad1Ibtihaj");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot contain numbers. Please remove any number from the name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameWithTabs() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad\tIbtihaj");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The name cannot contain tabs. Please remove any tabs from the name.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameWithOneLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String actualCustomerName = " MuhammadIbtihaj";
-		String expectedCustomerName = "MuhammadIbtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameWithTwoLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String actualCustomerName = "  MuhammadIbtihaj";
-		String expectedCustomerName = "MuhammadIbtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameWithOneMiddleWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String actualCustomerName = "Muhammad Ibtihaj";
-		String expectedCustomerName = "Muhammad Ibtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerNameWithOneEndingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String actualCustomerName = "Muhammad Ibtihaj ";
-		String expectedCustomerName = "Muhammad Ibtihaj";
-		order.setCustomerName(actualCustomerName);
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerName()).isEqualTo(expectedCustomerName);
-		verify(spyOrder).setCustomerName(expectedCustomerName);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The phone number field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsEmpty() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The phone number field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsShortStringLessThanTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "000000";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsLongStringGreaterThanTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "00000000000";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateNewOrderMethodWhenCustomerPhoneNumberIsLongStringEqualsTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerPhoneNumber()).isEqualTo(customerPhoneNumber);
-		verify(spyOrder).setCustomerPhoneNumber(customerPhoneNumber);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsWithSpecialCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372@78";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsWithAlphabetCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372a78";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsWithMiddleWhiteSpaceCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372 78";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsWithLeadingWhiteSpaceCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = " 340137278";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsWithEndingWhiteSpaceCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "340137278 ";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberIsWithTabsCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "340137\t278";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerPhoneNumberWithLeadingNumberExceptThree() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "4340137278";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The phone number must start with 3. Please provide a valid phone number.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		order.setCustomerName("Muhammad Ibtihaj");
-		String customerPhoneNumber = "3401372678";
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The address field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsEmpty() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The address field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsWithShortStringLessThanTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "42 Will";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The Address must be at least 10 characters long. Please provide a valid Address.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsShortStringEqualsToTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "42 Willowa";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The Address must be at least 10 characters long. Please provide a valid Address.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsLargeStringGreaterThanFiftyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street Near Bakary, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The Address cannot exceed 50 characters. Please provide a shorter Address.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsWithLargeStringEqualsToFiftyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "1234 Main Street , Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(customerAddress);
-		verify(spyOrder).setCustomerAddress(customerAddress);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsWithTabs() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "1234 Main Street\t Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The address cannot contain tabs. Please remove any tabs from the address.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsWithOneLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String actualAddress = " 123 Main Street , Apt 101, Springfield, USA 12345";
-		String expectedAddress = "123 Main Street , Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(actualAddress);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(expectedAddress);
-		verify(spyOrder).setCustomerAddress(expectedAddress);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsWithTwoLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String actualAddress = "  123 Main Street, Apt 101, Springfield, USA 12345";
-		String expectedAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(actualAddress);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(expectedAddress);
-		verify(spyOrder).setCustomerAddress(expectedAddress);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsWithOneMiddleWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "1234 Main Street , Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(address);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(address);
-		verify(spyOrder).setCustomerAddress(address);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerAddressIsWithOneEndingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String actualAddress = "123 Main Street, Apt 101, Springfield, USA 12345 ";
-		String expectedAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(actualAddress);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getCustomerAddress()).isEqualTo(expectedAddress);
-		verify(spyOrder).setCustomerAddress(expectedAddress);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenAppointmentDateIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The Date field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenAppointmentDateAsPreviousTwoDaysDate() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().minusDays(2);
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		order.setAppointmentDate(appointmentDate);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Please provide a valid date that is not before today's date.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenAppointmentDateAsPreviousOneDaysDate() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().minusDays(1);
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		order.setAppointmentDate(appointmentDate);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Please provide a valid date that is not before today's date.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDateIsWithCurrentDate() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(address);
-		order.setAppointmentDate(appointmentDate);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getAppointmentDate()).isEqualTo(appointmentDate);
-		verify(spyOrder).setAppointmentDate(appointmentDate);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDateIsEqualToAfterSixMonthDate() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().plusMonths(6);
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(address);
-		order.setAppointmentDate(appointmentDate);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getAppointmentDate()).isEqualTo(appointmentDate);
-		verify(spyOrder).setAppointmentDate(appointmentDate);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenAppointmentDateAsAfterSevenMonthDate() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().plusMonths(7);
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setCustomerAddress(customerAddress);
-		order.setAppointmentDate(appointmentDate);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("Please provide a valid date that is not 6 months after today's date.",
-				order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The description field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsEmpty() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The description field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsWithShortStringLessThanTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "repair";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The description must be at least 10 characters long. Please provide a valid description.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsShortStringEqualsToTenCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "change pip";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		orderController.updateOrder(order);
-
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError(
-				"The description must be at least 10 characters long. Please provide a valid description.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsLargeStringGreaterThanFiftyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "Please ensure the pipes are tightly sealed and all connections are leak-proof. Thank you!";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The description cannot exceed 50 characters. Please provide a shorter description.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsWithLargeStringEqualsToFiftyCharachters() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "Please ensure all connection are leak-proof.Thanks";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(description);
-		verify(spyOrder).setOrderDescription(description);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsWithTabs() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "Please ensure all connection \t are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showError("The description cannot contain tabs. Please remove any tabs from the description.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsWithOneLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = " Please ensure all connection are leak-proof.";
-		String expectedDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(expectedDescription);
-		verify(spyOrder).setOrderDescription(expectedDescription);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsWithTwoLeadingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "  Please ensure all connection are leak-proof.";
-		String expectedDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(expectedDescription);
-		verify(spyOrder).setOrderDescription(expectedDescription);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsWithOneMiddleWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(actualDescription);
-		verify(spyOrder).setOrderDescription(actualDescription);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerDescriptionIsWithOneEndingWhiteSpace() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof. ";
-		String expectedDescription = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getOrderDescription()).isEqualTo(expectedDescription);
-		verify(spyOrder).setOrderDescription(expectedDescription);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerCategoryIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "Please ensure all connection are leak-proof.";
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The category field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerCategoryIsNotNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getOrderCategory()).isEqualTo(category);
-		verify(spyOrder).setOrderCategory(category);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerStatusIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String description = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(description);
-		order.setOrderCategory(category);
-
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The status field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenCustomerStatusIsNotNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		OrderStatus status = OrderStatus.PENDING;
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-		order.setOrderStatus(status);
-
-		CustomerOrder spyOrder = spy(order);
-		orderController.updateOrder(spyOrder);
-		assertThat(spyOrder.getOrderStatus()).isEqualTo(status);
-		verify(spyOrder).setOrderStatus(status);
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenWorkerIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		OrderStatus status = OrderStatus.PENDING;
-
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-		order.setOrderStatus(status);
-
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The worker field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenWorkerIdIsNull() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		OrderStatus status = OrderStatus.PENDING;
-		Worker worker = new Worker();
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-		order.setOrderStatus(status);
-		order.setWorker(worker);
-
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenWorkerIdIsZero() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		OrderStatus status = OrderStatus.PENDING;
-		Worker worker = new Worker();
-		worker.setWorkerId(0l);
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-		order.setOrderStatus(status);
-		order.setWorker(worker);
-
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenWorkerIdIsNegativeNumber() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		OrderStatus status = OrderStatus.PENDING;
-		Worker worker = new Worker();
-		worker.setWorkerId(-1l);
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-		order.setOrderStatus(status);
-		order.setWorker(worker);
-
-		orderController.updateOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testUpdateOrderMethodWhenWorkerIdIsPositiveNumber() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
-		String customerName = "Muhammad Ibtihaj";
-		String customerPhoneNumber = "3401372678";
-		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
-		String actualDescription = "Please ensure all connection are leak-proof.";
-		OrderCategory category = OrderCategory.PLUMBER;
-		OrderStatus status = OrderStatus.PENDING;
-		Worker worker = new Worker();
-		worker.setWorkerId(1l);
-
-		Worker spyWorker = spy(worker);
-		order.setCustomerName(customerName);
-		order.setCustomerPhoneNumber(customerPhoneNumber);
-		order.setAppointmentDate(appointmentDate);
-		order.setCustomerAddress(address);
-		order.setOrderDescription(actualDescription);
-		order.setOrderCategory(category);
-		order.setOrderStatus(status);
-		order.setWorker(spyWorker);
-
-		orderController.updateOrder(order);
-		assertThat(spyWorker.getWorkerId()).isEqualTo(1l);
-		verify(spyWorker).setWorkerId(1l);
-
 	}
 
 	@Test
@@ -2655,7 +1134,17 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
-		orderController.updateOrder(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showErrorNotFound("Worker with this ID " + worker.getWorkerId() + " not found",
 				order);
@@ -2690,7 +1179,19 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		orderController.updateOrder(order);
+
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("Order and worker categories must align", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
@@ -2715,7 +1216,19 @@ public class OrderControllerTest {
 				appointmentDate, actualDescription, orderCategory, status, worker);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-		orderController.updateOrder(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
+
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("Cannot update order because it is assigned to the same worker.", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
@@ -2758,10 +1271,21 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 
-		when(orderRepository.modify(order)).thenReturn(order);
-		orderController.updateOrder(order);
+		when(orderRepository.save(order)).thenReturn(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderRepository).modify(order);
+		inOrder.verify(orderRepository).save(order);
 		inOrder.verify(orderView).orderModified(order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
@@ -2802,10 +1326,21 @@ public class OrderControllerTest {
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-		when(orderRepository.modify(order)).thenReturn(order);
-		orderController.updateOrder(order);
+		when(orderRepository.save(order)).thenReturn(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderRepository).modify(order);
+		inOrder.verify(orderRepository).save(order);
 		inOrder.verify(orderView).orderModified(order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
@@ -2849,8 +1384,19 @@ public class OrderControllerTest {
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-		when(orderRepository.modify(order)).thenReturn(order);
-		orderController.updateOrder(order);
+		when(orderRepository.save(order)).thenReturn(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError(
 				"Cannot assign a new order to this worker because they already have a pending order.", order);
@@ -2887,12 +1433,52 @@ public class OrderControllerTest {
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-		when(orderRepository.modify(order)).thenReturn(order);
+		when(orderRepository.save(order)).thenReturn(order);
 
-		orderController.updateOrder(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
+		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
+		when(validationConfigurations.validateAddress(address)).thenReturn(address);
+		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateDescription(actualDescription)).thenReturn(actualDescription);
+		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
+		when(validationConfigurations.validateStatus(status)).thenReturn(status);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderRepository).modify(order);
+		inOrder.verify(orderRepository).save(order);
 		inOrder.verify(orderView).orderModified(order);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void testCreateOrUpdateOrderMethodWhenOperationTypeNone() {
+		CustomerOrder order = new CustomerOrder();
+		String customerName = "Muhammad Ibtihaj";
+		String customerPhoneNumber = "3401372678";
+		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
+		LocalDateTime appointmentDate = LocalDateTime.now();
+		String actualDescription = "Please ensure all connection are leak-proof.";
+		OrderCategory category = OrderCategory.PLUMBER;
+		OrderStatus status = OrderStatus.PENDING;
+		Worker worker = new Worker();
+		long orderId = 1l;
+		long workerId = orderId;
+		worker.setWorkerId(workerId);
+		order.setOrderId(orderId);
+		order.setCustomerName(customerName);
+		order.setCustomerPhoneNumber(customerPhoneNumber);
+		order.setAppointmentDate(appointmentDate);
+		order.setCustomerAddress(address);
+		order.setOrderDescription(actualDescription);
+		order.setOrderCategory(category);
+		order.setOrderStatus(status);
+		order.setWorker(worker);
+		orderController.createOrUpdateOrder(order, OperationType.NONE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showError("This operation is not allowed here", order);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -2907,8 +1493,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testFetchOrderByIdMethodWhenOrderIdIsNull() {
+	public void testFetchOrderByIdMethodWhenValidateIdThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
+
+		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
+				.validateId(any());
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
@@ -2916,10 +1505,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testFetchOrderByIdMethodWhenOrderIdIsZero() {
+	public void testFetchOrderByIdMethodWhenValidateIdThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 0l;
-		order.setOrderId(orderId);
+		order.setOrderId(0l);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
@@ -2927,23 +1517,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testFetchOrderByIdMethodWhenOrderIdIsLessThenZero() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = -1l;
-		order.setOrderId(orderId);
-		orderController.fetchOrderById(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZero() {
+	public void testFetchOrderByIdMethodWhenValidateIdReturnsValidId() {
 		CustomerOrder order = new CustomerOrder();
 		long orderId = 1l;
 		order.setOrderId(orderId);
-		orderController.fetchOrderById(order);
 		CustomerOrder spyOrder = spy(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.fetchOrderById(spyOrder);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -2955,6 +1534,8 @@ public class OrderControllerTest {
 		long orderId = 1l;
 		order.setOrderId(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(null);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showErrorNotFound("Order with ID " + order.getOrderId() + " not found.", order);
@@ -2982,12 +1563,15 @@ public class OrderControllerTest {
 
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
 				appointmentDate, actualDescription, orderCategory, status, worker);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showFetchedOrder(savedOrder);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
+
 	// Tests for delete order
 
 	@Test
@@ -3000,8 +1584,10 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testDeleteOrderMethodWhenNullCustomerOrderIdIsNull() {
+	public void testDeleteOrderMethodWhenValidateIdThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
+		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
+				.validateId(any());
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
@@ -3009,10 +1595,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testDeleteOrderMethodWhenNullCustomerOrderIdIsZero() {
+	public void testDeleteOrderMethodWhenValidateIdThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 0l;
-		order.setOrderId(orderId);
+		order.setOrderId(0l);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
@@ -3020,22 +1607,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testDeleteOrderMethodWhenNullCustomerOrderIdIsLessThanZero() {
-		CustomerOrder order = new CustomerOrder();
-		long orderId = -1l;
-		order.setOrderId(orderId);
-		orderController.deleteOrder(order);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsGreaterThanZero() {
+	public void testDeleteOrderMethodWhenValidateIdReturnsValidId() {
 		CustomerOrder order = new CustomerOrder();
 		long orderId = 1l;
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		orderController.deleteOrder(spyOrder);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -3046,6 +1623,8 @@ public class OrderControllerTest {
 		CustomerOrder order = new CustomerOrder();
 		long orderId = 1l;
 		order.setOrderId(orderId);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3058,6 +1637,7 @@ public class OrderControllerTest {
 		CustomerOrder order = new CustomerOrder();
 		long orderId = 1l;
 		order.setOrderId(orderId);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(order);
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3067,8 +1647,11 @@ public class OrderControllerTest {
 	}
 
 	// tests for search options
+
 	@Test
-	public void testSearchOrderMethodWhenSearchTextIsNull() {
+	public void testSearchOrderMethodWhenValidateSearchThrowsNullPointerException() {
+		doThrow(new NullPointerException("The search Text field cannot be empty.")).when(validationConfigurations)
+				.validateSearchString(any());
 		orderController.searchOrder(null, null);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("The search Text field cannot be empty.", null);
@@ -3076,27 +1659,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testSearchOrderMethodWhenSearchTextIsEmpty() {
-		String searchText = "";
-		orderController.searchOrder(searchText, null);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("The search Text field cannot be empty.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testSearchOrderMethodWhenSearchTextIsLargeStringGreaterThanTwentyCharachters() {
-		String searchText = "Muhammad Ibtihaj Naeem";
-		orderController.searchOrder(searchText, null);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The search Text cannot exceed 20 characters. Please provide a shorter search Text.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void testSearchOrderMethodWhenSearchTextIsWithTabs() {
+	public void testSearchOrderMethodWhenValidateSearchThrowsIllegalArgumentException() {
 		String searchText = "Muhammad\tIbtihaj";
+		doThrow(new IllegalArgumentException(
+				"The search Text cannot contain tabs. Please remove any tabs from the search Text."))
+				.when(validationConfigurations).validateSearchString(anyString());
 		orderController.searchOrder(searchText, null);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError(
@@ -3107,6 +1674,7 @@ public class OrderControllerTest {
 	@Test
 	public void testSearchOrderMethodWhenSearchTextIsValidStringAndSearchOptionIsNull() {
 		String searchText = "1";
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, null);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Search option cannot be empty.", searchText);
@@ -3114,8 +1682,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_NonInteger() {
-		String searchText = "a";
+	public void searchOrder_WhenSearchOptionIsOrderId_AndValidateStringNumber_Throws_NullPointerException() {
+		String searchText = "";
+		doThrow(new NullPointerException("Please enter a valid number.")).when(validationConfigurations)
+				.validateStringNumber(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Please enter a valid number.", searchText);
@@ -3123,52 +1694,39 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_Zero() {
-		String searchText = "0";
+	public void searchOrder_WhenSearchOptionIsOrderId_AndValidateStringNumber_Throws_IllegalArgumentException() {
+		String searchText = "a";
+		doThrow(new IllegalArgumentException("Please enter a valid number.")).when(validationConfigurations)
+				.validateStringNumber(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
-				searchText);
+		inOrder.verify(orderView).showSearchError("Please enter a valid number.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_NegativeIntegar() {
-		String searchText = "-1";
+	public void searchOrder_WhenSearchOptionIsOrderId_AndValidateId_Throws_NullPointerException() {
+		String searchText = "1l";
+		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations).validateId(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(1l);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
-				searchText);
+		inOrder.verify(orderView).showSearchError("Id Field cannot be empty.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButWithLeadingWhiteSpaces() {
-		String searchText = " 1";
+	public void searchOrder_WhenSearchOptionIsOrderId_AndValidateId_Throws_IllegalArgumentException() {
+		String searchText = "0l";
+		doThrow(new IllegalArgumentException("Id Field cannot be zero.")).when(validationConfigurations)
+				.validateId(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(0l);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButWithEndingWhiteSpaces() {
-		String searchText = "1 ";
-		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButWithMiddleWhiteSpaces() {
-		String searchText = "1 0";
-		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
+		inOrder.verify(orderView).showSearchError("Id Field cannot be zero.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -3176,6 +1734,9 @@ public class OrderControllerTest {
 	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButOrderNotFound() {
 		String searchText = "1";
 		long orderId = 1l;
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3188,6 +1749,9 @@ public class OrderControllerTest {
 		String searchText = "1";
 		long orderId = 1l;
 		CustomerOrder order = new CustomerOrder();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
+		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(order);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3196,69 +1760,63 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_NonInteger() {
-		String searchText = "a";
+	public void searchOrder_WhenSearchOptionIsWorkerId_AndValidateStringNumber_Throws_NullPointerException() {
+		String searchText = "";
+		doThrow(new NullPointerException("Please enter a valid number.")).when(validationConfigurations)
+				.validateStringNumber(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Please enter a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_Zero() {
-		String searchText = "0";
+	public void searchOrder_WhenSearchOptionIsWorkerId_AndValidateStringNumber_Throws_IllegalArgumentException() {
+		String searchText = "a";
+		doThrow(new IllegalArgumentException("Please enter a valid number.")).when(validationConfigurations)
+				.validateStringNumber(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+		inOrder.verify(orderView).showSearchError("Please enter a valid number.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_NegativeIntegar() {
-		String searchText = "-1";
+	public void searchOrder_WhenSearchOptionIsWorkerId_AndValidateId_Throws_NullPointerException() {
+		String searchText = "1l";
+		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations).validateId(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(1l);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+		inOrder.verify(orderView).showSearchError("Id Field cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWithLeadingWhiteSpaces() {
-		String searchText = " 1";
+	public void searchOrder_WhenSearchOptionIsWorkerId_AndValidateId_Throws_IllegalArgumentException() {
+		String searchText = "0l";
+		doThrow(new IllegalArgumentException("Id Field cannot be zero.")).when(validationConfigurations)
+				.validateId(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(0l);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWithEndingWhiteSpaces() {
-		String searchText = "1 ";
-		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWithMiddleWhiteSpaces() {
-		String searchText = "1 0";
-		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+		inOrder.verify(orderView).showSearchError("Id Field cannot be zero.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWorkerNotFound() {
 		String searchText = "1";
 		long workerId = 1l;
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
+
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("No result found with ID: " + workerId, searchText);
@@ -3270,6 +1828,9 @@ public class OrderControllerTest {
 		String searchText = "1";
 		long workerId = 1l;
 		Worker worker = new Worker();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3283,6 +1844,9 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setOrders(Collections.emptyList());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3297,6 +1861,9 @@ public class OrderControllerTest {
 		Worker worker = new Worker();
 		CustomerOrder order = new CustomerOrder();
 		worker.setOrders(asList(order));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3305,83 +1872,37 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_StringLessThanTenCharacters() {
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_And_ValidatePhoneNumber_Throws_NullPointerException() {
 
 		String searchText = "000000";
+		doThrow(new NullPointerException("Phone Number cannot be empty.")).when(validationConfigurations)
+				.validatePhoneNumber(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The phone number must be 10 characters long. Please provide a valid phone number.", searchText);
+		inOrder.verify(orderView).showSearchError("Phone Number cannot be empty.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_StringGreaterThanTenCharachters() {
-		String searchText = "000000000000000000";
-		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The phone number must be 10 characters long. Please provide a valid phone number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
+	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_And_ValidatePhoneNumber_Throws_IllegalArgumentException() {
 
-	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithAlphabetCharachters() {
-		String searchText = "3401372a78";
+		String searchText = "000000";
+		doThrow(new IllegalArgumentException("Phone Number cannot be less then 10 characters."))
+				.when(validationConfigurations).validatePhoneNumber(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithMiddleWhiteSpaceCharachters() {
-		String searchText = "3401372 78";
-		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithSpecialCharacters() {
-		String searchText = "3401372@78";
-		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithLeadingWhiteSpaceCharachters() {
-		String searchText = " 340137278";
-		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_WithLeadingNumberExceptThree() {
-		String searchText = "4401372078";
-		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The phone number must start with 3. Please provide a valid phone number.", searchText);
+		inOrder.verify(orderView).showSearchError("Phone Number cannot be less then 10 characters.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
 	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_ValidPhoneNumber_ButOrdersAreNull() {
 		String searchText = "3401372678";
+
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validatePhoneNumber(searchText)).thenReturn(searchText);
 		when(orderRepository.findByCustomerPhoneNumber(searchText)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3392,6 +1913,8 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_ValidPhoneNumber_ButOrdersAreEmpty() {
 		String searchText = "3401372678";
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validatePhoneNumber(searchText)).thenReturn(searchText);
 		when(orderRepository.findByCustomerPhoneNumber(searchText)).thenReturn(Collections.emptyList());
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3403,6 +1926,8 @@ public class OrderControllerTest {
 	public void searchOrder_WhenSearchOptionIsCustomerPhoneNumber_SearchTextIs_ValidPhoneNumber() {
 		String searchText = "3401372678";
 		CustomerOrder order = new CustomerOrder();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validatePhoneNumber(searchText)).thenReturn(searchText);
 		when(orderRepository.findByCustomerPhoneNumber(searchText)).thenReturn(asList(order));
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3411,20 +1936,27 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_StringLessThanTwoCharachters() {
+	public void searchOrder_WhenSearchOptionIsCustomerName_And_ValidateName_ThrowsNullPointerException() {
 
 		String searchText = "a";
+		doThrow(new NullPointerException("Name field cannot be empty.")).when(validationConfigurations)
+				.validateName(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError(
-				"The name must be at least 3 characters long. Please provide a valid name.", searchText);
+		inOrder.verify(orderView).showSearchError("Name field cannot be empty.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_StringEqualsToTwoCharachters() {
+	public void searchOrder_WhenSearchOptionIsCustomerName_And_ValidateName_IllegalArgumentException() {
 
-		String searchText = "ab";
+		String searchText = "a";
+		doThrow(new IllegalArgumentException(
+				"The name must be at least 3 characters long. Please provide a valid name."))
+				.when(validationConfigurations).validateName(any());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError(
@@ -3435,6 +1967,9 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_ValidName_ButOrdersAreNull() {
 		String searchText = "Muhammad";
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateName(searchText)).thenReturn(searchText);
+
 		when(orderRepository.findByCustomerName(searchText)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3445,6 +1980,8 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_ValidName_ButOrdersAreEmpty() {
 		String searchText = "Muhammad";
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateName(searchText)).thenReturn(searchText);
 		when(orderRepository.findByCustomerName(searchText)).thenReturn(Collections.emptyList());
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3456,6 +1993,8 @@ public class OrderControllerTest {
 	public void searchOrder_WhenSearchOptionIsCustomerName_SearchTextIs_ValidName_OrderFound() {
 		String searchText = "Muhammad";
 		CustomerOrder customerOrder = new CustomerOrder();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateName(searchText)).thenReturn(searchText);
 		when(orderRepository.findByCustomerName(searchText)).thenReturn(asList(customerOrder));
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3464,8 +2003,24 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_WithWhiteSpace() {
+	public void searchOrder_WhenSearchOptionIsOrderStatus_And_ValidateEnum_Throws_NullPointerException() {
 		String searchText = " Pending ";
+		doThrow(new NullPointerException("Status field cannot be empty.")).when(validationConfigurations)
+				.validateEnum(any(), eq(OrderStatus.class));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Status field cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderStatus_And_ValidateEnum_Throws_IllegalArgumentException() {
+		String searchText = " Pending ";
+		doThrow(new IllegalArgumentException(
+				"The status cannot contain whitespaces. Please remove any whitespaces from the status."))
+				.when(validationConfigurations).validateEnum(anyString(), eq(OrderStatus.class));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError(
@@ -3474,19 +2029,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_WithUnavailableStatus() {
-		String searchText = "DELETED";
-		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("The specified status was not found. Please provide a valid status.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
 	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_ValidStatus_ButOrdersAreNull() {
 		OrderStatus status = OrderStatus.PENDING;
 		String searchText = status.toString();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderStatus.class)).thenReturn(status);
+
 		when(orderRepository.findByOrderStatus(status)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3499,8 +2047,9 @@ public class OrderControllerTest {
 	public void searchOrder_WhenSearchOptionIsOrderStatus_SearchTextIs_ValidStatus_ButOrdersAreEmpty() {
 		OrderStatus status = OrderStatus.PENDING;
 		String searchText = status.toString();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderStatus.class)).thenReturn(status);
 		when(orderRepository.findByOrderStatus(status)).thenReturn(Collections.emptyList());
-
 		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("No orders found with status: " + searchText.toUpperCase(),
@@ -3513,6 +2062,8 @@ public class OrderControllerTest {
 		OrderStatus status = OrderStatus.PENDING;
 		String searchText = status.toString();
 		CustomerOrder customerOrder = new CustomerOrder();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderStatus.class)).thenReturn(status);
 		when(orderRepository.findByOrderStatus(status)).thenReturn(asList(customerOrder));
 		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3521,8 +2072,24 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_WithWhiteSpace() {
+	public void searchOrder_WhenSearchOptionIsOrderCategory_And_ValidateEnum_Throws_NullPointerException() {
 		String searchText = " Plumber ";
+		doThrow(new NullPointerException("category field cannot be empty.")).when(validationConfigurations)
+				.validateEnum(any(), eq(OrderCategory.class));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("category field cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderCategory_And_ValidateEnum_Throws_IllegalArgumentException() {
+		String searchText = " Plumber ";
+		doThrow(new IllegalArgumentException(
+				"The category cannot contain whitespaces. Please remove any whitespaces from the category."))
+				.when(validationConfigurations).validateEnum(any(), eq(OrderCategory.class));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError(
@@ -3532,20 +2099,13 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_WithUnavailableCategory() {
-		String searchText = "Manager";
-		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView)
-				.showSearchError("The specified category was not found. Please provide a valid category.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
 	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_ValidCategory_ButOrdersAreNull() {
-		OrderCategory status = OrderCategory.PLUMBER;
-		String searchText = status.toString();
-		when(orderRepository.findByOrderCategory(status)).thenReturn(null);
+		OrderCategory category = OrderCategory.PLUMBER;
+		String searchText = category.toString();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderCategory.class)).thenReturn(category);
+
+		when(orderRepository.findByOrderCategory(category)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("No orders found with category: " + searchText.toUpperCase(),
@@ -3555,9 +2115,12 @@ public class OrderControllerTest {
 
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_ValidCategory_ButOrdersAreEmpty() {
-		OrderCategory status = OrderCategory.PLUMBER;
-		String searchText = status.toString();
-		when(orderRepository.findByOrderCategory(status)).thenReturn(Collections.emptyList());
+		OrderCategory category = OrderCategory.PLUMBER;
+		String searchText = category.toString();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderCategory.class)).thenReturn(category);
+
+		when(orderRepository.findByOrderCategory(category)).thenReturn(Collections.emptyList());
 
 		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3568,10 +2131,13 @@ public class OrderControllerTest {
 
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderCategory_SearchTextIs_ValidCategory_AndOrdersFound() {
-		OrderCategory status = OrderCategory.PLUMBER;
-		String searchText = status.toString();
+		OrderCategory category = OrderCategory.PLUMBER;
+		String searchText = category.toString();
 		CustomerOrder customerOrder = new CustomerOrder();
-		when(orderRepository.findByOrderCategory(status)).thenReturn(asList(customerOrder));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderCategory.class)).thenReturn(category);
+
+		when(orderRepository.findByOrderCategory(category)).thenReturn(asList(customerOrder));
 		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchResultForOrder(asList(customerOrder));
@@ -3579,41 +2145,28 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_StringLessThenNineLength() {
+	public void searchOrder_WhenSearchOptionIsOrderDate_And_ValidateStringDate_Throws_NullPoitnerException() {
 		String searchText = "12/12/";
+		doThrow(new NullPointerException("Date field cannot be empty.")).when(validationConfigurations)
+				.validateStringDate(anyString());
+
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+
+		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("Date field cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsOrderDate_And_ValidateStringDate_Throws_IllegalArgumentException() {
+		String searchText = "12/12/";
+		doThrow(new IllegalArgumentException("Date must not be less then 10 characters."))
+				.when(validationConfigurations).validateStringDate(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Date must not be less then 10 characters.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_StringEqualToNineLength() {
-		String searchText = "12/12/202";
-		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("Date must not be less then 10 characters.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_StringGreaterThenNineLength() {
-		String searchText = "12/12/20224";
-		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("Date must not be greater then 10 characters.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-	}
-
-	@Test
-	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_WithInValidStringDate() {
-		String searchText = "12/12-2024";
-		String pattern = "dd-MM-yyyy";
-
-		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
-		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("Please ensure that the date follows the format" + pattern,
-				searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
@@ -3621,6 +2174,8 @@ public class OrderControllerTest {
 	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_ButOrdersAreNull() {
 		String searchText = "30-12-2024";
 		LocalDate date = LocalDate.of(2024, 12, 30);
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringDate(searchText)).thenReturn(date);
 
 		when(orderRepository.findByDate(date)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
@@ -3633,7 +2188,8 @@ public class OrderControllerTest {
 	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_ButOrdersAreEmpty() {
 		String searchText = "30-12-2024";
 		LocalDate date = LocalDate.of(2024, 12, 30);
-
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringDate(searchText)).thenReturn(date);
 		when(orderRepository.findByDate(date)).thenReturn(Collections.emptyList());
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3646,6 +2202,8 @@ public class OrderControllerTest {
 		String searchText = "30-12-2024";
 		LocalDate date = LocalDate.of(2024, 12, 30);
 		CustomerOrder order = new CustomerOrder();
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringDate(searchText)).thenReturn(date);
 		when(orderRepository.findByDate(date)).thenReturn(asList(order));
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -3654,4 +2212,15 @@ public class OrderControllerTest {
 
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
+
+	@Test
+	public void searchOrder_WhenSearchOptionIsNone() {
+		String searchText = "30-12-2024";
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		orderController.searchOrder(searchText, OrderSearchOptions.None);
+		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
+		inOrder.verify(orderView).showSearchError("This operation is not allowed", searchText);
+		verifyNoMoreInteractions(ignoreStubs(orderRepository));
+	}
+
 }

@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
 import com.mycompany.orderAssignmentSystem.model.Worker;
@@ -59,22 +60,50 @@ public class WorkerController {
 		workerView.showAllWorkers(workerRepository.findAll());
 	}
 
+	private void add(Worker worker) {
+		validateNewWorker(worker);
+		worker = workerRepository.save(worker);
+		workerView.workerAdded(worker);
+		LOGGER.info("New worker created: {}", worker);
+	}
+
+	private void update(Worker worker) {
+		validateUpdateWorker(worker);
+
+		Worker savedWorker = workerRepository.findById(worker.getWorkerId());
+		if (savedWorker == null) {
+			throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
+		}
+		if (savedWorker.getOrders() != null && !savedWorker.getOrders().isEmpty()) {
+			throw new IllegalArgumentException(
+					"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
+		}
+
+		worker = workerRepository.save(worker);
+		workerView.workerModified(worker);
+		LOGGER.info("Worker Updated: {}", worker);
+	}
+
 	/**
 	 * Creates a new worker and adds it to the repository.
 	 *
 	 * @param worker the worker to be added
 	 */
-	public void createNewWorker(Worker worker) {
-		LOGGER.info("Creating a new worker");
-
+	public void createOrUpdateWorker(Worker worker, OperationType operation) {
 		try {
-			validateNewWorker(worker);
-			worker = workerRepository.save(worker);
-			workerView.workerAdded(worker);
-			LOGGER.info("New worker created: {}", worker);
+			switch (operation) {
+			case ADD:
+				LOGGER.info("Creating a new order");
+				add(worker);
+				break;
+			case UPDATE:
+				LOGGER.info("Updating an existing order");
+				update(worker);
+				break;
+			}
 
 		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while creating worker: " + e.getMessage());
+			LOGGER.error("Error validating while " + operation.toString() + " worker: " + e.getMessage());
 			workerView.showError(e.getMessage(), worker);
 			return;
 		}
@@ -85,32 +114,32 @@ public class WorkerController {
 	 *
 	 * @param worker the worker to be updated
 	 */
-	public void updateWorker(Worker worker) {
-		LOGGER.info("Updating a worker");
-
-		try {
-			validateUpdateWorker(worker);
-
-			Worker savedWorker = workerRepository.findById(worker.getWorkerId());
-			if (savedWorker == null) {
-				throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
-			}
-			if (savedWorker.getOrders() != null && !savedWorker.getOrders().isEmpty()) {
-				throw new IllegalArgumentException(
-						"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
-			}
-
-			worker = workerRepository.modify(worker);
-			workerView.workerModified(worker);
-			LOGGER.info("Worker Updated: {}", worker);
-		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
-			workerView.showError(e.getMessage(), worker);
-		} catch (NoSuchElementException e) {
-			LOGGER.error("Error finding worker: {}", e.getMessage());
-			workerView.showErrorNotFound(e.getMessage(), worker);
-		}
-	}
+//	public void updateWorker(Worker worker) {
+//		LOGGER.info("Updating a worker");
+//
+//		try {
+//			validateUpdateWorker(worker);
+//
+//			Worker savedWorker = workerRepository.findById(worker.getWorkerId());
+//			if (savedWorker == null) {
+//				throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
+//			}
+//			if (savedWorker.getOrders() != null && !savedWorker.getOrders().isEmpty()) {
+//				throw new IllegalArgumentException(
+//						"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
+//			}
+//
+//			worker = workerRepository.modify(worker);
+//			workerView.workerModified(worker);
+//			LOGGER.info("Worker Updated: {}", worker);
+//		} catch (NullPointerException | IllegalArgumentException e) {
+//			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
+//			workerView.showError(e.getMessage(), worker);
+//		} catch (NoSuchElementException e) {
+//			LOGGER.error("Error finding worker: {}", e.getMessage());
+//			workerView.showErrorNotFound(e.getMessage(), worker);
+//		}
+//	}
 
 	/**
 	 * Fetches a worker by its ID.

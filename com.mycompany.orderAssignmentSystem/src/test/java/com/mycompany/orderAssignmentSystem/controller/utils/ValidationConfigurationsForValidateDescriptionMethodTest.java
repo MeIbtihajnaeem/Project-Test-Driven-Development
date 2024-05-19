@@ -48,9 +48,16 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	@Test
+	public void testDescriptionMethodWithLargeStringEqualsToElevenCharachters() {
+		String description = "change pips";
+
+		assertEquals(description, validationConfigurations.validateDescription(description));
+	}
+
+	@Test
 	public void testDescriptionMethodWithLargeStringGreaterThanFiftyCharachters() {
 		assertThatThrownBy(() -> {
-			String description = "Please ensure the pipes are tightly sealed and all connections are leak-proof. Thank you!";
+			String description = "Please ensure the pipes are tightly sealed and all!";
 			validationConfigurations.validateDescription(description);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The description cannot exceed 50 characters. Please provide a shorter description.");

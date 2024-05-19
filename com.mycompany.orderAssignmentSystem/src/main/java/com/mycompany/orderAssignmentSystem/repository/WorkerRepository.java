@@ -62,14 +62,6 @@ public interface WorkerRepository {
 	public Worker save(Worker worker);
 
 	/**
-	 * Modifies an existing worker.
-	 *
-	 * @param worker the worker to be modified
-	 * @return the updated worker
-	 */
-	public Worker modify(Worker worker);
-
-	/**
 	 * Deletes a worker from the system.
 	 *
 	 * @param worker the worker to be deleted

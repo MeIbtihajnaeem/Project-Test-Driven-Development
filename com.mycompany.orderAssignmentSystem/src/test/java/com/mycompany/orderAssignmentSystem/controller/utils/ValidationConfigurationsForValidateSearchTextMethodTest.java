@@ -32,7 +32,7 @@ public class ValidationConfigurationsForValidateSearchTextMethodTest {
 	@Test
 	public void testSearchTextMethodWithLargeStringGreaterThanTwentyCharachters() {
 		assertThatThrownBy(() -> {
-			String searchText = "Muhammad Ibtihaj Naeem";
+			String searchText = "Muhammad Ibtihaj Naee";
 			validationConfigurations.validateSearchString(searchText);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The search Text cannot exceed 20 characters. Please provide a shorter search Text.");
