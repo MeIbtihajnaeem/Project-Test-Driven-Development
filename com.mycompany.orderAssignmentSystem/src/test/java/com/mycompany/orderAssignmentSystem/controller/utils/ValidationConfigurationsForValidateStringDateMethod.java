@@ -1,12 +1,14 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
 
 public class ValidationConfigurationsForValidateStringDateMethod {
 
@@ -14,7 +16,7 @@ public class ValidationConfigurationsForValidateStringDateMethod {
 
 	@Before
 	public void setup() {
-		validationConfigurations = new ValidationConfigurations();
+		validationConfigurations = new ExtendedValidationConfigurations();
 	}
 
 	@Test

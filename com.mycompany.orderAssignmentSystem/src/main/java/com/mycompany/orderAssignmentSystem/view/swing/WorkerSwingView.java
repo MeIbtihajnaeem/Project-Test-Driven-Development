@@ -1,12 +1,12 @@
 package com.mycompany.orderAssignmentSystem.view.swing;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -77,28 +78,13 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	/** The btn fetch. */
 	private JButton btnFetch;
 
-	/** The btn delete. */
-	private JButton btnDelete;
-
 	/** The cmb search by options. */
 	private JComboBox<WorkerSearchOption> cmbSearchByOptions;
 
 	/** The btn search worker. */
 	private JButton btnSearchWorker;
 
-	/** The worker list model. */
-	private DefaultListModel<Worker> workerListModel;
-
-	/** The order list model. */
-	private DefaultListModel<CustomerOrder> orderListModel;
-
-	/** The list workers. */
-	private JList<Worker> listWorkers;
-
-	/** The list orders. */
-	private JList<CustomerOrder> listOrders;
-
-	/** The btn clear search worker. */
+	/** The btn clear search results and will reset to default state. */
 	private JButton btnClearSearchWorker;
 
 	/** The btn search order. */
@@ -115,9 +101,21 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 	/** The show error while worker not found error. */
 	private JLabel showErrorNotFoundLbl;
-
-	/** The scroll pane. */
 	private JScrollPane scrollPane;
+	private JButton btnDelete;
+	private JScrollPane scrollPane_1;
+
+	/** The worker list model. */
+	private DefaultListModel<Worker> workerListModel;
+
+	/** The order list model. */
+	private DefaultListModel<CustomerOrder> orderListModel;
+
+	/** The list workers. */
+	private JList<Worker> listWorkers;
+
+	/** The list orders. */
+	private JList<CustomerOrder> listOrders;
 
 	/**
 	 * Launch the application.
@@ -159,58 +157,17 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 * Create the frame.
 	 */
 	public WorkerSwingView() {
-
-		cmbWorkerCategory = new JComboBox<>();
+		// Initialisation of combo box by enumeration
+		cmbWorkerCategory = new JComboBox<OrderCategory>();
+		cmbSearchByOptions = new JComboBox<WorkerSearchOption>();
 		for (OrderCategory category : OrderCategory.values()) {
 			cmbWorkerCategory.addItem(category);
 		}
-		cmbWorkerCategory.setSelectedItem(null);
-
-		cmbSearchByOptions = new JComboBox<WorkerSearchOption>();
 		for (WorkerSearchOption workerSearchOption : WorkerSearchOption.values()) {
 			cmbSearchByOptions.addItem(workerSearchOption);
 		}
+		cmbWorkerCategory.setSelectedItem(null);
 		cmbSearchByOptions.setSelectedItem(null);
-
-		setTitle("Worker View");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 713, 461);
-		contentPane = new JPanel();
-		contentPane.setBackground(SystemColor.textHighlight);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 1.0, 1.0, 1.0, 1.0 };
-		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0,
-				0.0, 1.0, 0.0, Double.MIN_VALUE };
-		contentPane.setLayout(gbl_contentPane);
-
-		JButton lblManageOrder = new JButton("Manage Order");
-		lblManageOrder.setOpaque(true);
-		lblManageOrder.setName("lblManageOrder");
-		lblManageOrder.setHorizontalAlignment(SwingConstants.CENTER);
-		lblManageOrder.setFont(new Font("Arial", Font.BOLD, 14));
-		lblManageOrder.setEnabled(true);
-		lblManageOrder.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		lblManageOrder.setBackground(new Color(250, 138, 132));
-		GridBagConstraints gbc_lblManageOrder = new GridBagConstraints();
-		gbc_lblManageOrder.insets = new Insets(0, 0, 5, 5);
-		gbc_lblManageOrder.gridx = 3;
-		gbc_lblManageOrder.gridy = 0;
-		contentPane.add(lblManageOrder, gbc_lblManageOrder);
-
-		JLabel lblWorkerId = new JLabel("Worker ID");
-		lblWorkerId.setIconTextGap(8);
-		lblWorkerId.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblWorkerId = new GridBagConstraints();
-		gbc_lblWorkerId.anchor = GridBagConstraints.EAST;
-		gbc_lblWorkerId.insets = new Insets(0, 0, 5, 5);
-		gbc_lblWorkerId.gridx = 0;
-		gbc_lblWorkerId.gridy = 1;
-		contentPane.add(lblWorkerId, gbc_lblWorkerId);
 
 		KeyListener changeWorkerValueListener = new KeyAdapter() {
 			@Override
@@ -239,308 +196,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 				}
 			}
 		};
-
-		txtWorkerId = new JTextField();
-		txtWorkerId.addKeyListener(changeWorkerValueListener);
-		txtWorkerId.setName("txtWorkerId");
-		txtWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
-		txtWorkerId.setColumns(10);
-		GridBagConstraints gbc_txtWorkerId = new GridBagConstraints();
-		gbc_txtWorkerId.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtWorkerId.insets = new Insets(0, 0, 5, 5);
-		gbc_txtWorkerId.gridx = 1;
-		gbc_txtWorkerId.gridy = 1;
-		contentPane.add(txtWorkerId, gbc_txtWorkerId);
-
-		btnFetch = new JButton("Fetch");
-		btnFetch.setOpaque(true);
-		btnFetch.setName("btnFetch");
-		btnFetch.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnFetch.setEnabled(false);
-		btnFetch.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnFetch.setBackground(new Color(252, 195, 174));
-		GridBagConstraints gbc_btnFetch = new GridBagConstraints();
-		gbc_btnFetch.insets = new Insets(0, 0, 5, 5);
-		gbc_btnFetch.gridx = 2;
-		gbc_btnFetch.gridy = 1;
-		contentPane.add(btnFetch, gbc_btnFetch);
-
-		JLabel lblWorkerName = new JLabel("Worker Name");
-		lblWorkerName.setIconTextGap(8);
-		lblWorkerName.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblWorkerName = new GridBagConstraints();
-		gbc_lblWorkerName.anchor = GridBagConstraints.EAST;
-		gbc_lblWorkerName.insets = new Insets(0, 0, 5, 5);
-		gbc_lblWorkerName.gridx = 0;
-		gbc_lblWorkerName.gridy = 2;
-		contentPane.add(lblWorkerName, gbc_lblWorkerName);
-
-		txtWorkerName = new JTextField();
-		txtWorkerName.addKeyListener(changeWorkerValueListener);
-		txtWorkerName.setName("txtWorkerName");
-		txtWorkerName.setFont(new Font("Arial", Font.PLAIN, 16));
-		txtWorkerName.setColumns(10);
-		GridBagConstraints gbc_txtWorkerName = new GridBagConstraints();
-		gbc_txtWorkerName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtWorkerName.insets = new Insets(0, 0, 5, 5);
-		gbc_txtWorkerName.gridx = 1;
-		gbc_txtWorkerName.gridy = 2;
-		contentPane.add(txtWorkerName, gbc_txtWorkerName);
-
-		btnUpdate = new JButton("Update");
-		btnUpdate.setOpaque(true);
-		btnUpdate.setName("btnUpdate");
-		btnUpdate.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnUpdate.setEnabled(false);
-		btnUpdate.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnUpdate.setBackground(new Color(252, 195, 174));
-		GridBagConstraints gbc_btnUpdate = new GridBagConstraints();
-		gbc_btnUpdate.insets = new Insets(0, 0, 5, 5);
-		gbc_btnUpdate.gridx = 2;
-		gbc_btnUpdate.gridy = 2;
-		contentPane.add(btnUpdate, gbc_btnUpdate);
-
-		JLabel lblWorkerPhoneNumber = new JLabel("Worker Phone No.");
-		lblWorkerPhoneNumber.setIconTextGap(8);
-		lblWorkerPhoneNumber.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblWorkerPhoneNumber = new GridBagConstraints();
-		gbc_lblWorkerPhoneNumber.anchor = GridBagConstraints.EAST;
-		gbc_lblWorkerPhoneNumber.insets = new Insets(0, 0, 5, 5);
-		gbc_lblWorkerPhoneNumber.gridx = 0;
-		gbc_lblWorkerPhoneNumber.gridy = 3;
-		contentPane.add(lblWorkerPhoneNumber, gbc_lblWorkerPhoneNumber);
-
-		txtWorkerPhone = new JTextField();
-		txtWorkerPhone.addKeyListener(changeWorkerValueListener);
-		txtWorkerPhone.setName("txtWorkerPhone");
-		txtWorkerPhone.setFont(new Font("Arial", Font.PLAIN, 16));
-		txtWorkerPhone.setColumns(10);
-		GridBagConstraints gbc_txtWorkerPhone = new GridBagConstraints();
-		gbc_txtWorkerPhone.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtWorkerPhone.insets = new Insets(0, 0, 5, 5);
-		gbc_txtWorkerPhone.gridx = 1;
-		gbc_txtWorkerPhone.gridy = 3;
-		contentPane.add(txtWorkerPhone, gbc_txtWorkerPhone);
-
-		btnAdd = new JButton("Add");
-		btnAdd.setOpaque(true);
-		btnAdd.setName("btnAdd");
-		btnAdd.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnAdd.setEnabled(false);
-		btnAdd.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnAdd.setBackground(new Color(252, 195, 174));
-		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
-		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAdd.gridx = 2;
-		gbc_btnAdd.gridy = 3;
-		contentPane.add(btnAdd, gbc_btnAdd);
-
-		JLabel lblWorkerCategory = new JLabel("Worker Category");
-		lblWorkerCategory.setIconTextGap(8);
-		lblWorkerCategory.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblWorkerCategory = new GridBagConstraints();
-		gbc_lblWorkerCategory.anchor = GridBagConstraints.EAST;
-		gbc_lblWorkerCategory.insets = new Insets(0, 0, 5, 5);
-		gbc_lblWorkerCategory.gridx = 0;
-		gbc_lblWorkerCategory.gridy = 4;
-		contentPane.add(lblWorkerCategory, gbc_lblWorkerCategory);
-
-		cmbWorkerCategory.addActionListener(changeWorkerCategoryListener);
-		cmbWorkerCategory.setName("cmbWorkerCategory");
-		GridBagConstraints gbc_cmbWorkerCategory = new GridBagConstraints();
-		gbc_cmbWorkerCategory.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbWorkerCategory.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbWorkerCategory.gridx = 1;
-		gbc_cmbWorkerCategory.gridy = 4;
-		contentPane.add(cmbWorkerCategory, gbc_cmbWorkerCategory);
-
-		btnClearSearchWorker = new JButton("Clear");
-		btnClearSearchWorker.setOpaque(true);
-		btnClearSearchWorker.setName("btnClearSearchWorker");
-		btnClearSearchWorker.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnClearSearchWorker.setEnabled(false);
-		btnClearSearchWorker.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnClearSearchWorker.setBackground(new Color(252, 195, 174));
-		GridBagConstraints gbc_btnClearSearchWorker = new GridBagConstraints();
-		gbc_btnClearSearchWorker.insets = new Insets(0, 0, 5, 0);
-		gbc_btnClearSearchWorker.gridx = 4;
-		gbc_btnClearSearchWorker.gridy = 5;
-		contentPane.add(btnClearSearchWorker, gbc_btnClearSearchWorker);
-
-		showErrorLbl = new JLabel("");
-		showErrorLbl.setName("showErrorLbl");
-		showErrorLbl.setIconTextGap(8);
-		showErrorLbl.setForeground(Color.RED);
-		showErrorLbl.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_showErrorLbl = new GridBagConstraints();
-		gbc_showErrorLbl.insets = new Insets(0, 0, 5, 5);
-		gbc_showErrorLbl.gridx = 0;
-		gbc_showErrorLbl.gridy = 6;
-		contentPane.add(showErrorLbl, gbc_showErrorLbl);
-
-		JLabel lblSearchWorker = new JLabel("Search Worker");
-		lblSearchWorker.setIconTextGap(8);
-		lblSearchWorker.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblSearchWorker = new GridBagConstraints();
-		gbc_lblSearchWorker.anchor = GridBagConstraints.EAST;
-		gbc_lblSearchWorker.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSearchWorker.gridx = 0;
-		gbc_lblSearchWorker.gridy = 7;
-		contentPane.add(lblSearchWorker, gbc_lblSearchWorker);
-
-		txtSearchWorker = new JTextField();
-		txtSearchWorker.addKeyListener(changeWorkerValueListener);
-
-		txtSearchWorker.setName("txtSearchWorker");
-		txtSearchWorker.setFont(new Font("Arial", Font.PLAIN, 16));
-		txtSearchWorker.setColumns(10);
-		GridBagConstraints gbc_txtSearchWorker = new GridBagConstraints();
-		gbc_txtSearchWorker.insets = new Insets(0, 0, 5, 5);
-		gbc_txtSearchWorker.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtSearchWorker.gridx = 1;
-		gbc_txtSearchWorker.gridy = 7;
-		contentPane.add(txtSearchWorker, gbc_txtSearchWorker);
-
-		JLabel lblSearchBy = new JLabel("Search By");
-		lblSearchBy.setIconTextGap(8);
-		lblSearchBy.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblSearchBy = new GridBagConstraints();
-		gbc_lblSearchBy.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSearchBy.gridx = 2;
-		gbc_lblSearchBy.gridy = 7;
-		contentPane.add(lblSearchBy, gbc_lblSearchBy);
-
-		cmbSearchByOptions.addActionListener(changeWorkerCategoryListener);
-		cmbSearchByOptions.setName("cmbSearchByOptions");
-		GridBagConstraints gbc_cmbSearchByOptions = new GridBagConstraints();
-		gbc_cmbSearchByOptions.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbSearchByOptions.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbSearchByOptions.gridx = 3;
-		gbc_cmbSearchByOptions.gridy = 7;
-		contentPane.add(cmbSearchByOptions, gbc_cmbSearchByOptions);
-
-		btnSearchWorker = new JButton("Search");
-		btnSearchWorker.setOpaque(true);
-		btnSearchWorker.setName("btnSearchWorker");
-		btnSearchWorker.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnSearchWorker.setEnabled(false);
-		btnSearchWorker.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnSearchWorker.setBackground(new Color(252, 195, 174));
-		GridBagConstraints gbc_btnSearchWorker = new GridBagConstraints();
-		gbc_btnSearchWorker.insets = new Insets(0, 0, 5, 0);
-		gbc_btnSearchWorker.gridx = 4;
-		gbc_btnSearchWorker.gridy = 7;
-		contentPane.add(btnSearchWorker, gbc_btnSearchWorker);
-
-		showErrorLblSearchWorker = new JLabel("");
-		showErrorLblSearchWorker.setName("showErrorLblSearchWorker");
-		showErrorLblSearchWorker.setIconTextGap(8);
-		showErrorLblSearchWorker.setForeground(Color.RED);
-		showErrorLblSearchWorker.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_showErrorLblSearchWorker = new GridBagConstraints();
-		gbc_showErrorLblSearchWorker.gridwidth = 2;
-		gbc_showErrorLblSearchWorker.insets = new Insets(0, 0, 5, 5);
-		gbc_showErrorLblSearchWorker.gridx = 0;
-		gbc_showErrorLblSearchWorker.gridy = 10;
-		contentPane.add(showErrorLblSearchWorker, gbc_showErrorLblSearchWorker);
-
-		scrollPane = new JScrollPane();
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridwidth = 2;
-		gbc_scrollPane.gridx = 0;
-		gbc_scrollPane.gridy = 9;
-		contentPane.add(scrollPane, gbc_scrollPane);
-
-		workerListModel = new DefaultListModel<>();
-		listWorkers = new JList<>(workerListModel);
-
-		listWorkers.addListSelectionListener(e -> btnDelete.setEnabled(listWorkers.getSelectedIndex() != -1));
-		listWorkers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listWorkers.setName("listWorkers");
-		scrollPane.setViewportView(listWorkers);
-		btnDelete = new JButton("Delete");
-		btnDelete.setOpaque(true);
-		btnDelete.setName("btnDelete");
-		btnDelete.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnDelete.setEnabled(false);
-		btnDelete.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnDelete.setBackground(new Color(252, 195, 174));
-		GridBagConstraints gbc_btnDelete = new GridBagConstraints();
-		gbc_btnDelete.insets = new Insets(0, 0, 5, 0);
-		gbc_btnDelete.gridx = 4;
-		gbc_btnDelete.gridy = 11;
-		contentPane.add(btnDelete, gbc_btnDelete);
-
-		JLabel lblSearchOrdersBy = new JLabel("Search Orders By Worker ID");
-		lblSearchOrdersBy.setIconTextGap(8);
-		lblSearchOrdersBy.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblSearchOrdersBy = new GridBagConstraints();
-		gbc_lblSearchOrdersBy.anchor = GridBagConstraints.EAST;
-		gbc_lblSearchOrdersBy.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSearchOrdersBy.gridx = 0;
-		gbc_lblSearchOrdersBy.gridy = 12;
-		contentPane.add(lblSearchOrdersBy, gbc_lblSearchOrdersBy);
-
-		txtOrdersByWorkerId = new JTextField();
-		txtOrdersByWorkerId.addKeyListener(changeWorkerValueListener);
-		txtOrdersByWorkerId.setName("txtOrdersByWorkerId");
-		txtOrdersByWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
-		txtOrdersByWorkerId.setColumns(10);
-		GridBagConstraints gbc_txtOrdersByWorkerId = new GridBagConstraints();
-		gbc_txtOrdersByWorkerId.insets = new Insets(0, 0, 5, 5);
-		gbc_txtOrdersByWorkerId.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtOrdersByWorkerId.gridx = 1;
-		gbc_txtOrdersByWorkerId.gridy = 12;
-		contentPane.add(txtOrdersByWorkerId, gbc_txtOrdersByWorkerId);
-
-		btnSearchOrder = new JButton("Search");
-		btnSearchOrder.setOpaque(true);
-		btnSearchOrder.setName("btnSearchOrder");
-		btnSearchOrder.setFont(new Font("Arial", Font.PLAIN, 14));
-		btnSearchOrder.setEnabled(false);
-		btnSearchOrder.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnSearchOrder.setBackground(new Color(252, 195, 174));
-		GridBagConstraints gbc_btnSearchOrder = new GridBagConstraints();
-		gbc_btnSearchOrder.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSearchOrder.gridx = 2;
-		gbc_btnSearchOrder.gridy = 12;
-		contentPane.add(btnSearchOrder, gbc_btnSearchOrder);
-
-		showErrorLblSearchOrder = new JLabel("");
-		showErrorLblSearchOrder.setName("showErrorLblSearchOrder");
-		showErrorLblSearchOrder.setIconTextGap(8);
-		showErrorLblSearchOrder.setForeground(Color.RED);
-		showErrorLblSearchOrder.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_showErrorLblSearchOrder = new GridBagConstraints();
-		gbc_showErrorLblSearchOrder.insets = new Insets(0, 0, 5, 5);
-		gbc_showErrorLblSearchOrder.gridx = 0;
-		gbc_showErrorLblSearchOrder.gridy = 13;
-		contentPane.add(showErrorLblSearchOrder, gbc_showErrorLblSearchOrder);
-		orderListModel = new DefaultListModel<>();
-		listOrders = new JList<>(orderListModel);
-		listOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listOrders.setName("listOrders");
-		GridBagConstraints gbc_listOrders = new GridBagConstraints();
-		gbc_listOrders.gridwidth = 4;
-		gbc_listOrders.insets = new Insets(0, 0, 5, 5);
-		gbc_listOrders.fill = GridBagConstraints.BOTH;
-		gbc_listOrders.gridx = 0;
-		gbc_listOrders.gridy = 12;
-		contentPane.add(listOrders, gbc_listOrders);
-
-		showErrorNotFoundLbl = new JLabel("");
-		showErrorNotFoundLbl.setName("showErrorNotFoundLbl");
-		showErrorNotFoundLbl.setFont(new Font("Arial", Font.BOLD, 13));
-		GridBagConstraints gbc_lblError = new GridBagConstraints();
-		gbc_lblError.gridheight = 2;
-		gbc_lblError.gridwidth = 2;
-		gbc_lblError.insets = new Insets(0, 0, 0, 5);
-		gbc_lblError.gridx = 0;
-		gbc_lblError.gridy = 17;
-		contentPane.add(showErrorNotFoundLbl, gbc_lblError);
-
 		ActionListener crudActionListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -585,13 +240,421 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 		};
 
-		btnAdd.addActionListener(crudActionListener);
-		btnUpdate.addActionListener(crudActionListener);
+		setTitle("Worker View");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 767, 522);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 1.0, 1.0, 1.0, 1.0, 0.0, 0.0 };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0,
+				0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE, 0.0, 0.0 };
+		contentPane.setLayout(gbl_contentPane);
+
+		JButton lblManageOrder = new JButton("Manage Order");
+		lblManageOrder.setName("lblManageOrder");
+		lblManageOrder.setForeground(Color.WHITE);
+		lblManageOrder.setOpaque(true);
+		lblManageOrder.setFont(new Font("Arial", Font.BOLD, 16));
+		lblManageOrder.setBorder(new LineBorder(new Color(0, 0, 0)));
+		lblManageOrder.setBackground(Color.RED);
+		lblManageOrder.setFocusPainted(false);
+		lblManageOrder.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_lblManageOrder = new GridBagConstraints();
+		gbc_lblManageOrder.gridheight = 2;
+		gbc_lblManageOrder.ipady = 10;
+		gbc_lblManageOrder.ipadx = 20;
+		gbc_lblManageOrder.insets = new Insets(0, 0, 5, 0);
+		gbc_lblManageOrder.gridx = 4;
+		gbc_lblManageOrder.gridy = 1;
+		contentPane.add(lblManageOrder, gbc_lblManageOrder);
+
+		JLabel lblWorkerId = new JLabel("Worker ID");
+		lblWorkerId.setFont(new Font("Arial", Font.BOLD, 14));
+		lblWorkerId.setForeground(new Color(50, 50, 50));
+		lblWorkerId.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblWorkerId.setVerticalAlignment(SwingConstants.CENTER);
+
+		GridBagConstraints gbc_lblWorkerId = new GridBagConstraints();
+		gbc_lblWorkerId.anchor = GridBagConstraints.EAST;
+		gbc_lblWorkerId.insets = new Insets(0, 0, 5, 5);
+		gbc_lblWorkerId.gridx = 0;
+		gbc_lblWorkerId.gridy = 1;
+		contentPane.add(lblWorkerId, gbc_lblWorkerId);
+
+		txtWorkerId = new JTextField();
+		txtWorkerId.addKeyListener(changeWorkerValueListener);
+		txtWorkerId.setName("txtWorkerId");
+		txtWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
+		txtWorkerId.setColumns(10);
+		GridBagConstraints gbc_txtWorkerId = new GridBagConstraints();
+		gbc_txtWorkerId.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtWorkerId.insets = new Insets(0, 0, 5, 5);
+		gbc_txtWorkerId.gridx = 1;
+		gbc_txtWorkerId.gridy = 1;
+		contentPane.add(txtWorkerId, gbc_txtWorkerId);
+
+		JLabel lblWorkerPhoneNumber = new JLabel("Worker Phone No.");
+		lblWorkerPhoneNumber.setFont(new Font("Arial", Font.BOLD, 14));
+		lblWorkerPhoneNumber.setForeground(new Color(50, 50, 50));
+		lblWorkerPhoneNumber.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblWorkerPhoneNumber.setVerticalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblWorkerPhoneNumber = new GridBagConstraints();
+		gbc_lblWorkerPhoneNumber.anchor = GridBagConstraints.EAST;
+		gbc_lblWorkerPhoneNumber.insets = new Insets(0, 0, 5, 5);
+		gbc_lblWorkerPhoneNumber.gridx = 2;
+		gbc_lblWorkerPhoneNumber.gridy = 1;
+		contentPane.add(lblWorkerPhoneNumber, gbc_lblWorkerPhoneNumber);
+
+		txtWorkerPhone = new JTextField();
+		txtWorkerPhone.addKeyListener(changeWorkerValueListener);
+		txtWorkerPhone.setName("txtWorkerPhone");
+		txtWorkerPhone.setFont(new Font("Arial", Font.PLAIN, 16));
+		txtWorkerPhone.setColumns(10);
+		GridBagConstraints gbc_txtWorkerPhone = new GridBagConstraints();
+		gbc_txtWorkerPhone.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtWorkerPhone.insets = new Insets(0, 0, 5, 5);
+		gbc_txtWorkerPhone.gridx = 3;
+		gbc_txtWorkerPhone.gridy = 1;
+		contentPane.add(txtWorkerPhone, gbc_txtWorkerPhone);
+
+		JLabel lblWorkerName = new JLabel("Worker Name");
+		lblWorkerName.setFont(new Font("Arial", Font.BOLD, 14));
+		lblWorkerName.setForeground(new Color(50, 50, 50));
+		lblWorkerName.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblWorkerName.setVerticalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblWorkerName = new GridBagConstraints();
+		gbc_lblWorkerName.anchor = GridBagConstraints.EAST;
+		gbc_lblWorkerName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblWorkerName.gridx = 0;
+		gbc_lblWorkerName.gridy = 2;
+		contentPane.add(lblWorkerName, gbc_lblWorkerName);
+
+		txtWorkerName = new JTextField();
+		txtWorkerName.addKeyListener(changeWorkerValueListener);
+		txtWorkerName.setName("txtWorkerName");
+		txtWorkerName.setFont(new Font("Arial", Font.PLAIN, 16));
+		txtWorkerName.setColumns(10);
+		GridBagConstraints gbc_txtWorkerName = new GridBagConstraints();
+		gbc_txtWorkerName.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtWorkerName.insets = new Insets(0, 0, 5, 5);
+		gbc_txtWorkerName.gridx = 1;
+		gbc_txtWorkerName.gridy = 2;
+		contentPane.add(txtWorkerName, gbc_txtWorkerName);
+
+		JLabel lblWorkerCategory = new JLabel("Worker Category");
+		lblWorkerCategory.setFont(new Font("Arial", Font.BOLD, 14));
+		lblWorkerCategory.setForeground(new Color(50, 50, 50));
+		lblWorkerCategory.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblWorkerCategory.setVerticalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblWorkerCategory = new GridBagConstraints();
+		gbc_lblWorkerCategory.anchor = GridBagConstraints.EAST;
+		gbc_lblWorkerCategory.insets = new Insets(0, 0, 5, 5);
+		gbc_lblWorkerCategory.gridx = 2;
+		gbc_lblWorkerCategory.gridy = 2;
+		contentPane.add(lblWorkerCategory, gbc_lblWorkerCategory);
+
+		cmbWorkerCategory.addActionListener(changeWorkerCategoryListener);
+		cmbWorkerCategory.setName("cmbWorkerCategory");
+		GridBagConstraints gbc_cmbWorkerCategory = new GridBagConstraints();
+		gbc_cmbWorkerCategory.insets = new Insets(0, 0, 5, 5);
+		gbc_cmbWorkerCategory.fill = GridBagConstraints.HORIZONTAL;
+		gbc_cmbWorkerCategory.gridx = 3;
+		gbc_cmbWorkerCategory.gridy = 2;
+		contentPane.add(cmbWorkerCategory, gbc_cmbWorkerCategory);
+
+		showErrorLbl = new JLabel("");
+		showErrorLbl.setName("showErrorLbl");
+		showErrorLbl.setForeground(new Color(139, 0, 0));
+		showErrorLbl.setFont(new Font("Verdana", Font.PLAIN, 16));
+		showErrorLbl.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 1),
+				BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+		GridBagConstraints gbc_showErrorLbl = new GridBagConstraints();
+		gbc_showErrorLbl.gridwidth = 5;
+		gbc_showErrorLbl.insets = new Insets(0, 0, 5, 0);
+		gbc_showErrorLbl.gridx = 0;
+		gbc_showErrorLbl.gridy = 3;
+		contentPane.add(showErrorLbl, gbc_showErrorLbl);
+
+		btnFetch = new JButton("Fetch");
+		btnFetch.setEnabled(false);
+		btnFetch.setName("btnFetch");
+		btnFetch.setForeground(Color.WHITE);
+		btnFetch.setOpaque(true);
+		btnFetch.setFont(new Font("Arial", Font.BOLD, 16));
+		btnFetch.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnFetch.setBackground(new Color(59, 89, 182));
+		btnFetch.setFocusPainted(false);
+		btnFetch.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_btnFetch = new GridBagConstraints();
+		gbc_btnFetch.ipady = 10;
+		gbc_btnFetch.ipadx = 20;
+		gbc_btnFetch.insets = new Insets(0, 0, 5, 5);
+		gbc_btnFetch.gridx = 0;
+		gbc_btnFetch.gridy = 4;
+		contentPane.add(btnFetch, gbc_btnFetch);
 		btnFetch.addActionListener(crudActionListener);
-		btnDelete.addActionListener(filterActionListener);
-		btnSearchOrder.addActionListener(crudActionListener);
+
+		btnUpdate = new JButton("Update");
+		btnUpdate.setEnabled(false);
+		btnUpdate.setName("btnUpdate");
+		btnUpdate.setForeground(Color.WHITE);
+		btnUpdate.setOpaque(true);
+		btnUpdate.setFont(new Font("Arial", Font.BOLD, 16));
+		btnUpdate.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnUpdate.setBackground(new Color(59, 89, 182));
+		btnUpdate.setFocusPainted(false);
+		btnUpdate.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_btnUpdate = new GridBagConstraints();
+		gbc_btnUpdate.ipady = 10;
+		gbc_btnUpdate.ipadx = 20;
+		gbc_btnUpdate.insets = new Insets(0, 0, 5, 5);
+		gbc_btnUpdate.gridx = 1;
+		gbc_btnUpdate.gridy = 4;
+		contentPane.add(btnUpdate, gbc_btnUpdate);
+		btnUpdate.addActionListener(crudActionListener);
+
+		btnAdd = new JButton("Add");
+		btnAdd.setEnabled(false);
+		btnAdd.setName("btnAdd");
+		btnAdd.setForeground(Color.WHITE);
+		btnAdd.setOpaque(true);
+		btnAdd.setFont(new Font("Arial", Font.BOLD, 16));
+		btnAdd.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnAdd.setBackground(new Color(59, 89, 182));
+		btnAdd.setFocusPainted(false);
+		btnAdd.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
+		gbc_btnAdd.ipady = 10;
+		gbc_btnAdd.ipadx = 20;
+		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAdd.gridx = 2;
+		gbc_btnAdd.gridy = 4;
+		contentPane.add(btnAdd, gbc_btnAdd);
+
+		btnAdd.addActionListener(crudActionListener);
+
+		JLabel lblSearchWorker = new JLabel("Search Worker");
+		lblSearchWorker.setFont(new Font("Arial", Font.BOLD, 14));
+		lblSearchWorker.setForeground(new Color(50, 50, 50));
+		lblSearchWorker.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblSearchWorker.setVerticalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblSearchWorker = new GridBagConstraints();
+		gbc_lblSearchWorker.anchor = GridBagConstraints.EAST;
+		gbc_lblSearchWorker.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSearchWorker.gridx = 0;
+		gbc_lblSearchWorker.gridy = 5;
+		contentPane.add(lblSearchWorker, gbc_lblSearchWorker);
+
+		txtSearchWorker = new JTextField();
+		txtSearchWorker.addKeyListener(changeWorkerValueListener);
+
+		txtSearchWorker.setName("txtSearchWorker");
+		txtSearchWorker.setFont(new Font("Arial", Font.PLAIN, 16));
+		txtSearchWorker.setColumns(10);
+		GridBagConstraints gbc_txtSearchWorker = new GridBagConstraints();
+		gbc_txtSearchWorker.insets = new Insets(0, 0, 5, 5);
+		gbc_txtSearchWorker.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtSearchWorker.gridx = 1;
+		gbc_txtSearchWorker.gridy = 5;
+		contentPane.add(txtSearchWorker, gbc_txtSearchWorker);
+
+		JLabel lblSearchBy = new JLabel("Search By");
+		lblSearchBy.setFont(new Font("Arial", Font.BOLD, 14));
+		lblSearchBy.setForeground(new Color(50, 50, 50));
+		lblSearchBy.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblSearchBy.setVerticalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblSearchBy = new GridBagConstraints();
+		gbc_lblSearchBy.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSearchBy.gridx = 2;
+		gbc_lblSearchBy.gridy = 5;
+		contentPane.add(lblSearchBy, gbc_lblSearchBy);
+
+		cmbSearchByOptions.addActionListener(changeWorkerCategoryListener);
+		cmbSearchByOptions.setName("cmbSearchByOptions");
+		GridBagConstraints gbc_cmbSearchByOptions = new GridBagConstraints();
+		gbc_cmbSearchByOptions.insets = new Insets(0, 0, 5, 5);
+		gbc_cmbSearchByOptions.fill = GridBagConstraints.HORIZONTAL;
+		gbc_cmbSearchByOptions.gridx = 3;
+		gbc_cmbSearchByOptions.gridy = 5;
+		contentPane.add(cmbSearchByOptions, gbc_cmbSearchByOptions);
+
+		btnSearchWorker = new JButton("Search Worker");
+		btnSearchWorker.setEnabled(false);
+		btnSearchWorker.setName("btnSearchWorker");
+		btnSearchWorker.setForeground(Color.WHITE);
+		btnSearchWorker.setOpaque(true);
+		btnSearchWorker.setFont(new Font("Arial", Font.BOLD, 16));
+		btnSearchWorker.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnSearchWorker.setBackground(new Color(59, 89, 182));
+		btnSearchWorker.setFocusPainted(false);
+		btnSearchWorker.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_btnSearchWorker = new GridBagConstraints();
+		gbc_btnSearchWorker.ipady = 10;
+		gbc_btnSearchWorker.ipadx = 20;
+		gbc_btnSearchWorker.insets = new Insets(0, 0, 5, 0);
+		gbc_btnSearchWorker.gridx = 4;
+		gbc_btnSearchWorker.gridy = 5;
+		contentPane.add(btnSearchWorker, gbc_btnSearchWorker);
 		btnSearchWorker.addActionListener(filterActionListener);
+
+		showErrorLblSearchWorker = new JLabel("");
+		showErrorLblSearchWorker.setName("showErrorLblSearchWorker");
+		showErrorLblSearchWorker.setForeground(new Color(139, 0, 0));
+		showErrorLblSearchWorker.setFont(new Font("Verdana", Font.PLAIN, 16));
+		showErrorLblSearchWorker.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.RED, 1), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+		GridBagConstraints gbc_showErrorLblSearchWorker = new GridBagConstraints();
+		gbc_showErrorLblSearchWorker.gridwidth = 2;
+		gbc_showErrorLblSearchWorker.insets = new Insets(0, 0, 5, 5);
+		gbc_showErrorLblSearchWorker.gridx = 0;
+		gbc_showErrorLblSearchWorker.gridy = 6;
+		contentPane.add(showErrorLblSearchWorker, gbc_showErrorLblSearchWorker);
+
+		btnClearSearchWorker = new JButton("Clear");
+		btnClearSearchWorker.setEnabled(false);
+		btnClearSearchWorker.setName("btnClearSearchWorker");
+		btnClearSearchWorker.setForeground(Color.WHITE);
+		btnClearSearchWorker.setOpaque(true);
+		btnClearSearchWorker.setFont(new Font("Arial", Font.BOLD, 16));
+		btnClearSearchWorker.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnClearSearchWorker.setBackground(new Color(59, 89, 182));
+		btnClearSearchWorker.setFocusPainted(false);
+		btnClearSearchWorker.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_btnClearSearchWorker = new GridBagConstraints();
+		gbc_btnClearSearchWorker.ipady = 10;
+		gbc_btnClearSearchWorker.ipadx = 20;
+		gbc_btnClearSearchWorker.insets = new Insets(0, 0, 5, 0);
+		gbc_btnClearSearchWorker.gridx = 4;
+		gbc_btnClearSearchWorker.gridy = 6;
+		contentPane.add(btnClearSearchWorker, gbc_btnClearSearchWorker);
 		btnClearSearchWorker.addActionListener(filterActionListener);
+
+		scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.gridwidth = 5;
+		gbc_scrollPane.gridheight = 7;
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 7;
+		contentPane.add(scrollPane, gbc_scrollPane);
+
+		workerListModel = new DefaultListModel<>();
+		listWorkers = new JList<Worker>(workerListModel);
+		listWorkers.setName("listWorkers");
+		listWorkers.addListSelectionListener(e -> btnDelete.setEnabled(listWorkers.getSelectedIndex() != -1));
+		listWorkers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollPane.setViewportView(listWorkers);
+
+		btnDelete = new JButton("Delete");
+		btnDelete.setEnabled(false);
+
+		btnDelete.setName("btnDelete");
+		btnDelete.setForeground(Color.WHITE);
+		btnDelete.setOpaque(true);
+		btnDelete.setFont(new Font("Arial", Font.BOLD, 16));
+		btnDelete.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnDelete.setBackground(new Color(59, 89, 182));
+		btnDelete.setFocusPainted(false);
+		btnDelete.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_btnDelete = new GridBagConstraints();
+		gbc_btnDelete.ipady = 10;
+		gbc_btnDelete.ipadx = 20;
+		gbc_btnDelete.insets = new Insets(0, 0, 5, 5);
+		gbc_btnDelete.gridx = 1;
+		gbc_btnDelete.gridy = 14;
+		contentPane.add(btnDelete, gbc_btnDelete);
+		btnDelete.addActionListener(filterActionListener);
+
+		JLabel lblSearchOrdersBy = new JLabel("Search Orders By Worker ID");
+		lblSearchOrdersBy.setFont(new Font("Arial", Font.BOLD, 14));
+		lblSearchOrdersBy.setForeground(new Color(50, 50, 50));
+		lblSearchOrdersBy.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblSearchOrdersBy.setVerticalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblSearchOrdersBy = new GridBagConstraints();
+		gbc_lblSearchOrdersBy.anchor = GridBagConstraints.EAST;
+		gbc_lblSearchOrdersBy.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSearchOrdersBy.gridx = 0;
+		gbc_lblSearchOrdersBy.gridy = 15;
+		contentPane.add(lblSearchOrdersBy, gbc_lblSearchOrdersBy);
+
+		txtOrdersByWorkerId = new JTextField();
+		txtOrdersByWorkerId.addKeyListener(changeWorkerValueListener);
+		txtOrdersByWorkerId.setName("txtOrdersByWorkerId");
+		txtOrdersByWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
+		txtOrdersByWorkerId.setColumns(10);
+		GridBagConstraints gbc_txtOrdersByWorkerId = new GridBagConstraints();
+		gbc_txtOrdersByWorkerId.insets = new Insets(0, 0, 5, 5);
+		gbc_txtOrdersByWorkerId.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtOrdersByWorkerId.gridx = 1;
+		gbc_txtOrdersByWorkerId.gridy = 15;
+		contentPane.add(txtOrdersByWorkerId, gbc_txtOrdersByWorkerId);
+
+		btnSearchOrder = new JButton("Search Orders");
+		btnSearchOrder.setEnabled(false);
+		btnSearchOrder.setName("btnSearchOrder");
+		btnSearchOrder.setForeground(Color.WHITE);
+		btnSearchOrder.setOpaque(true);
+		btnSearchOrder.setFont(new Font("Arial", Font.BOLD, 16));
+		btnSearchOrder.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnSearchOrder.setBackground(new Color(59, 89, 182));
+		btnSearchOrder.setFocusPainted(false);
+		btnSearchOrder.setPreferredSize(new Dimension(150, 40));
+		GridBagConstraints gbc_btnSearchOrder = new GridBagConstraints();
+		gbc_btnSearchOrder.ipady = 10;
+		gbc_btnSearchOrder.ipadx = 20;
+		gbc_btnSearchOrder.insets = new Insets(0, 0, 5, 5);
+		gbc_btnSearchOrder.gridx = 2;
+		gbc_btnSearchOrder.gridy = 15;
+		contentPane.add(btnSearchOrder, gbc_btnSearchOrder);
+		btnSearchOrder.addActionListener(crudActionListener);
+
+		scrollPane_1 = new JScrollPane();
+		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
+		gbc_scrollPane_1.gridwidth = 5;
+		gbc_scrollPane_1.gridheight = 4;
+		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
+		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane_1.gridx = 0;
+		gbc_scrollPane_1.gridy = 16;
+		contentPane.add(scrollPane_1, gbc_scrollPane_1);
+
+		orderListModel = new DefaultListModel<>();
+		listOrders = new JList<>(orderListModel);
+		listOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listOrders.setName("listOrders");
+		scrollPane_1.setViewportView(listOrders);
+
+		showErrorLblSearchOrder = new JLabel("");
+		showErrorLblSearchOrder.setName("showErrorLblSearchOrder");
+		showErrorLblSearchOrder.setForeground(new Color(139, 0, 0));
+		showErrorLblSearchOrder.setFont(new Font("Verdana", Font.PLAIN, 16));
+		showErrorLblSearchOrder.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createLineBorder(Color.RED, 1), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+		GridBagConstraints gbc_showErrorLblSearchOrder = new GridBagConstraints();
+		gbc_showErrorLblSearchOrder.gridwidth = 5;
+		gbc_showErrorLblSearchOrder.insets = new Insets(0, 0, 5, 5);
+		gbc_showErrorLblSearchOrder.gridx = 0;
+		gbc_showErrorLblSearchOrder.gridy = 20;
+		contentPane.add(showErrorLblSearchOrder, gbc_showErrorLblSearchOrder);
+
+		showErrorNotFoundLbl = new JLabel("");
+		showErrorNotFoundLbl.setName("showErrorNotFoundLbl");
+		showErrorNotFoundLbl.setForeground(new Color(139, 0, 0));
+		showErrorNotFoundLbl.setFont(new Font("Verdana", Font.PLAIN, 16));
+		showErrorNotFoundLbl.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 1),
+				BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+		GridBagConstraints gbc_lblError = new GridBagConstraints();
+		gbc_lblError.gridwidth = 5;
+		gbc_lblError.insets = new Insets(0, 0, 0, 5);
+		gbc_lblError.gridx = 0;
+		gbc_lblError.gridy = 21;
+		contentPane.add(showErrorNotFoundLbl, gbc_lblError);
 
 	}
 

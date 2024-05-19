@@ -1,9 +1,12 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
 
 public class ValidationConfigurationsForValidateIdMethodTest {
 
@@ -11,7 +14,7 @@ public class ValidationConfigurationsForValidateIdMethodTest {
 
 	@Before
 	public void setup() {
-		validationConfigurations = new ValidationConfigurations();
+		validationConfigurations = new ExtendedValidationConfigurations();
 	}
 
 	@Test

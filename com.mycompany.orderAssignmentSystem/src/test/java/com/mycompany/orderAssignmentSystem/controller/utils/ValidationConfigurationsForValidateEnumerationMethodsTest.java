@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 
@@ -17,7 +18,7 @@ public class ValidationConfigurationsForValidateEnumerationMethodsTest {
 
 	@Before
 	public void setup() {
-		validationConfigurations = new ValidationConfigurations();
+		validationConfigurations = new ExtendedValidationConfigurations();
 	}
 
 // These tests are to validate category enumeration method

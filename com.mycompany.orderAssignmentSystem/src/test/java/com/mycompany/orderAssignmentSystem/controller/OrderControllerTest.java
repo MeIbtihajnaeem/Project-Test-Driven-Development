@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -41,6 +42,9 @@ public class OrderControllerTest {
 
 	@Mock
 	private WorkerRepository workerRepository;
+
+	@Mock
+	private ValidationConfigurations validationConfigurations;
 
 	@InjectMocks
 	private OrderController orderController;

@@ -6,12 +6,14 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
+
 public class ValidationConfigurationsForValidateAddressMethodTest {
 	private ValidationConfigurations validationConfigurations;
 
 	@Before
 	public void setup() {
-		validationConfigurations = new ValidationConfigurations();
+		validationConfigurations = new ExtendedValidationConfigurations();
 	}
 
 	@Test

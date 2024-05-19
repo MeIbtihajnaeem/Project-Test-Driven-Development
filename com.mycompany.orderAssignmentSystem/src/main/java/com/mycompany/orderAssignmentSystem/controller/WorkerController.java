@@ -35,17 +35,20 @@ public class WorkerController {
 	private WorkerView workerView;
 
 	/** The validation configurations. */
-	private ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+	private ValidationConfigurations validationConfigurations;
 
 	/**
 	 * Instantiates a new worker controller.
 	 *
-	 * @param workerRepository the worker repository
-	 * @param workerView       the worker view
+	 * @param workerRepository         the worker repository
+	 * @param validationConfigurations the input validation configuration
+	 * @param workerView               the worker view
 	 */
-	public WorkerController(WorkerRepository workerRepository, WorkerView workerView) {
+	public WorkerController(WorkerRepository workerRepository, WorkerView workerView,
+			ValidationConfigurations validationConfigurations) {
 		this.workerRepository = workerRepository;
 		this.workerView = workerView;
+		this.validationConfigurations = validationConfigurations;
 	}
 
 	/**
@@ -118,7 +121,9 @@ public class WorkerController {
 		LOGGER.info("Fetch a worker");
 
 		try {
-			validateWorkerForFetch(worker);
+//			validateWorkerForFetch(worker);
+			validateWorkerAndWorkerId(worker);
+
 			Worker savedWorker = workerRepository.findById(worker.getWorkerId());
 			if (savedWorker == null) {
 				throw new NoSuchElementException("Worker with id " + worker.getWorkerId() + " Not Found.");
@@ -284,7 +289,6 @@ public class WorkerController {
 	 */
 	private Worker searchByWorkerId(String searchText) {
 		Long workerId = validationConfigurations.validateStringNumber(searchText);
-		workerId = Long.parseLong(searchText);
 		workerId = validationConfigurations.validateId(workerId);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
@@ -322,10 +326,10 @@ public class WorkerController {
 	 *
 	 * @param worker the worker to validate
 	 */
-	private void validateWorkerForFetch(Worker worker) {
-		validateWorkerAndWorkerId(worker);
-
-	}
+//	private void validateWorkerForFetch(Worker worker) {
+//		validateWorkerAndWorkerId(worker);
+//
+//	}
 
 	/**
 	 * Validates a new worker.

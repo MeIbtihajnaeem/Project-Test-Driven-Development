@@ -42,19 +42,22 @@ public class OrderController {
 	private WorkerRepository workerRepository;
 
 	/** The validation configurations. */
-	private ValidationConfigurations validationConfigurations = new ValidationConfigurations();
+	private ValidationConfigurations validationConfigurations;
 
 	/**
 	 * Instantiates a new order controller.
 	 *
-	 * @param orderRepository  the order repository
-	 * @param orderView        the order view
-	 * @param workerRepository the worker repository
+	 * @param orderRepository          the order repository
+	 * @param orderView                the order view
+	 * @param validationConfigurations the input validation configuration
+	 * @param workerRepository         the worker repository
 	 */
-	public OrderController(OrderRepository orderRepository, OrderView orderView, WorkerRepository workerRepository) {
+	public OrderController(OrderRepository orderRepository, OrderView orderView, WorkerRepository workerRepository,
+			ValidationConfigurations validationConfigurations) {
 		this.orderRepository = orderRepository;
 		this.orderView = orderView;
 		this.workerRepository = workerRepository;
+		this.validationConfigurations = validationConfigurations;
 	}
 
 	/**

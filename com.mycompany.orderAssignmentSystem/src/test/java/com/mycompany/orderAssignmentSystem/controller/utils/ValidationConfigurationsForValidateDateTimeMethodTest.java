@@ -8,13 +8,15 @@ import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
+
 public class ValidationConfigurationsForValidateDateTimeMethodTest {
 
 	private ValidationConfigurations validationConfigurations;
 
 	@Before
 	public void setup() {
-		validationConfigurations = new ValidationConfigurations();
+		validationConfigurations = new ExtendedValidationConfigurations();
 	}
 
 	@Test

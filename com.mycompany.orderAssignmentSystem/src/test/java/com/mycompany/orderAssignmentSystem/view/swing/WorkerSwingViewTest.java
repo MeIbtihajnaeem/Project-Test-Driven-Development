@@ -31,16 +31,30 @@ import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
 import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 
+/**
+ * The Class WorkerSwingViewTest.
+ */
 @RunWith(GUITestRunner.class)
 public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
+
+	/** The window. */
 	private FrameFixture window;
 
+	/** The worker swing view. */
 	private WorkerSwingView workerSwingView;
+
+	/** The worker controller. */
 	@Mock
 	private WorkerController workerController;
 
+	/** The closeable. */
 	private AutoCloseable closeable;
 
+	/**
+	 * On set up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Override
 	protected void onSetUp() throws Exception {
 		closeable = MockitoAnnotations.openMocks(this);
@@ -55,11 +69,19 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
+	/**
+	 * On tear down.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Override
 	protected void onTearDown() throws Exception {
 		closeable.close();
 	}
 
+	/**
+	 * Test controls initial states.
+	 */
 	@Test
 	@GUITest
 	public void testControlsInitialStates() {
@@ -94,18 +116,23 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("listWorkers");
 		window.list("listOrders");
 
-		// Verify Buttons
-		window.button(JButtonMatcher.withName("lblManageOrder")).requireEnabled();
-		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
-		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
-		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
-		window.button(JButtonMatcher.withName("btnDelete")).requireDisabled();
-
-		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireDisabled();
-		window.button(JButtonMatcher.withName("btnSearchWorker")).requireDisabled();
-		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
+		// Verify Buttons using text
+		window.button(JButtonMatcher.withText("Manage Order")).requireEnabled();
+		window.button(JButtonMatcher.withText("Fetch")).requireDisabled();
+		window.button(JButtonMatcher.withText("Add")).requireDisabled();
+		window.button(JButtonMatcher.withText("Update")).requireDisabled();
+		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
+		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
+		window.button(JButtonMatcher.withText("Search Worker")).requireDisabled();
+		window.button(JButtonMatcher.withText("Search Orders")).requireDisabled();
 
 	}
+
+	/**
+	 * Verify that the "Add" button is disabled when the worker ID, worker name,
+	 * worker phone, and worker category fields are not empty. This is because the
+	 * worker ID must be null when creating a new worker.
+	 */
 
 	@Test
 	public void testWhenWorkerIdWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndAddButtonShouldBeDisable() {
@@ -116,6 +143,12 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Add" button is enabled when the worker ID field is empty,
+	 * worker name, worker phone, and worker category fields are not empty. This is
+	 * because the worker ID must null when creating a new worker as it is
+	 * automatically assigned by the database.
+	 */
 	@Test
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndAddButtonShouldBeEnable() {
 		window.textBox("txtWorkerName").enterText("Naeem");
@@ -124,6 +157,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnAdd")).requireEnabled();
 	}
 
+	/**
+	 * Verify that the "Search Worker" button is enabled when the search string and
+	 * search option fields are not empty.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionIsNotEmptyAndSearchButtonShouldBeEnabled() {
 		window.textBox("txtSearchWorker").enterText("Naeem");
@@ -131,18 +168,30 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireEnabled();
 	}
 
+	/**
+	 * Verify that the "Search Worker" button is disabled when the search string and
+	 * search option fields are empty.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionIsEmptyAndSearchButtonShouldBeDisabled() {
 		window.textBox("txtSearchWorker").enterText(" ");
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Clear" button is disabled when the search string and search
+	 * options fields are empty.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionsIsEmptyAndClearWorkerButtonShouldBeDisabled() {
 		window.textBox("txtSearchWorker").enterText(" ");
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Clear" button is enabled when the search string and search
+	 * options fields are not empty.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionsIsNotEmptyAndClearWorkerButtonShouldBeEnabled() {
 		window.textBox("txtSearchWorker").enterText("Naeem");
@@ -150,18 +199,31 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireEnabled();
 	}
 
+	/**
+	 * Verify that the "Search Order" button is enabled when the search order by
+	 * worker ID string field is not empty.
+	 */
 	@Test
 	public void testWhenSearchOrderByWorkerIdStringIsNotEmptyAndSearchOrderButtonShouldBeEnabled() {
 		window.textBox("txtOrdersByWorkerId").enterText("1");
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireEnabled();
 	}
 
+	/**
+	 * Verify that the "Search Order" button is disabled when the search order by
+	 * worker ID string field is empty.
+	 */
 	@Test
 	public void testWhenSearchOrderByWorkerIdStringIsEmptyAndSearchOrderButtonShouldBeDisabled() {
 		window.textBox("txtOrdersByWorkerId").enterText(" ");
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Update" button is disabled when the worker ID is empty, but
+	 * the worker name, worker phone number, and worker category fields are not
+	 * empty.
+	 */
 	@Test
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndUpdateButtonShouldBeDisable() {
 		window.textBox("txtWorkerName").enterText("Naeem");
@@ -170,6 +232,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Update" button is enabled when the worker ID, worker name,
+	 * worker phone number, and worker category fields are not empty.
+	 */
 	@Test
 	public void testWhenWorkerIdWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndUpdateButtonShouldBeEnable() {
 		window.textBox("txtWorkerId").enterText("1");
@@ -179,6 +245,11 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnUpdate")).requireEnabled();
 	}
 
+	/**
+	 * Verify that the "Fetch" button is disabled when the worker ID is empty, but
+	 * the worker name, worker phone number, and worker category fields are not
+	 * empty.
+	 */
 	@Test
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndFetchButtonShouldBeDisable() {
 		window.textBox("txtWorkerName").enterText("Naeem");
@@ -186,6 +257,11 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Fetch" button is enabled when the worker ID is not empty,
+	 * but the worker name, worker phone number, and worker category fields are
+	 * empty.
+	 */
 	@Test
 	public void testWhenWorkerIdIsNotEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsEmptyAndFetchButtonShouldBeEnable() {
 		window.textBox("txtWorkerId").enterText("1");
@@ -194,6 +270,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
+	/**
+	 * Verify that the "Add" button is disabled when either the worker name, worker
+	 * phone number, or worker category fields are blank.
+	 */
 	@Test
 	public void testWhenEitherNameOrCategoryOrPhoneNumberAreBlankThenAddButtonShouldBeDisabled() {
 		JTextComponentFixture name = window.textBox("txtWorkerName");
@@ -213,6 +293,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Search Worker" button is disabled when either the search
+	 * string or search option fields are blank.
+	 */
 	@Test
 	public void testWhenEitherSearchStringOrSearchOptionAreBlankThenSearchWorkerButtonShouldBeDisabled() {
 		JTextComponentFixture txtSearch = window.textBox("txtSearchWorker");
@@ -228,6 +312,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Clear Search" button is disabled when either the search
+	 * string or search option fields are blank.
+	 */
 	@Test
 	public void testWhenEitherSearchStringOrSearchOptionAreBlankThenClearSearchButtonShouldBeDisabled() {
 		JTextComponentFixture txtSearch = window.textBox("txtSearchWorker");
@@ -243,6 +331,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Update" button is disabled when either the worker ID, worker
+	 * name, worker phone number, or worker category fields are blank.
+	 */
 	@Test
 	public void testWhenEitherNameOrCategoryOrPhoneNumberOrOrderIdAreBlankThenUpdateButtonShouldBeDisabled() {
 		JTextComponentFixture orderId = window.textBox("txtWorkerId");
@@ -266,6 +358,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Fetch" button is disabled when either the worker ID, worker
+	 * name, or worker phone number fields are blank.
+	 */
 	@Test
 	public void testWhenEitherNameOrPhoneNumberOrOrderIdAreBlankThenFetchButtonShouldBeDisabled() {
 		JTextComponentFixture orderId = window.textBox("txtWorkerId");
@@ -289,11 +385,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
 	}
 
-	// Introducing a delay as GuiActionRunner.execute() functions reliably when the
-	// test runs individually,
-	// However, when run as part of a test collection, it fails due to an issue that
-	// is currently unknown to me.
-	// Adding delay solves the problem temporarily for some machines
+	/**
+	 * Verify that the "Delete" button is enabled only when a worker is selected.
+	 */
 	@Test
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAWorkerIsSelected() {
 		JListFixture list = window.list("listWorkers");
@@ -313,6 +407,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		deleteButton.requireDisabled();
 	}
 
+	/**
+	 * Verify that the "Show All Workers" functionality adds worker descriptions to
+	 * the list of workers.
+	 */
 	@Test
 	public void testsShowAllWorkersAddWorkerDescriptionToTheListWorkers() {
 		Worker worker1 = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -324,6 +422,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(listContents).containsExactly(worker1.toString(), worker2.toString());
 	}
 
+	/**
+	 * Verify that the "Show Search Order" functionality adds order descriptions to
+	 * the list of orders.
+	 */
 	@Test
 	public void testsShowSearchOrderAddOrderDescriptionToTheListOrders() {
 
@@ -339,6 +441,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
 	}
 
+	/**
+	 * Verify that the "Show Error" functionality displays the message in the error
+	 * label.
+	 */
 	@Test
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -346,6 +452,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText("error message: " + worker);
 	}
 
+	/**
+	 * Verify that the "Show Search Worker Error" functionality displays the message
+	 * in the error label.
+	 */
 	@Test
 	public void testShowSearchWorkerErrorShouldShowTheMessageInTheErrorLabel() {
 		String searchText = "1";
@@ -353,6 +463,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLblSearchWorker").requireText("error message: " + searchText);
 	}
 
+	/**
+	 * Verify that the "Show Not Found Error" functionality displays the message in
+	 * the error label.
+	 */
 	@Test
 	public void testShowNotFoundErrorShouldShowTheMessageInTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -360,6 +474,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorNotFoundLbl").requireText("error message: " + worker);
 	}
 
+	/**
+	 * Verify that the "Show Order By Worker ID Error" functionality displays the
+	 * message in the error label.
+	 */
 	@Test
 	public void testShowOrderByWorkerIdErrorShouldShowTheMessageInTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -367,6 +485,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLblSearchOrder").requireText("error message: " + worker);
 	}
 
+	/**
+	 * Verify that when a worker is added, it is added to the list of workers and
+	 * the error label is reset.
+	 */
 	@Test
 	public void testWorkerAddedShouldAddTheWorkerToTheListAndResetTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -376,6 +498,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Verify that when a worker is fetched, it populates the fields with worker
+	 * information and resets the error label.
+	 */
 	@Test
 	public void testWorkerFetchShouldFetchTheWorkerToTheFieldsAndResetTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -390,6 +516,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Verify that when a worker is modified, it updates the worker in the list of
+	 * workers and resets the error label.
+	 */
 	@Test
 	public void testWorkerModifiedShouldModifyAndAddTheWorkerToTheListAndResetTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -402,6 +532,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Verify that when a worker is modified but not found in the list, it does not
+	 * modify the list of workers and resets the error label.
+	 */
 	@Test
 	public void testWorkerModifiedShouldNotModifyAndDonotAddTheWorkerToTheListAndResetTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -414,6 +548,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Verify that when a worker is removed, it is removed from the list of workers
+	 * and resets the error label.
+	 */
 	@Test
 	public void testWorkerRemovedShouldRemoveTheWorkerToTheListAndResetTheErrorLabel() {
 		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -432,6 +570,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Verify that when searching for a worker, only the searched worker is shown in
+	 * the list of workers and the error label is reset.
+	 */
 	@Test
 	public void testWorkerSearchShouldModifyAndShowOnlySearchedWorkerToTheListAndResetTheErrorLabel() {
 		Worker worker1 = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
@@ -449,6 +591,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Verify that when searching for orders, only the searched orders are shown in
+	 * the list of orders and the error label is reset.
+	 */
 	@Test
 	public void testOrderSearchShouldModifyAndShowOnlySearchedOrdersToTheListAndResetTheErrorLabel() {
 		CustomerOrder order1 = new CustomerOrder(1l, "John", "Piazza Luigi", "3401372678", LocalDateTime.now(),
@@ -457,12 +603,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		CustomerOrder order2 = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", LocalDateTime.now(),
 				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
 
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			Thread.currentThread().interrupt();
-//			throw new RuntimeException(e);
-//		}
 		GuiActionRunner.execute(() -> {
 			workerSwingView.getOrderListModel().addElement(order1);
 			workerSwingView.getOrderListModel().addElement(order2);
@@ -475,6 +615,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Verify that clicking the "Add" button delegates to the worker controller to
+	 * create a new worker.
+	 */
 	@Test
 	public void testAddButtonShouldDelegateToWorkerControllerNewWorker() {
 		String name = "Naeem";
@@ -494,6 +638,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(workerController).createNewWorker(worker);
 	}
 
+	/**
+	 * Verify that clicking the "Update" button delegates to the worker controller
+	 * to update the worker.
+	 */
 	@Test
 	public void testUpdateButtonShouldDelegateToWorkerControllerUpdateWorker() {
 		long workerId = 1L;
@@ -521,6 +669,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(workerController).updateWorker(updatedWorker);
 	}
 
+	/**
+	 * Verify that clicking the "Fetch" button delegates to the worker controller to
+	 * fetch a worker by ID.
+	 */
 	@Test
 	public void testFetchButtonShouldDelegateToWorkerControllerFetchWorkerById() {
 		Long workerId = 1l;
@@ -534,6 +686,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(workerController).fetchWorkerById(worker);
 	}
 
+	/**
+	 * Verify that clicking the "Search Worker" button delegates to the worker
+	 * controller to search for workers by options.
+	 */
 	@Test
 	public void testSearchWorkerButtonShouldDelegateToWorkerControllerSearchWorkerByOptions() {
 		String searchText = "Ibtihaj";
@@ -550,6 +706,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
+	/**
+	 * Verify that clicking the "Clear Search Worker" button delegates to the worker
+	 * controller to show all workers.
+	 */
 	@Test
 	public void testClearSearchWorkerButtonShouldDelegateToWorkerControllerShowAllWorkers() {
 		String searchText = "Ibtihaj";
@@ -573,15 +733,12 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(workerController).getAllWorkers();
 	}
 
+	/**
+	 * Verify that clicking the "Delete" button delegates to the worker controller
+	 * to remove a worker.
+	 */
 	@Test
 	public void testDeleteButtonShouldDelegateToWorkerControllerRemoveWorker() {
-
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new RuntimeException(e);
-		}
 		long workerId = 1L;
 		long workerId2 = 2L;
 
@@ -606,6 +763,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		verify(workerController).deleteWorker(worker2);
 	}
 
+	/**
+	 * Verify that clicking the "Search Order" button delegates to the worker
+	 * controller to search orders by worker ID.
+	 */
 	@Test
 	public void testSearcOrderButtonShouldDelegateToWorkerControllerSearchOrderByWorkerId() {
 		Worker worker = new Worker();

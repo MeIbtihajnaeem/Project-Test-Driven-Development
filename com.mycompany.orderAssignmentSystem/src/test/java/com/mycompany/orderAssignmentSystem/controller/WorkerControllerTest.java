@@ -1,12 +1,17 @@
 package com.mycompany.orderAssignmentSystem.controller;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
 import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
@@ -27,13 +33,18 @@ import com.mycompany.orderAssignmentSystem.model.Worker;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
 import com.mycompany.orderAssignmentSystem.view.WorkerView;
 
+/**
+ * Controller class responsible for handling worker-related operations.
+ */
 public class WorkerControllerTest {
-
 	@Mock
 	private WorkerRepository workerRepository;
 
 	@Mock
 	private WorkerView workerView;
+
+	@Mock
+	private ValidationConfigurations validationConfigurations;
 
 	@InjectMocks
 	private WorkerController workerController;
@@ -96,8 +107,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameIsNull() {
+	public void testCreateNewsWorkerMethodWhenValidationConfigurationsCallsValidateNameThrowsNullPointerException() {
 		Worker worker = new Worker();
+		worker.setWorkerName("");
+		doThrow(new NullPointerException("The name field cannot be empty.")).when(validationConfigurations)
+				.validateName(anyString());
 		workerController.createNewWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The name field cannot be empty.", worker);
@@ -105,81 +119,13 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameIsEmpty() {
-		Worker worker = new Worker();
-		String workerName = "";
-		worker.setWorkerName(workerName);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The name field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameIsShortStringLessThanTwoCharachters() {
-		Worker worker = new Worker();
-		String workerName = "a";
-		worker.setWorkerName(workerName);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The name must be at least 3 characters long. Please provide a valid name.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameIsShortStringEqualsToTwoCharachters() {
-		Worker worker = new Worker();
-		String workerName = "ab";
-		worker.setWorkerName(workerName);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The name must be at least 3 characters long. Please provide a valid name.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameIsLargeStringGreaterThanTwentyCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj Naeem";
-		worker.setWorkerName(workerName);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The name cannot exceed 20 characters. Please provide a shorter name.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameIsLargeStringEqualsToTwentyCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj Nae";
-		worker.setWorkerName(workerName);
-		Worker spyWorker = spy(worker);
-		workerController.createNewWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(workerName);
-		verify(spyWorker).setWorkerName(workerName);
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameWithSpecialCharacters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad@Ibtihaj";
-		worker.setWorkerName(workerName);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The name cannot contain special characters. Please remove any special characters from the name.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameWithNumbers() {
+	public void testCreateNewsWorkerMethodWhenValidationConfigurationsCallsValidateNameThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad1Ibtihaj";
 		worker.setWorkerName(workerName);
+		doThrow(new IllegalArgumentException(
+				"The name cannot contain numbers. Please remove any number from the name."))
+				.when(validationConfigurations).validateName(anyString());
 		workerController.createNewWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The name cannot contain numbers. Please remove any number from the name.",
@@ -188,73 +134,26 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameWithTabs() {
+	public void testCreateNewWorkerMethodWhenValidateNameReturnsValidName() {
 		Worker worker = new Worker();
-		String workerName = "Muhammad\tIbtihaj";
-		worker.setWorkerName(workerName);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The name cannot contain tabs. Please remove any tabs from the name.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameWithOneLeadingWhiteSpace() {
-		Worker worker = new Worker();
-		String actualWorkerName = " MuhammadIbtihaj";
-		String expectedWorkerName = "MuhammadIbtihaj";
-		worker.setWorkerName(actualWorkerName);
-		Worker spyWorker = spy(worker);
-		workerController.createNewWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(expectedWorkerName);
-		verify(spyWorker).setWorkerName(expectedWorkerName);
-
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameWithTwoLeadingWhiteSpace() {
-		Worker worker = new Worker();
-		String actualWorkerName = "  MuhammadIbtihaj";
-		String expectedWorkerName = "MuhammadIbtihaj";
-
-		worker.setWorkerName(actualWorkerName);
-		Worker spyWorker = spy(worker);
-		workerController.createNewWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(expectedWorkerName);
-		verify(spyWorker).setWorkerName(expectedWorkerName);
-
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameWithOneMiddleWhiteSpace() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
+		String workerName = "Muhammad Ibtihaj Nae";
 		worker.setWorkerName(workerName);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
 		workerController.createNewWorker(spyWorker);
 		assertThat(spyWorker.getWorkerName()).isEqualTo(workerName);
 		verify(spyWorker).setWorkerName(workerName);
 	}
 
 	@Test
-	public void testCreateNewWorkerMethodWhenWorkerNameWithOneEndingWhiteSpace() {
-		Worker worker = new Worker();
-		String actualWorkerName = "Muhammad Ibtihaj ";
-		String expectedWorkerName = "Muhammad Ibtihaj";
-
-		worker.setWorkerName(actualWorkerName);
-		Worker spyWorker = spy(worker);
-		workerController.createNewWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(expectedWorkerName);
-		verify(spyWorker).setWorkerName(expectedWorkerName);
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberIsNull() {
+	public void testCreateNewsWorkerMethodWhenValidationConfigurationsCallsValidatPhoneThrowsNullPointerException() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad Ibtihaj";
 		worker.setWorkerName(workerName);
+		worker.setWorkerPhoneNumber("");
+		doThrow(new NullPointerException("The phone number field cannot be empty.")).when(validationConfigurations)
+				.validatePhoneNumber(anyString());
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
 		workerController.createNewWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The phone number field cannot be empty.", worker);
@@ -262,51 +161,28 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberIsEmptyString() {
+	public void testCreateNewsWorkerMethodWhenValidationConfigurationsCallsValidatPhoneThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "";
-
+		String workerPhoneNumber = "3401372@78";
 		worker.setWorkerName(workerName);
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
+		doThrow(new IllegalArgumentException(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number."))
+				.when(validationConfigurations).validatePhoneNumber(anyString());
+
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
+
 		workerController.createNewWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The phone number field cannot be empty.", worker);
+		inOrder.verify(workerView).showError(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
+				worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberIsShortStringLessThanTenCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "000000";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberIsLongStringGreaterThanTenCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "00000000000";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberIsLongStringEqualsTenCharachters() {
+	public void testCreateNewWorkerMethodWhenValidatePhoneNumberReturnsValidPhoneNumber() {
 		Worker worker = new Worker();
 
 		String workerName = "Muhammad Ibtihaj";
@@ -315,138 +191,16 @@ public class WorkerControllerTest {
 		worker.setWorkerName(workerName);
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(workerPhoneNumber)).thenReturn(workerPhoneNumber);
+
 		workerController.createNewWorker(spyWorker);
 		assertThat(spyWorker.getWorkerPhoneNumber()).isEqualTo(workerPhoneNumber);
 		verify(spyWorker).setWorkerPhoneNumber(workerPhoneNumber);
 	}
 
 	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberWithSpecialCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "3401372@78";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberWithAlphabetCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "3401372a78";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberWithMiddleWhiteSpaceCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "3401372 78";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberWithLeadingWhiteSpaceCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = " 340137278";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberWithEndingWhiteSpaceCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "340137278 ";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberWithTabsCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "\t340137278";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerPhoneNumberWithLeadingNumberExceptThree() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "4401372078";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The phone number must start with 3. Please provide a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerOrderCategoryIsNull() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "3401372678";
-
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.createNewWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The category field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testCreateNewWorkerMethodWhenWorkerOrderCategoryEnumValue() {
+	public void testCreateNewWorkerMethodWhenValidateCategoryReturnsValidCategory() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad Ibtihaj";
 		String workerPhoneNumber = "3401372678";
@@ -456,6 +210,10 @@ public class WorkerControllerTest {
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
 		worker.setWorkerCategory(plumber);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(workerPhoneNumber)).thenReturn(workerPhoneNumber);
+		when(validationConfigurations.validateCategory(plumber)).thenReturn(plumber);
+
 		workerController.createNewWorker(spyWorker);
 		assertThat(spyWorker.getWorkerCategory()).isEqualTo(plumber);
 		verify(spyWorker).setWorkerCategory(plumber);
@@ -472,6 +230,9 @@ public class WorkerControllerTest {
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
 		worker.setWorkerCategory(plumber);
 		when(workerRepository.findByPhoneNumber(workerPhoneNumber)).thenReturn(worker);
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(workerPhoneNumber)).thenReturn(workerPhoneNumber);
+		when(validationConfigurations.validateCategory(plumber)).thenReturn(plumber);
 		workerController.createNewWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
 		inOrder.verify(workerView).showError("Worker with phone number " + workerPhoneNumber + " Already Exists",
@@ -488,6 +249,9 @@ public class WorkerControllerTest {
 		worker.setWorkerName(workerName);
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
 		worker.setWorkerCategory(plumber);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(workerPhoneNumber);
+		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(plumber);
 		when(workerRepository.findByPhoneNumber(workerPhoneNumber)).thenReturn(null);
 		when(workerRepository.save(worker)).thenReturn(worker);
 		workerController.createNewWorker(worker);
@@ -497,7 +261,8 @@ public class WorkerControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
-	// Tests for update worker method
+	// Test update method
+
 	@Test
 	public void testUpdateWorkerMethodWhenNullWorker() {
 		workerController.updateWorker(null);
@@ -507,18 +272,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerIdIsNull() {
-		Worker worker = new Worker();
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerIdIsZero() {
+	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsValidateIdThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 		worker.setWorkerId(0l);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
@@ -526,31 +284,26 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerIdIsLessThanZero() {
-		Worker worker = new Worker();
-		worker.setWorkerId(-1l);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerIdIsGreaterThanZero() {
+	public void testUpdateWorkerMethodWhenWorkerIdIsValidIdReturnedByValidateId() {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.updateWorker(spyWorker);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
 		verify(spyWorker).setWorkerId(workerId);
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameIsNull() {
+	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsValidateNameThrowsNullPointerException() {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
+		worker.setWorkerName("");
+		doThrow(new NullPointerException("The name field cannot be empty.")).when(validationConfigurations)
+				.validateName(anyString());
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The name field cannot be empty.", worker);
@@ -558,80 +311,17 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameIsEmpty() {
-		Worker worker = new Worker();
-		String workerName = "";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The name field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameIsShortStringLessThanTwoCharachters() {
-		Worker worker = new Worker();
-		String workerName = "a";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The name must be at least 3 characters long. Please provide a valid name.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameIsShortStringEqualsToTwoCharachters() {
-		Worker worker = new Worker();
-		String workerName = "ab";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The name must be at least 3 characters long. Please provide a valid name.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameIsLargeStringGreaterThanTwentyCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj Naeem";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The name cannot exceed 20 characters. Please provide a shorter name.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameIsLargeStringEqualsToTwentyCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj Nae";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		Worker spyWorker = spy(worker);
-		workerController.updateWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(workerName);
-		verify(spyWorker).setWorkerName(workerName);
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameWithSpecialCharacters() {
+	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsValidateNameThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad@Ibtihaj";
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		worker.setWorkerName(workerName);
+		doThrow(new IllegalArgumentException(
+				"The name cannot contain special characters. Please remove any special characters from the name."))
+				.when(validationConfigurations).validateName(anyString());
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError(
@@ -641,97 +331,33 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameWithNumbers() {
+	public void testUpdateWorkerMethodWhenWorkerNameIsValidWorkerNameReturnedByValidateName() {
 		Worker worker = new Worker();
-		String workerName = "Muhammad1Ibtihaj";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The name cannot contain numbers. Please remove any number from the name.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameWithTabs() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad\tIbtihaj";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The name cannot contain tabs. Please remove any tabs from the name.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameWithOneLeadingWhiteSpace() {
-		Worker worker = new Worker();
-		String actualWorkerName = " MuhammadIbtihaj";
-		String expectedWorkerName = "MuhammadIbtihaj";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(actualWorkerName);
-		Worker spyWorker = spy(worker);
-		workerController.updateWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(expectedWorkerName);
-		verify(spyWorker).setWorkerName(expectedWorkerName);
-
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameWithTwoLeadingWhiteSpace() {
-		Worker worker = new Worker();
-		String actualWorkerName = "  MuhammadIbtihaj";
-		String expectedWorkerName = "MuhammadIbtihaj";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(actualWorkerName);
-		Worker spyWorker = spy(worker);
-		workerController.updateWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(expectedWorkerName);
-		verify(spyWorker).setWorkerName(expectedWorkerName);
-
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameWithOneMiddleWhiteSpace() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
+		String workerName = "Muhammad Ibtihaj Nae";
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		worker.setWorkerName(workerName);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
 		workerController.updateWorker(spyWorker);
 		assertThat(spyWorker.getWorkerName()).isEqualTo(workerName);
 		verify(spyWorker).setWorkerName(workerName);
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerNameWithOneEndingWhiteSpace() {
-		Worker worker = new Worker();
-		String actualWorkerName = "Muhammad Ibtihaj ";
-		String expectedWorkerName = "Muhammad Ibtihaj";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(actualWorkerName);
-		Worker spyWorker = spy(worker);
-		workerController.updateWorker(spyWorker);
-		assertThat(spyWorker.getWorkerName()).isEqualTo(expectedWorkerName);
-		verify(spyWorker).setWorkerName(expectedWorkerName);
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberIsNull() {
+	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsValidatePhoneNumberThrowsNullPointerException() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad Ibtihaj";
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		worker.setWorkerName(workerName);
+		worker.setWorkerPhoneNumber("");
+		doThrow(new NullPointerException("The phone number field cannot be empty.")).when(validationConfigurations)
+				.validatePhoneNumber(anyString());
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
+
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The phone number field cannot be empty.", worker);
@@ -739,70 +365,7 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberIsEmptyString() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The phone number field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberIsShortStringLessThanTenCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "000000";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberIsLongStringGreaterThanTenCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "00000000000";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showError("The phone number must be 10 characters long. Please provide a valid phone number.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberIsLongStringEqualsTenCharachters() {
-		Worker worker = new Worker();
-
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "3401372678";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		Worker spyWorker = spy(worker);
-		workerController.updateWorker(spyWorker);
-		assertThat(spyWorker.getWorkerPhoneNumber()).isEqualTo(workerPhoneNumber);
-		verify(spyWorker).setWorkerPhoneNumber(workerPhoneNumber);
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberWithSpecialCharachters() {
+	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsValidatePhoneNumberThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad Ibtihaj";
 		String workerPhoneNumber = "3401372@78";
@@ -810,6 +373,12 @@ public class WorkerControllerTest {
 		worker.setWorkerId(workerId);
 		worker.setWorkerName(workerName);
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
+		doThrow(new IllegalArgumentException(
+				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number."))
+				.when(validationConfigurations).validatePhoneNumber(anyString());
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateName(workerName)).thenReturn(workerName);
+
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError(
@@ -819,123 +388,26 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberWithAlphabetCharachters() {
+	public void testUpdateWorkerMethodWhenWorkerPhoneNumberIsValidPhoneNumberReturnByValidatePhoneNumber() {
 		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "3401372a78";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
 
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberWithMiddleWhiteSpaceCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "3401372 78";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberWithLeadingWhiteSpaceCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = " 340137278";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberWithEndingWhiteSpaceCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "340137278 ";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberWithTabsCharachters() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "\t340137278";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerPhoneNumberWithLeadingNumberExceptThree() {
-		Worker worker = new Worker();
-		String workerName = "Muhammad Ibtihaj";
-		String workerPhoneNumber = "4401372078";
-		long workerId = 1l;
-		worker.setWorkerId(workerId);
-		worker.setWorkerName(workerName);
-		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The phone number must start with 3. Please provide a valid phone number.",
-				worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testUpdateWorkerMethodWhenWorkerOrderCategoryIsNull() {
-		Worker worker = new Worker();
 		String workerName = "Muhammad Ibtihaj";
 		String workerPhoneNumber = "3401372678";
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		worker.setWorkerName(workerName);
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
-		workerController.updateWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The category field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(workerPhoneNumber);
+		workerController.updateWorker(spyWorker);
+		assertThat(spyWorker.getWorkerPhoneNumber()).isEqualTo(workerPhoneNumber);
+		verify(spyWorker).setWorkerPhoneNumber(workerPhoneNumber);
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerOrderCategoryEnumValue() {
+	public void testUpdateWorkerMethodWhenWorkerOrderCategoryEnumValueIsValidReturnedByValidateCategory() {
 		Worker worker = new Worker();
 		String workerName = "Muhammad Ibtihaj";
 		String workerPhoneNumber = "3401372678";
@@ -946,6 +418,9 @@ public class WorkerControllerTest {
 		worker.setWorkerPhoneNumber(workerPhoneNumber);
 		worker.setWorkerCategory(plumber);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(workerPhoneNumber);
+		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(plumber);
 		workerController.updateWorker(spyWorker);
 		assertThat(spyWorker.getWorkerCategory()).isEqualTo(plumber);
 		verify(spyWorker).setWorkerCategory(plumber);
@@ -967,7 +442,10 @@ public class WorkerControllerTest {
 		long workerId = 1l;
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-
+		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
+		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(differentWorker);
 		workerController.updateWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
@@ -984,7 +462,10 @@ public class WorkerControllerTest {
 		long workerId = 1l;
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-
+		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
+		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		worker.setOrders(asList(new CustomerOrder()));
 		when(workerRepository.findById(workerId)).thenReturn(worker);
@@ -1004,7 +485,10 @@ public class WorkerControllerTest {
 		long workerId = 1l;
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-
+		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
+		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(workerRepository.modify(worker)).thenReturn(worker);
@@ -1025,7 +509,10 @@ public class WorkerControllerTest {
 		long workerId = 1l;
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-
+		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
+		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		worker.setOrders(Collections.emptyList());
 		when(workerRepository.findById(workerId)).thenReturn(worker);
@@ -1048,7 +535,10 @@ public class WorkerControllerTest {
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 		worker.setOrders(Collections.emptyList());
-
+		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateName(anyString())).thenReturn(workerName);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
+		when(validationConfigurations.validateCategory(any(OrderCategory.class))).thenReturn(category);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		workerController.updateWorker(worker);
@@ -1069,20 +559,13 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchWorkerMethodWhenWorkerIdIsNull() {
-		Worker worker = new Worker();
-		workerController.fetchWorkerById(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchWorkerMethodWhenWorkerIdIsZero() {
+	public void testFetchWorkerMethodWhenValidationConfigurationsCallsValidateIdThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 
 		long workerId = 0l;
 		worker.setWorkerId(workerId);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
 		workerController.fetchWorkerById(worker);
 
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -1091,23 +574,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchWorkerMethodWhenWorkerIdIsLessThanZero() {
-		Worker worker = new Worker();
-
-		long workerId = -1l;
-		worker.setWorkerId(workerId);
-		workerController.fetchWorkerById(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchWorkerMethodWhenWorkerIdIsGreaterThanZero() {
+	public void testFetchWorkerMethodWhenWorkerIdIsValidReturnedByValidateId() {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.fetchWorkerById(spyWorker);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
 		verify(spyWorker).setWorkerId(workerId);
@@ -1118,6 +590,7 @@ public class WorkerControllerTest {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		workerController.fetchWorkerById(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -1139,7 +612,7 @@ public class WorkerControllerTest {
 		savedWorker.setWorkerName(workerName);
 		savedWorker.setWorkerPhoneNumber(workerPhoneNumber);
 		savedWorker.setWorkerCategory(plumber);
-
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(savedWorker);
 		workerController.fetchWorkerById(worker);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
@@ -1147,38 +620,26 @@ public class WorkerControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
-// Tests for search worker method
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsNull() {
-		workerController.searchWorker(null, null);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError("The search Text field cannot be empty.", null);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
+	// Tests for search worker method
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsEmpty() {
+	public void testSearchWorkerMethodWhenValidationConfigurationsCallsValidateSearchStringThrowsNullPointerException() {
+		String searchText = "";
 
-		workerController.searchWorker("", null);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError("The search Text field cannot be empty.", "");
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsLargeStringGreaterThanTwentyCharachters() {
-		String searchText = "Muhammad Ibtihaj Naeem";
+		doThrow(new NullPointerException("The search Text field cannot be empty.")).when(validationConfigurations)
+				.validateSearchString(anyString());
 		workerController.searchWorker(searchText, null);
-
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The search Text cannot exceed 20 characters. Please provide a shorter search Text.", searchText);
+		inOrder.verify(workerView).showSearchError("The search Text field cannot be empty.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextWithTabs() {
+	public void testSearchWorkerMethodWhenValidationConfigurationsCallsValidateSearchStringThrowsIllegalArgumentException() {
 		String searchText = "Muhammad\tIbtihaj";
+		doThrow(new IllegalArgumentException(
+				"The search Text cannot contain tabs. Please remove any tabs from the search Text."))
+				.when(validationConfigurations).validateSearchString(anyString());
 		workerController.searchWorker(searchText, null);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError(
@@ -1189,6 +650,7 @@ public class WorkerControllerTest {
 	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsNull() {
 		String searchText = "1";
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		workerController.searchWorker(searchText, null);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("Search Option cannot be empty.", searchText);
@@ -1196,8 +658,23 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsNonIntegar() {
-		String searchText = "a";
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndValidateStringNumberThrowsNullPointerExcetption() {
+		String searchText = "";
+		doThrow(new NullPointerException("The text cannot be empty.")).when(validationConfigurations)
+				.validateStringNumber(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("The text cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndValidateStringNumberThrowsIllegalArgumentExcetption() {
+		String searchText = "";
+		doThrow(new IllegalArgumentException("Please enter a valid number.")).when(validationConfigurations)
+				.validateStringNumber(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("Please enter a valid number.", searchText);
@@ -1205,61 +682,30 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsZero() {
-		String searchText = "0";
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndValidateIdThrowsNullPointerExcetption() {
+		String searchText = "";
+		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
+				.validateId(anyLong());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(1l);
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("The id field cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndValidateIdThrowsIllegalArgumentExcetption() {
+		String searchText = "";
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(1l);
+
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
 				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsNegativeIntegar() {
-		String searchText = "-1";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError("The id field cannot be less than 1. Please provide a valid id.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithLeadingWhiteSpaces() {
-		String searchText = " 1";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithEndingWhiteSpaces() {
-		String searchText = "1 ";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithMiddleWhiteSpaces() {
-		String searchText = "1 0";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showSearchError("The number cannot contains whitespace. Please provide a valid number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWithSpecialCharacters() {
-		String searchText = "1@0";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError("Please enter a valid number.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1267,6 +713,9 @@ public class WorkerControllerTest {
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWorkerNotFound() {
 		String searchText = "1";
 		long workerId = 1l;
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -1275,10 +724,14 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidPositiveIntegar() {
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidPositiveIntegarAndWorkerFound() {
 		String searchText = "1";
+		long workerId = 1l;
 		Worker worker = new Worker();
 		when(workerRepository.findById(1l)).thenReturn(worker);
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchResultForWorker(asList(worker));
@@ -1286,28 +739,39 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndSearchTextIsShortStringLessThanTwoCharachters() {
-		String searchText = "a";
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndValidateNameThrowsNullPointerException() {
+		String searchText = "";
+		doThrow(new NullPointerException("The name field cannot be empty.")).when(validationConfigurations)
+				.validateName(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_NAME);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The name must be at least 3 characters long. Please provide a valid name.", searchText);
+		inOrder.verify(workerView).showSearchError("The name field cannot be empty.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndSearchTextIsShortStringEqualsToTwoCharachters() {
-		String searchText = "ab";
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndValidateNameThrowsIllegalArgumentException() {
+		String searchText = "$";
+		doThrow(new IllegalArgumentException(
+				"The name cannot contain special characters. Please remove any special characters from the name."))
+				.when(validationConfigurations).validateName(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_NAME);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError(
-				"The name must be at least 3 characters long. Please provide a valid name.", searchText);
+				"The name cannot contain special characters. Please remove any special characters from the name.",
+				searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndSearchTextIsValidNameButWorkersFoundAreNull() {
-		String searchText = "Muhammad";
+		String searchText = "Ibtihaj";
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateName(searchText)).thenReturn(searchText);
 		when(workerRepository.findByName(searchText)).thenReturn(null);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_NAME);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -1317,8 +781,10 @@ public class WorkerControllerTest {
 
 	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerNameAndSearchTextIsValidNameButWorkersFoundAreEmpty() {
-		String searchText = "Muhammad";
+		String searchText = "Ibtihaj";
 		when(workerRepository.findByName(searchText)).thenReturn(Collections.emptyList());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateName(searchText)).thenReturn(searchText);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_NAME);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("No result found with Worker Name: " + searchText, searchText);
@@ -1330,6 +796,8 @@ public class WorkerControllerTest {
 		String searchText = "Muhammad";
 		Worker worker = new Worker();
 		when(workerRepository.findByName(searchText)).thenReturn(asList(worker));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateName(searchText)).thenReturn(searchText);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_NAME);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchResultForWorker(asList(worker));
@@ -1337,77 +805,32 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsShortStringLessThanTenCharachters() {
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndValidatePhoneNumberThorwsNullPointerException() {
+
+		String searchText = "";
+
+		doThrow(new NullPointerException("The phone number field cannot be empty.")).when(validationConfigurations)
+				.validatePhoneNumber(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("The phone number field cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndValidatePhoneNumberThorwsIllegalArgumentException() {
 
 		String searchText = "000000";
+
+		doThrow(new IllegalArgumentException(
+				"The phone number must be 10 characters long. Please provide a valid phone number."))
+				.when(validationConfigurations).validatePhoneNumber(anyString());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError(
 				"The phone number must be 10 characters long. Please provide a valid phone number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsLongStringGreaterThanTenCharachters() {
-		String searchText = "000000000000000000";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The phone number must be 10 characters long. Please provide a valid phone number.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsWithAlphabetCharachters() {
-		String searchText = "3401372a78";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsWithMiddleWhiteSpaceCharachters() {
-		String searchText = "3401372 78";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsWithSpecialCharacters() {
-		String searchText = "3401372@78";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsWithLeadingWhiteSpaceCharachters() {
-		String searchText = " 340137278";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.",
-				searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsWithLeadingNumberExceptThree() {
-		String searchText = "4401372078";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchError(
-				"The phone number must start with 3. Please provide a valid phone number.", searchText);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -1415,6 +838,8 @@ public class WorkerControllerTest {
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsValidPhoneNumberButWorkerFoundIsNull() {
 		String searchText = "3401372678";
 		when(workerRepository.findByPhoneNumber(searchText)).thenReturn(null);
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validatePhoneNumber(searchText)).thenReturn(searchText);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("No result found with phone number: " + searchText, searchText);
@@ -1422,10 +847,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsValidPhoneNumber() {
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerPhoneNumberAndSearchTextIsValidPhoneNumberAndWorkerFound() {
 		String searchText = "3401372678";
 		Worker worker = new Worker();
 		when(workerRepository.findByPhoneNumber(searchText)).thenReturn(worker);
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validatePhoneNumber(searchText)).thenReturn(searchText);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_PHONE);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchResultForWorker(asList(worker));
@@ -1433,8 +860,28 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsWithWhiteSpace() {
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndValidateEnumThrowsNullPointerException() {
+		String searchText = "";
+
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		doThrow(new NullPointerException("The category cannot be empty.")).when(validationConfigurations)
+				.validateEnum(anyString(), eq(OrderCategory.class));
+
+		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
+		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+		inOrder.verify(workerView).showSearchError("The category cannot be empty.", searchText);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+	@Test
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndValidateEnumThrowsIllegalArgumentException() {
 		String searchText = " Plumber ";
+
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		doThrow(new IllegalArgumentException(
+				"The category cannot contain whitespaces. Please remove any whitespaces from the category."))
+				.when(validationConfigurations).validateEnum(anyString(), eq(OrderCategory.class));
+
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError(
@@ -1444,20 +891,13 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsWithUnavailableCategory() {
-		String searchText = "Manager";
-		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView)
-				.showSearchError("The specified category was not found. Please provide a valid category.", searchText);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsValidCategoryButWorkersFoundAreNull() {
 		OrderCategory category = OrderCategory.PLUMBER;
 		String searchText = category.toString();
 		when(workerRepository.findByOrderCategory(category)).thenReturn(null);
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderCategory.class)).thenReturn(category);
+
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("No result found with category: " + searchText, searchText);
@@ -1469,6 +909,9 @@ public class WorkerControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		String searchText = category.toString();
 		when(workerRepository.findByOrderCategory(category)).thenReturn(Collections.emptyList());
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderCategory.class)).thenReturn(category);
+
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("No result found with category: " + searchText, searchText);
@@ -1476,11 +919,13 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsValidCategory() {
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerCategoryAndSearchTextIsValidCategoryAndWorkerFound() {
 		OrderCategory category = OrderCategory.PLUMBER;
 		String searchText = category.toString();
 		Worker worker = new Worker();
 		when(workerRepository.findByOrderCategory(OrderCategory.PLUMBER)).thenReturn(asList(worker));
+		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		when(validationConfigurations.validateEnum(searchText, OrderCategory.class)).thenReturn(category);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_CATEGORY);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchResultForWorker(asList(worker));
@@ -1488,6 +933,7 @@ public class WorkerControllerTest {
 	}
 
 	// Tests for delete method
+
 	public void testDeleteWorkerMethodWithNullWorker() {
 		workerController.deleteWorker(null);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -1496,18 +942,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsNull() {
-		Worker worker = new Worker();
-		workerController.deleteWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsZero() {
+	public void testDeleteWorkerMethodWhenWorkerIdIsZeroAndValidateIdThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 		worker.setWorkerId(0l);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
@@ -1515,21 +954,13 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsLessThanZero() {
-		Worker worker = new Worker();
-		worker.setWorkerId(-1l);
-		workerController.deleteWorker(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsGreaterThanZero() {
+	public void testDeleteWorkerMethodWhenWorkerIdIsValidAndReturnedByValidateId() {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+
 		workerController.deleteWorker(spyWorker);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
 		verify(spyWorker).setWorkerId(workerId);
@@ -1538,8 +969,10 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButNoWorkerFound() {
 		Worker worker = new Worker();
-		worker.setWorkerId(1l);
-		when(workerRepository.findById(1l)).thenReturn(null);
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
+		when(workerRepository.findById(workerId)).thenReturn(null);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
@@ -1549,9 +982,11 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithOrders() {
 		Worker worker = new Worker();
-		worker.setWorkerId(1l);
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
 		worker.setOrders(asList(new CustomerOrder()));
-		when(workerRepository.findById(1l)).thenReturn(worker);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError(
@@ -1562,9 +997,11 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithNullOrders() {
 		Worker worker = new Worker();
-		worker.setWorkerId(1l);
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
 		worker.setOrders(null);
-		when(workerRepository.findById(1l)).thenReturn(worker);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerRepository).delete(worker);
@@ -1575,9 +1012,12 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithEmptyOrders() {
 		Worker worker = new Worker();
-		worker.setWorkerId(1l);
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
 		worker.setOrders(Collections.emptyList());
-		when(workerRepository.findById(1l)).thenReturn(worker);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerRepository).delete(worker);
@@ -1595,40 +1035,25 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsNull() {
-		Worker worker = new Worker();
-		workerController.fetchOrdersByWorkerId(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be empty.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZero() {
+	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndValidateIdThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 		worker.setWorkerId(0l);
+		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+				.when(validationConfigurations).validateId(anyLong());
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be less than 1. Please provide a valid id.", worker);
+		inOrder.verify(workerView).showSearchOrderByWorkerIdError(
+				"The id field cannot be less than 1. Please provide a valid id.", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
 	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsLessThanZero() {
-		Worker worker = new Worker();
-		worker.setWorkerId(-1l);
-		workerController.fetchOrdersByWorkerId(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be less than 1. Please provide a valid id.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsGreaterThanZero() {
+	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndReturnedByValidateId() {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.fetchOrdersByWorkerId(spyWorker);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
 		verify(spyWorker).setWorkerId(workerId);
@@ -1637,8 +1062,10 @@ public class WorkerControllerTest {
 	@Test
 	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidButNoWorkerFound() {
 		Worker worker = new Worker();
-		worker.setWorkerId(1l);
-		when(workerRepository.findById(1l)).thenReturn(null);
+		long workerId = 1l;
+		worker.setWorkerId(workerId);
+		when(workerRepository.findById(workerId)).thenReturn(null);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
@@ -1648,11 +1075,14 @@ public class WorkerControllerTest {
 	@Test
 	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndOrdersExists() {
 		Worker newWorker = new Worker();
-		newWorker.setWorkerId(1l);
+		long workerId = 1l;
+		newWorker.setWorkerId(workerId);
 		Worker savedWorker = new Worker();
-		savedWorker.setWorkerId(1l);
+		savedWorker.setWorkerId(workerId);
 		savedWorker.setOrders(Collections.emptyList());
-		when(workerRepository.findById(1l)).thenReturn(savedWorker);
+		when(workerRepository.findById(workerId)).thenReturn(savedWorker);
+		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+
 		workerController.fetchOrdersByWorkerId(newWorker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showOrderByWorkerId(savedWorker.getOrders());

@@ -17,7 +17,6 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<junit.version>4.13.1</junit.version>
 		<lang3.version>3.0</lang3.version>
-		<jdate.version>1.4</jdate.version>
 		<mockito.version>4.11.0</mockito.version>
 		<log4j.version>2.23.1</log4j.version>
 		<assertj-swing-junit-version>3.17.1</assertj-swing-junit-version>
@@ -35,11 +34,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${lang3.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.toedter</groupId>
-			<artifactId>jcalendar</artifactId>
-			<version>${jdate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>

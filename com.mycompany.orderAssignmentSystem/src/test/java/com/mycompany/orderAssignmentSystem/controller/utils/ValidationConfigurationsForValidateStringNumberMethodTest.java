@@ -1,10 +1,12 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
 
 public class ValidationConfigurationsForValidateStringNumberMethodTest {
 
@@ -12,7 +14,7 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 
 	@Before
 	public void setup() {
-		validationConfigurations = new ValidationConfigurations();
+		validationConfigurations = new ExtendedValidationConfigurations();
 	}
 
 	@Test
@@ -78,14 +80,12 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 				.hasMessage("The number cannot contains whitespace. Please provide a valid number.");
 	}
 
-
 	@Test
 	public void testStringNumberMethodWithValidNumber() {
 		String number = "1234567890";
 		long resultNumber = 1234567890L;
 		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
 	}
-
 
 	@Test
 	public void testStringNumberMethodWithNegativeNumber() {
