@@ -9,6 +9,10 @@ package com.mycompany.orderAssignmentSystem.enumerations;
 public enum WorkerSearchOption {
 
 	/**
+	 * NONE
+	 */
+	NONE,
+	/**
 	 * Search by worker ID.
 	 */
 	WORKER_ID,

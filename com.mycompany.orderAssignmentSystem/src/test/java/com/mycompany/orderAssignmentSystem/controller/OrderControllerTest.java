@@ -1090,7 +1090,6 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
@@ -1134,7 +1133,6 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
@@ -1180,7 +1178,6 @@ public class OrderControllerTest {
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
@@ -1216,7 +1213,6 @@ public class OrderControllerTest {
 				appointmentDate, actualDescription, orderCategory, status, worker);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
@@ -1272,7 +1268,6 @@ public class OrderControllerTest {
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 
 		when(orderRepository.save(order)).thenReturn(order);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
@@ -1327,7 +1322,6 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(orderRepository.save(order)).thenReturn(order);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
@@ -1385,7 +1379,6 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(orderRepository.save(order)).thenReturn(order);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
@@ -1435,7 +1428,6 @@ public class OrderControllerTest {
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(orderRepository.save(order)).thenReturn(order);
 
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
 		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);

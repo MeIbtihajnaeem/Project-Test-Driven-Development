@@ -61,14 +61,26 @@ public class WorkerController {
 	}
 
 	private void add(Worker worker) {
-		validateNewWorker(worker);
+		if (worker.getWorkerId() != null) {
+			throw new IllegalArgumentException("Unable to assign a worker ID during worker creation.");
+		}
+		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
+		if (existingWorker != null) {
+			throw new IllegalArgumentException(
+					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
+		}
 		worker = workerRepository.save(worker);
 		workerView.workerAdded(worker);
 		LOGGER.info("New worker created: {}", worker);
 	}
 
 	private void update(Worker worker) {
-		validateUpdateWorker(worker);
+		worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
+		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
+		if (existingWorker != null) {
+			throw new IllegalArgumentException(
+					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
+		}
 
 		Worker savedWorker = workerRepository.findById(worker.getWorkerId());
 		if (savedWorker == null) {
@@ -91,6 +103,9 @@ public class WorkerController {
 	 */
 	public void createOrUpdateWorker(Worker worker, OperationType operation) {
 		try {
+			Objects.requireNonNull(worker, "Worker is null");
+			validateWorkerFields(worker);
+
 			switch (operation) {
 			case ADD:
 				LOGGER.info("Creating a new order");
@@ -100,46 +115,20 @@ public class WorkerController {
 				LOGGER.info("Updating an existing order");
 				update(worker);
 				break;
+			default:
+				throw new IllegalArgumentException("This operation is not allowed");
+
 			}
 
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while " + operation.toString() + " worker: " + e.getMessage());
 			workerView.showError(e.getMessage(), worker);
 			return;
+		} catch (NoSuchElementException e) {
+			LOGGER.error("Error finding worker: {}", e.getMessage());
+			workerView.showErrorNotFound(e.getMessage(), worker);
 		}
 	}
-
-	/**
-	 * Updates an existing worker in the repository.
-	 *
-	 * @param worker the worker to be updated
-	 */
-//	public void updateWorker(Worker worker) {
-//		LOGGER.info("Updating a worker");
-//
-//		try {
-//			validateUpdateWorker(worker);
-//
-//			Worker savedWorker = workerRepository.findById(worker.getWorkerId());
-//			if (savedWorker == null) {
-//				throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
-//			}
-//			if (savedWorker.getOrders() != null && !savedWorker.getOrders().isEmpty()) {
-//				throw new IllegalArgumentException(
-//						"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
-//			}
-//
-//			worker = workerRepository.modify(worker);
-//			workerView.workerModified(worker);
-//			LOGGER.info("Worker Updated: {}", worker);
-//		} catch (NullPointerException | IllegalArgumentException e) {
-//			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
-//			workerView.showError(e.getMessage(), worker);
-//		} catch (NoSuchElementException e) {
-//			LOGGER.error("Error finding worker: {}", e.getMessage());
-//			workerView.showErrorNotFound(e.getMessage(), worker);
-//		}
-//	}
 
 	/**
 	 * Fetches a worker by its ID.
@@ -248,9 +237,11 @@ public class WorkerController {
 			case WORKER_CATEGORY:
 				workers = searchByWorkerCategory(searchText);
 				break;
-			default:
+			case WORKER_NAME:
 				workers = searchByWorkerName(searchText);
 				break;
+			default:
+				throw new IllegalArgumentException("This operation is not allowed");
 			}
 			workerView.showSearchResultForWorker(workers);
 			LOGGER.info("Worker Searched: {}", workers);
@@ -351,31 +342,6 @@ public class WorkerController {
 	}
 
 	/**
-	 * Validates the worker for fetching.
-	 *
-	 * @param worker the worker to validate
-	 */
-//	private void validateWorkerForFetch(Worker worker) {
-//		validateWorkerAndWorkerId(worker);
-//
-//	}
-
-	/**
-	 * Validates a new worker.
-	 *
-	 * @param worker the worker to validate
-	 */
-	private void validateNewWorker(Worker worker) {
-		Objects.requireNonNull(worker, "Worker is null");
-		if (worker.getWorkerId() != null) {
-			throw new IllegalArgumentException("Unable to assign a worker ID during worker creation.");
-		}
-		validateWorkerFields(worker);
-		validateExistingWorker(worker);
-
-	}
-
-	/**
 	 * Validates the fields of a worker.
 	 *
 	 * @param worker the worker to validate
@@ -386,28 +352,4 @@ public class WorkerController {
 		worker.setWorkerCategory(validationConfigurations.validateCategory(worker.getWorkerCategory()));
 	}
 
-	/**
-	 * Validates an update to an existing worker.
-	 *
-	 * @param worker the worker to validate
-	 */
-	private void validateUpdateWorker(Worker worker) {
-		validateWorkerAndWorkerId(worker);
-		validateWorkerFields(worker);
-		validateExistingWorker(worker);
-
-	}
-
-	/**
-	 * Validates the existence of an existing worker.
-	 *
-	 * @param worker the worker to validate
-	 */
-	private void validateExistingWorker(Worker worker) {
-		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
-		if (existingWorker != null) {
-			throw new IllegalArgumentException(
-					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
-		}
-	}
 }
