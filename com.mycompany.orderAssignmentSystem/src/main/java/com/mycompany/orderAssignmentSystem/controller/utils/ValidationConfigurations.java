@@ -4,7 +4,6 @@
 package com.mycompany.orderAssignmentSystem.controller.utils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -30,7 +29,7 @@ public interface ValidationConfigurations {
 	 * @return the validated numeric value
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public long validateStringNumber(String str);
+	public String validateStringNumber(String str);
 
 	/**
 	 * Validates an address.
@@ -66,7 +65,7 @@ public interface ValidationConfigurations {
 	 * @return the validated ID
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public long validateId(Long id);
+//	public long validateId(Long id);
 
 	/**
 	 * Validates a date.
@@ -75,7 +74,7 @@ public interface ValidationConfigurations {
 	 * @return the validated date
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public LocalDateTime validateDate(LocalDateTime dateTime);
+	public LocalDate validateDate(LocalDate dateTime);
 
 	/**
 	 * Validates a string date.
@@ -84,7 +83,7 @@ public interface ValidationConfigurations {
 	 * @return the validated date
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public LocalDate validateStringDate(String dateString);
+	public String validateStringDate(String dateString);
 
 	/**
 	 * Validates an order category.

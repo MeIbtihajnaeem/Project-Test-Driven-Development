@@ -5,7 +5,7 @@
 
 package com.mycompany.orderAssignmentSystem.model;
 
-import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -16,7 +16,7 @@ import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 public class CustomerOrder {
 
 	/** The order id. */
-	private Long orderId;
+	private String orderId;
 
 	/** The customer name. */
 	private String customerName;
@@ -28,7 +28,7 @@ public class CustomerOrder {
 	private String customerPhoneNumber;
 
 	/** The appointment date. */
-	private LocalDateTime appointmentDate;
+	private String appointmentDate;
 
 	/** The order description. */
 	private String orderDescription;
@@ -50,7 +50,7 @@ public class CustomerOrder {
 	}
 
 	/**
-	 * Parameterized constructor.
+	 * Parameterised constructor.
 	 *
 	 * @param orderId             the order id
 	 * @param customerName        the customer name
@@ -62,9 +62,9 @@ public class CustomerOrder {
 	 * @param orderStatus         the order status
 	 * @param worker              the worker assigned to the order
 	 */
-	public CustomerOrder(Long orderId, String customerName, String customerAddress, String customerPhoneNumber,
-			LocalDateTime appointmentDate, String orderDescription, OrderCategory orderCategory,
-			OrderStatus orderStatus, Worker worker) {
+	public CustomerOrder(String orderId, String customerName, String customerAddress, String customerPhoneNumber,
+			String appointmentDate, String orderDescription, OrderCategory orderCategory, OrderStatus orderStatus,
+			Worker worker) {
 		super();
 		this.orderId = orderId;
 		this.customerName = customerName;
@@ -82,7 +82,7 @@ public class CustomerOrder {
 	 *
 	 * @return the order id
 	 */
-	public Long getOrderId() {
+	public String getOrderId() {
 		return orderId;
 	}
 
@@ -91,7 +91,7 @@ public class CustomerOrder {
 	 *
 	 * @param orderId the new order id
 	 */
-	public void setOrderId(Long orderId) {
+	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
 
@@ -154,7 +154,7 @@ public class CustomerOrder {
 	 *
 	 * @return the appointment date
 	 */
-	public LocalDateTime getAppointmentDate() {
+	public String getAppointmentDate() {
 		return appointmentDate;
 	}
 
@@ -163,7 +163,7 @@ public class CustomerOrder {
 	 *
 	 * @param appointmentDate the new appointment date
 	 */
-	public void setAppointmentDate(LocalDateTime appointmentDate) {
+	public void setAppointmentDate(String appointmentDate) {
 		this.appointmentDate = appointmentDate;
 	}
 
@@ -238,5 +238,42 @@ public class CustomerOrder {
 	public void setWorker(Worker worker) {
 		this.worker = worker;
 	}
+
+	
+	
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(appointmentDate, customerAddress, customerName, customerPhoneNumber, orderCategory,
+				orderDescription, orderId, orderStatus, worker);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CustomerOrder other = (CustomerOrder) obj;
+		return Objects.equals(appointmentDate, other.appointmentDate)
+				&& Objects.equals(customerAddress, other.customerAddress)
+				&& Objects.equals(customerName, other.customerName)
+				&& Objects.equals(customerPhoneNumber, other.customerPhoneNumber)
+				&& orderCategory == other.orderCategory && Objects.equals(orderDescription, other.orderDescription)
+				&& Objects.equals(orderId, other.orderId) && orderStatus == other.orderStatus
+				&& Objects.equals(worker, other.worker);
+	}
+
+	@Override
+	public String toString() {
+		return "CustomerOrder [orderId=" + orderId + ", customerName=" + customerName + ", customerAddress="
+				+ customerAddress + ", customerPhoneNumber=" + customerPhoneNumber + ", appointmentDate="
+				+ appointmentDate + ", orderDescription=" + orderDescription + ", orderCategory=" + orderCategory
+				+ ", orderStatus=" + orderStatus + ", worker=" + worker + "]";
+	}
+	
+	
 
 }

@@ -3,7 +3,6 @@ package com.mycompany.orderAssignmentSystem.controller;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -13,8 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -88,6 +85,29 @@ public class OrderControllerTest {
 		when(orderRepository.findAll()).thenReturn(null);
 		orderController.allOrders();
 		verify(orderView).showAllOrder(null);
+	}
+
+	// Tests for show all workers
+	@Test
+	public void testAllWorkersMethodWhenW() {
+		List<Worker> workers = asList(new Worker());
+		when(workerRepository.findAll()).thenReturn(workers);
+		orderController.allWorkers();
+		verify(orderView).showAllWorkers(workers);
+	}
+
+	@Test
+	public void testAllWorkersMethodWhenEmptyList() {
+		when(workerRepository.findAll()).thenReturn(Collections.emptyList());
+		orderController.allWorkers();
+		verify(orderView).showAllWorkers(Collections.emptyList());
+	}
+
+	@Test
+	public void testAllWorkersMethodWhenNullList() {
+		when(workerRepository.findAll()).thenReturn(null);
+		orderController.allWorkers();
+		verify(orderView).showAllWorkers(null);
 	}
 
 	// Tests for create order method
@@ -185,7 +205,6 @@ public class OrderControllerTest {
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 
 		CustomerOrder spyOrder = spy(order);
-//		when(validationConfigurations.validateName(customerName)).thenReturn(customerName);
 		when(validationConfigurations.validatePhoneNumber(customerPhoneNumber)).thenReturn(customerPhoneNumber);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getCustomerPhoneNumber()).isEqualTo(customerPhoneNumber);
@@ -258,14 +277,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().minusDays(2);
+		String appointmentDate = "12-12-2024";
 
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setCustomerAddress(customerAddress);
 		order.setAppointmentDate(appointmentDate);
 		doThrow(new NullPointerException("Date field cannot be empty.")).when(validationConfigurations)
-				.validateDate(any(LocalDateTime.class));
+				.validateStringDate(anyString());
 
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -279,14 +298,13 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String customerAddress = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now().minusDays(2);
-
+		String appointmentDate = "12-12-2024";
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
 		order.setCustomerAddress(customerAddress);
 		order.setAppointmentDate(appointmentDate);
 		doThrow(new IllegalArgumentException("Please provide a valid date that is not before today's date."))
-				.when(validationConfigurations).validateDate(any(LocalDateTime.class));
+				.when(validationConfigurations).validateStringDate(anyString());
 
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -300,7 +318,7 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
 
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -309,7 +327,7 @@ public class OrderControllerTest {
 
 		CustomerOrder spyOrder = spy(order);
 
-		when(validationConfigurations.validateDate(appointmentDate)).thenReturn(appointmentDate);
+		when(validationConfigurations.validateStringDate(appointmentDate)).thenReturn(appointmentDate);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.ADD);
 		assertThat(spyOrder.getAppointmentDate()).isEqualTo(appointmentDate);
 		verify(spyOrder).setAppointmentDate(appointmentDate);
@@ -321,7 +339,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String description = "";
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -344,7 +363,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String description = "";
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -368,7 +388,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String description = "Please ensure all connection are leak-proof.Thanks";
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -389,7 +410,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String description = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		order.setCustomerName(customerName);
@@ -413,7 +435,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String description = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		order.setCustomerName(customerName);
@@ -436,7 +459,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		order.setCustomerName(customerName);
@@ -460,7 +484,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String description = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 
@@ -484,7 +509,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String description = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 
@@ -509,7 +535,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
@@ -537,7 +564,8 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
@@ -557,12 +585,13 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenValidateIdThrowsNullPointerException() {
+	public void testCreateOrderMethodWhenvalidateStringNumberThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
@@ -576,7 +605,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
@@ -584,17 +613,18 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenValidateIdThrowsIllegalArgumentException() {
+	public void testCreateOrderMethodWhenvalidateStringNumberThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		long workerId = 0l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -605,7 +635,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
@@ -613,17 +643,18 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenValidateIdReturnsValidWorkerId() {
+	public void testCreateOrderMethodWhenvalidateStringNumberReturnsValidWorkerId() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 
 		Worker spyWorker = spy(worker);
@@ -635,7 +666,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(spyWorker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(category)).thenReturn(category);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -652,13 +683,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		long orderId = 1l;
-		long workerId = orderId;
+		String orderId = "1";
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
@@ -681,12 +713,13 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.COMPLETED;
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(category);
 		order.setCustomerName(customerName);
@@ -698,7 +731,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(category)).thenReturn(category);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -717,13 +750,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.PLUMBER;
 		OrderCategory workerCategory = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -739,7 +773,7 @@ public class OrderControllerTest {
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
 
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -757,13 +791,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.PLUMBER;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -776,7 +811,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -794,13 +829,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -813,7 +849,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -833,13 +869,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -852,7 +889,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -871,13 +908,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -892,7 +930,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -913,13 +951,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -934,7 +973,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -950,17 +989,18 @@ public class OrderControllerTest {
 	// Update
 
 	@Test
-	public void testCreateOrderMethodWhenOperationUpdateAndValidateIdThrowsNullPointerException() {
+	public void testCreateOrderMethodWhenOperationUpdateAndvalidateStringNumberThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -971,7 +1011,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
@@ -979,17 +1019,18 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testCreateOrderMethodWhenOperationUpdateAndValidateIdThrowsIllegalArgumentException() {
+	public void testCreateOrderMethodWhenOperationUpdateAndvalidateStringNumberThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -999,9 +1040,9 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		order.setOrderId(0l);
+		order.setOrderId("0");
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
@@ -1009,18 +1050,19 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testUpdateOrderMethodWhenValidateIdReturnsValidIdForOperationUpdate() {
+	public void testUpdateOrderMethodWhenvalidateStringNumberReturnsValidIdForOperationUpdate() {
 		CustomerOrder order = new CustomerOrder();
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		long orderId = 1l;
-		long workerId = 2l;
+		String orderId = "1";
+		String workerId = "2";
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1033,7 +1075,7 @@ public class OrderControllerTest {
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
 
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.UPDATE);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -1045,17 +1087,18 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.PLUMBER;
 		OrderCategory workerCategory = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1080,17 +1123,18 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.PLUMBER;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1102,7 +1146,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("Order and worker categories must align", order);
@@ -1114,13 +1158,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connections are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.PLUMBER;
 		OrderCategory workerCategory = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
-		long workerId = 1L;
-		long orderId = 1L;
+		String workerId = "1";
+		String orderId = "1";
 		Worker worker = new Worker(workerId, "Worker Name", "1234567890", workerCategory);
 		CustomerOrder order = new CustomerOrder(orderId, customerName, address, customerPhoneNumber, appointmentDate,
 				actualDescription, orderCategory, status, worker);
@@ -1129,7 +1174,7 @@ public class OrderControllerTest {
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1143,14 +1188,15 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -1165,7 +1211,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		Worker savedWorker = new Worker();
-		long savedWorkerId = 2l;
+		String savedWorkerId = "2";
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1175,7 +1221,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
@@ -1189,14 +1235,15 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -1211,7 +1258,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		Worker savedWorker = new Worker();
-		long savedWorkerId = 2l;
+		String savedWorkerId = "2";
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1222,7 +1269,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
@@ -1236,14 +1283,15 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -1261,7 +1309,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		Worker savedWorker = new Worker();
-		long savedWorkerId = 2l;
+		String savedWorkerId = "2";
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1272,7 +1320,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError(
@@ -1283,16 +1331,17 @@ public class OrderControllerTest {
 
 	@Test
 	public void testUpdateOrderMethodWhenWorkerOrdersHaveNoPendingOrders() {
-		long orderId = 1L;
+		String orderId = "1";
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connections are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		long workerId = 1L;
+		String workerId = "1";
 
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
@@ -1302,7 +1351,7 @@ public class OrderControllerTest {
 				actualDescription, orderCategory, status, worker);
 
 		Worker savedWorker = new Worker();
-		long savedWorkerId = 2L;
+		String savedWorkerId = "2";
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1313,7 +1362,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
@@ -1327,13 +1376,14 @@ public class OrderControllerTest {
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connection are leak-proof.";
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		long orderId = 1l;
-		long workerId = orderId;
+		String orderId = "1";
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
@@ -1361,11 +1411,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testFetchOrderByIdMethodWhenValidateIdThrowsNullPointerException() {
+	public void testFetchOrderByIdMethodWhenvalidateStringNumberThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 
 		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
@@ -1373,11 +1423,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testFetchOrderByIdMethodWhenValidateIdThrowsIllegalArgumentException() {
+	public void testFetchOrderByIdMethodWhenvalidateStringNumberThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(0l);
+		order.setOrderId("0");
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
@@ -1385,12 +1435,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testFetchOrderByIdMethodWhenValidateIdReturnsValidId() {
+	public void testFetchOrderByIdMethodWhenvalidateStringNumberReturnsValidId() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.fetchOrderById(spyOrder);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -1399,10 +1449,10 @@ public class OrderControllerTest {
 	@Test
 	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZeroAndOrderNotFound() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(null);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1413,17 +1463,18 @@ public class OrderControllerTest {
 	@Test
 	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZeroAndOrderFound() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-		LocalDateTime appointmentDate = LocalDateTime.now();
+		String appointmentDate = "12-12-2024";
+
 		String actualDescription = "Please ensure all connections are leak-proof.";
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		long workerId = 1L;
+		String workerId = "1";
 
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
@@ -1431,7 +1482,7 @@ public class OrderControllerTest {
 
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
 				appointmentDate, actualDescription, orderCategory, status, worker);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		orderController.fetchOrderById(order);
@@ -1452,10 +1503,10 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testDeleteOrderMethodWhenValidateIdThrowsNullPointerException() {
+	public void testDeleteOrderMethodWhenvalidateStringNumberThrowsNullPointerException() {
 		CustomerOrder order = new CustomerOrder();
 		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be empty.", order);
@@ -1463,11 +1514,11 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testDeleteOrderMethodWhenValidateIdThrowsIllegalArgumentException() {
+	public void testDeleteOrderMethodWhenvalidateStringNumberThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(0l);
+		order.setOrderId("0");
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("The id field cannot be less than 1. Please provide a valid id.", order);
@@ -1475,12 +1526,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void testDeleteOrderMethodWhenValidateIdReturnsValidId() {
+	public void testDeleteOrderMethodWhenvalidateStringNumberReturnsValidId() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		orderController.deleteOrder(spyOrder);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -1489,9 +1540,9 @@ public class OrderControllerTest {
 	@Test
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidButNoOrderFoundWithId() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.deleteOrder(order);
@@ -1503,9 +1554,9 @@ public class OrderControllerTest {
 	@Test
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidAndOrderFound() {
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
+		String orderId = "1";
 		order.setOrderId(orderId);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(order);
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1574,11 +1625,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_AndValidateId_Throws_NullPointerException() {
-		String searchText = "1l";
-		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations).validateId(any());
+	public void searchOrder_WhenSearchOptionIsOrderId_AndvalidateStringNumber_Throws_NullPointerException() {
+		String searchText = "1";
+		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations)
+				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(1l);
+//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("1");
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be empty.", searchText);
@@ -1586,12 +1638,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsOrderId_AndValidateId_Throws_IllegalArgumentException() {
-		String searchText = "0l";
+	public void searchOrder_WhenSearchOptionIsOrderId_AndvalidateStringNumber_Throws_IllegalArgumentException() {
+		String searchText = "0";
 		doThrow(new IllegalArgumentException("Id Field cannot be zero.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(0l);
+//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("0");
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be zero.", searchText);
@@ -1601,10 +1653,10 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButOrderNotFound() {
 		String searchText = "1";
-		long orderId = 1l;
+		String orderId = "1";
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1615,11 +1667,11 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberAndOrderFound() {
 		String searchText = "1";
-		long orderId = 1l;
+		String orderId = "1";
 		CustomerOrder order = new CustomerOrder();
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
-		when(validationConfigurations.validateId(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(order);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1652,11 +1704,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_AndValidateId_Throws_NullPointerException() {
-		String searchText = "1l";
-		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations).validateId(any());
+	public void searchOrder_WhenSearchOptionIsWorkerId_AndvalidateStringNumber_Throws_NullPointerException() {
+		String searchText = "1";
+		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations)
+				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(1l);
+//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("1");
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be empty.", searchText);
@@ -1664,12 +1717,12 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void searchOrder_WhenSearchOptionIsWorkerId_AndValidateId_Throws_IllegalArgumentException() {
-		String searchText = "0l";
+	public void searchOrder_WhenSearchOptionIsWorkerId_AndvalidateStringNumber_Throws_IllegalArgumentException() {
+		String searchText = "0";
 		doThrow(new IllegalArgumentException("Id Field cannot be zero.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(0l);
+//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("0");
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be zero.", searchText);
@@ -1679,10 +1732,10 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWorkerNotFound() {
 		String searchText = "1";
-		long workerId = 1l;
+		String workerId = "1";
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
@@ -1694,11 +1747,11 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButOrdersAreNull() {
 		String searchText = "1";
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1709,12 +1762,12 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButOrdersAreEmpty() {
 		String searchText = "1";
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		worker.setOrders(Collections.emptyList());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1725,13 +1778,13 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberAndOrderFound() {
 		String searchText = "1";
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
 		CustomerOrder order = new CustomerOrder();
 		worker.setOrders(asList(order));
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -2041,11 +2094,10 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_ButOrdersAreNull() {
 		String searchText = "30-12-2024";
-		LocalDate date = LocalDate.of(2024, 12, 30);
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringDate(searchText)).thenReturn(date);
+		when(validationConfigurations.validateStringDate(searchText)).thenReturn(searchText);
 
-		when(orderRepository.findByDate(date)).thenReturn(null);
+		when(orderRepository.findByDate(searchText)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("No orders found with date: " + searchText, searchText);
@@ -2055,10 +2107,9 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_ButOrdersAreEmpty() {
 		String searchText = "30-12-2024";
-		LocalDate date = LocalDate.of(2024, 12, 30);
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringDate(searchText)).thenReturn(date);
-		when(orderRepository.findByDate(date)).thenReturn(Collections.emptyList());
+		when(validationConfigurations.validateStringDate(searchText)).thenReturn(searchText);
+		when(orderRepository.findByDate(searchText)).thenReturn(Collections.emptyList());
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("No orders found with date: " + searchText, searchText);
@@ -2068,11 +2119,10 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderDate_SearchTextIs_ValidStringDate_AndOrdersFound() {
 		String searchText = "30-12-2024";
-		LocalDate date = LocalDate.of(2024, 12, 30);
 		CustomerOrder order = new CustomerOrder();
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringDate(searchText)).thenReturn(date);
-		when(orderRepository.findByDate(date)).thenReturn(asList(order));
+		when(validationConfigurations.validateStringDate(searchText)).thenReturn(searchText);
+		when(orderRepository.findByDate(searchText)).thenReturn(asList(order));
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 

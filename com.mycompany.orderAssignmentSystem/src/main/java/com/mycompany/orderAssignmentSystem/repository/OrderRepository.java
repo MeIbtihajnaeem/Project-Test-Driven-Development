@@ -3,7 +3,6 @@
  */
 package com.mycompany.orderAssignmentSystem.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
@@ -43,7 +42,7 @@ public interface OrderRepository {
 	 * @param orderId the ID of the customer order
 	 * @return the found customer order, or null if not found
 	 */
-	public CustomerOrder findById(long orderId);
+	public CustomerOrder findById(String orderId);
 
 	/**
 	 * Finds customer orders by customer name.
@@ -70,7 +69,7 @@ public interface OrderRepository {
 	 * @return the list of customer orders placed on the specified date or empty
 	 *         list if not found
 	 */
-	public List<CustomerOrder> findByDate(LocalDate date);
+	public List<CustomerOrder> findByDate(String date);
 
 	/**
 	 * Finds customer orders by order category.

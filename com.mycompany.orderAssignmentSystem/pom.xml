@@ -52,6 +52,9 @@
 			<version>${assertj-swing-junit-version}</version>
 			<scope>test</scope>
 		</dependency>
+
+
+
 	</dependencies>
 	<build>
 		<plugins>

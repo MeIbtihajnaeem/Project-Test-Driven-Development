@@ -75,7 +75,7 @@ public class WorkerController {
 	}
 
 	private void update(Worker worker) {
-		worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
+		worker.setWorkerId(validationConfigurations.validateStringNumber(worker.getWorkerId()));
 		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
 		if (existingWorker != null) {
 			throw new IllegalArgumentException(
@@ -308,8 +308,8 @@ public class WorkerController {
 	 * @return the worker with the specified ID
 	 */
 	private Worker searchByWorkerId(String searchText) {
-		Long workerId = validationConfigurations.validateStringNumber(searchText);
-		workerId = validationConfigurations.validateId(workerId);
+		String workerId = validationConfigurations.validateStringNumber(searchText);
+		workerId = validationConfigurations.validateStringNumber(workerId);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
 			throw new NoSuchElementException("No result found with id: " + workerId);
@@ -338,7 +338,7 @@ public class WorkerController {
 	 */
 	private void validateWorkerAndWorkerId(Worker worker) {
 		Objects.requireNonNull(worker, "Worker is null");
-		worker.setWorkerId(validationConfigurations.validateId(worker.getWorkerId()));
+		worker.setWorkerId(validationConfigurations.validateStringNumber(worker.getWorkerId()));
 	}
 
 	/**

@@ -207,17 +207,17 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 					worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
 					workerController.createOrUpdateWorker(worker, OperationType.ADD);
 				} else if (e.getSource() == btnUpdate) {
-					worker.setWorkerId(Long.parseLong(txtWorkerId.getText()));
+					worker.setWorkerId(txtWorkerId.getText());
 					worker.setWorkerName(txtWorkerName.getText());
 					worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
 					worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
 					workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
 				} else if (e.getSource() == btnFetch) {
-					worker.setWorkerId(Long.parseLong(txtWorkerId.getText()));
+					worker.setWorkerId(txtWorkerId.getText());
 					workerController.fetchWorkerById(worker);
 
 				} else {
-					worker.setWorkerId(Long.parseLong(txtOrdersByWorkerId.getText()));
+					worker.setWorkerId(txtOrdersByWorkerId.getText());
 					workerController.fetchOrdersByWorkerId(worker);
 				}
 

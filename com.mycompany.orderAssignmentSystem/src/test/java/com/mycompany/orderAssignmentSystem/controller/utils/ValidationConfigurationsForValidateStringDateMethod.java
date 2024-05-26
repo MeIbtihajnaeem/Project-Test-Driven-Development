@@ -3,8 +3,6 @@ package com.mycompany.orderAssignmentSystem.controller.utils;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 
-import java.time.LocalDate;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,8 +60,7 @@ public class ValidationConfigurationsForValidateStringDateMethod {
 	@Test
 	public void testValidateStringDateMethodWithValidStringDate() {
 		String validStringDate = "30-12-2024";
-		LocalDate date = LocalDate.of(2024, 12, 30);
-		assertEquals(date, validationConfigurations.validateStringDate(validStringDate));
+		assertEquals(validStringDate, validationConfigurations.validateStringDate(validStringDate));
 	}
 
 }

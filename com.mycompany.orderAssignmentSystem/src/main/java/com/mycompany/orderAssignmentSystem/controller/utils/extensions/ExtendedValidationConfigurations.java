@@ -1,7 +1,6 @@
 package com.mycompany.orderAssignmentSystem.controller.utils.extensions;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -76,7 +75,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @return the validated numeric value
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public long validateStringNumber(String str) {
+	public String validateStringNumber(String str) {
 		if (str == null || str == "") {
 			LOGGER.info("The text cannot be empty.");
 			throw new NullPointerException("The number cannot be empty.");
@@ -98,8 +97,18 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		if (!matcher.matches()) {
 			throw new IllegalArgumentException("Please enter a valid number.");
 		}
-		return Long.parseLong(str);
+		Long orderId = 0l;
+		try {
+			orderId = Long.parseLong(str);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Please enter a valid number.");
+		}
+		if (orderId <= 0) {
+			LOGGER.info("The id field cannot be less than 1. Please provide a valid id.");
 
+			throw new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id.");
+		}
+		return str;
 	}
 
 	/**
@@ -207,26 +216,27 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return phoneNumber;
 	}
 
-	/**
-	 * Validates an ID.
-	 *
-	 * @param id the ID to validate
-	 * @return the validated ID
-	 * @throws IllegalArgumentException if validation fails
-	 */
-	public long validateId(Long id) {
-		if (id == null) {
-			LOGGER.info("The id field cannot be empty.");
-
-			throw new NullPointerException("The id field cannot be empty.");
-		}
-		if (id <= 0) {
-			LOGGER.info("The id field cannot be less than 1. Please provide a valid id.");
-
-			throw new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id.");
-		}
-		return id;
-	}
+//	/**
+//	 * Validates an ID.
+//	 *
+//	 * @param id the ID to validate
+//	 * @return the validated ID
+//	 * @throws IllegalArgumentException if validation fails
+//	 */
+//	public long validateId(Long id) {
+//		if (id == null) {
+//			LOGGER.info("The id field cannot be empty.");
+//
+//			throw new NullPointerException("The id field cannot be empty.");
+//		}
+//
+//		if (id <= 0) {
+//			LOGGER.info("The id field cannot be less than 1. Please provide a valid id.");
+//
+//			throw new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id.");
+//		}
+//		return id;
+//	}
 
 	/**
 	 * Validates a date.
@@ -235,8 +245,8 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @return the validated date
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public LocalDateTime validateDate(LocalDateTime dateTime) {
-		LocalDateTime currentDateTime = LocalDateTime.now();
+	public LocalDate validateDate(LocalDate dateTime) {
+		LocalDate currentDateTime = LocalDate.now();
 
 		if (dateTime == null) {
 			LOGGER.info("The Date field cannot be empty.");
@@ -246,7 +256,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			LOGGER.info("Please provide a valid date that is not before today's date.");
 			throw new IllegalArgumentException("Please provide a valid date that is not before today's date.");
 		}
-		if (Period.between(currentDateTime.toLocalDate(), dateTime.toLocalDate()).getMonths() > 6) {
+		if (Period.between(currentDateTime, dateTime).getMonths() > 6) {
 			LOGGER.info("Please provide a valid date that is not 6 months after today's date.");
 			throw new IllegalArgumentException("Please provide a valid date that is not 6 months after today's date.");
 		}
@@ -261,7 +271,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @return the validated date
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public LocalDate validateStringDate(String dateString) {
+	public String validateStringDate(String dateString) {
 
 		String pattern = "dd-MM-yyyy";
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
@@ -279,8 +289,8 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException("Date must not be greater then 10 characters.");
 		}
 		try {
-			LocalDate dateTime = LocalDate.parse(dateString, formatter);
-			return dateTime;
+			LocalDate.parse(dateString, formatter);
+			return dateString;
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Please ensure that the date follows the format" + pattern);
 		}

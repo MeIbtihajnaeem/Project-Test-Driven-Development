@@ -3,7 +3,6 @@ package com.mycompany.orderAssignmentSystem.controller;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -236,7 +235,7 @@ public class WorkerControllerTest {
 	@Test
 	public void testCreateNewWorkerWhenWorkerIdIsNotNull() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		workerController.createOrUpdateWorker(worker, OperationType.ADD);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -283,11 +282,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsValidateIdThrowsNullPointerException() {
+	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsvalidateStringNumberThrowsNullPointerException() {
 		Worker worker = new Worker();
-		worker.setWorkerId(0l);
+		worker.setWorkerId("0");
 		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
-				.validateId(anyLong());
+				.validateStringNumber(anyString());
 		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The id field cannot be empty.", worker);
@@ -295,11 +294,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsValidateIdThrowsIllegalArgumentException() {
+	public void testUpdateWorkerMethodWhenValidationConfigurationsCallsvalidateStringNumberThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
-		worker.setWorkerId(0l);
+		worker.setWorkerId("0");
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
@@ -307,12 +306,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testUpdateWorkerMethodWhenWorkerIdIsValidIdReturnedByValidateId() {
+	public void testUpdateWorkerMethodWhenWorkerIdIsValidIdReturnedByvalidateStringNumber() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.createOrUpdateWorker(spyWorker, OperationType.UPDATE);
 
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
@@ -323,7 +322,7 @@ public class WorkerControllerTest {
 	public void testUpdateWorkerMethodWithExistingPhoneNumberForWorker() {
 		String phoneNumber = "3401372678";
 
-		long differentWorkerId = 2l;
+		String differentWorkerId = "2";
 		String differentWorkerName = "Ibtihaj";
 		OrderCategory differentWorkerCategory = OrderCategory.PLUMBER;
 
@@ -332,7 +331,7 @@ public class WorkerControllerTest {
 
 		String workerName = "Muhammad Ibtihaj";
 		OrderCategory category = OrderCategory.PLUMBER;
-		long workerId = 1l;
+		String workerId = "1";
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 
@@ -350,10 +349,10 @@ public class WorkerControllerTest {
 
 		String workerName = "Muhammad Ibtihaj";
 		OrderCategory category = OrderCategory.PLUMBER;
-		long workerId = 1l;
+		String workerId = "1";
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(workerId);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		worker.setOrders(asList(new CustomerOrder()));
@@ -371,10 +370,10 @@ public class WorkerControllerTest {
 
 		String workerName = "Muhammad Ibtihaj";
 		OrderCategory category = OrderCategory.PLUMBER;
-		long workerId = 1l;
+		String workerId = "1";
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(workerId);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
@@ -393,10 +392,10 @@ public class WorkerControllerTest {
 
 		String workerName = "Muhammad Ibtihaj";
 		OrderCategory category = OrderCategory.PLUMBER;
-		long workerId = 1l;
+		String workerId = "1";
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
-		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(workerId);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		worker.setOrders(Collections.emptyList());
@@ -416,11 +415,11 @@ public class WorkerControllerTest {
 
 		String workerName = "Muhammad Ibtihaj";
 		OrderCategory category = OrderCategory.PLUMBER;
-		long workerId = 1l;
+		String workerId = "1";
 
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 		worker.setOrders(Collections.emptyList());
-		when(validationConfigurations.validateId(anyLong())).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(workerId);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
 		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(null);
 		when(workerRepository.findById(workerId)).thenReturn(null);
@@ -461,11 +460,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchWorkerMethodWhenValidationConfigurationsCallsValidateIdThrowsNullPointerException() {
+	public void testFetchWorkerMethodWhenValidationConfigurationsCallsvalidateStringNumberThrowsNullPointerException() {
 		Worker worker = new Worker();
 
 		doThrow(new NullPointerException("The id field cannot be null.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		workerController.fetchWorkerById(worker);
 
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -474,13 +473,13 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchWorkerMethodWhenValidationConfigurationsCallsValidateIdThrowsIllegalArgumentException() {
+	public void testFetchWorkerMethodWhenValidationConfigurationsCallsvalidateStringNumberThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
 
-		long workerId = 0l;
+		String workerId = "0";
 		worker.setWorkerId(workerId);
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		workerController.fetchWorkerById(worker);
 
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -489,12 +488,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchWorkerMethodWhenWorkerIdIsValidReturnedByValidateId() {
+	public void testFetchWorkerMethodWhenWorkerIdIsValidReturnedByvalidateStringNumber() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.fetchWorkerById(spyWorker);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
 		verify(spyWorker).setWorkerId(workerId);
@@ -503,9 +502,9 @@ public class WorkerControllerTest {
 	@Test
 	public void testFetchWorkerMethodWhenWorkerIdIsGreaterThanZeroAndWorkerNotFound() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		workerController.fetchWorkerById(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -516,7 +515,7 @@ public class WorkerControllerTest {
 	@Test
 	public void testFetchWorkerMethodWhenWorkerIdIsGreaterThanZeroAndWorkerFound() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 
 		Worker savedWorker = new Worker();
@@ -527,7 +526,7 @@ public class WorkerControllerTest {
 		savedWorker.setWorkerName(workerName);
 		savedWorker.setWorkerPhoneNumber(workerPhoneNumber);
 		savedWorker.setWorkerCategory(plumber);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(savedWorker);
 		workerController.fetchWorkerById(worker);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
@@ -573,12 +572,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndValidateIdThrowsNullPointerExcetption() {
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndvalidateStringNumberThrowsNullPointerExcetption() {
 		String searchText = "";
 		doThrow(new NullPointerException("The id field cannot be empty.")).when(validationConfigurations)
-				.validateId(anyLong());
+				.validateStringNumber(anyString());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(1l);
+//		when(validationConfigurations.validateStringNumber(anyString())).thenReturn("1");
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchError("The id field cannot be empty.", searchText);
@@ -586,12 +585,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndValidateIdThrowsIllegalArgumentExcetption() {
+	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndvalidateStringNumberThrowsIllegalArgumentExcetption() {
 		String searchText = "";
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(1l);
+//		when(validationConfigurations.validateStringNumber(anyString())).thenReturn("1");
 
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -603,10 +602,10 @@ public class WorkerControllerTest {
 	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidNumberButWorkerNotFound() {
 		String searchText = "1";
-		long workerId = 1l;
+		String workerId = "1";
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -617,12 +616,12 @@ public class WorkerControllerTest {
 	@Test
 	public void testSearchWorkerMethodWhenSearchTextIsValidStringAndSearchOptionIsWorkerIdAndSearchTextIsValidPositiveIntegarAndWorkerFound() {
 		String searchText = "1";
-		long workerId = 1l;
+		String workerId = "1";
 		Worker worker = new Worker();
-		when(workerRepository.findById(1l)).thenReturn(worker);
+		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.searchWorker(searchText, WorkerSearchOption.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchResultForWorker(asList(worker));
@@ -852,10 +851,10 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsZeroAndValidateIdThrowsNullPointerException() {
+	public void testDeleteWorkerMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsNullPointerException() {
 		Worker worker = new Worker();
 		doThrow(new NullPointerException("The id field cannot be null.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The id field cannot be null.", worker);
@@ -863,11 +862,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsZeroAndValidateIdThrowsIllegalArgumentException() {
+	public void testDeleteWorkerMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
-		worker.setWorkerId(0l);
+		worker.setWorkerId("0");
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError("The id field cannot be less than 1. Please provide a valid id.", worker);
@@ -875,12 +874,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testDeleteWorkerMethodWhenWorkerIdIsValidAndReturnedByValidateId() {
+	public void testDeleteWorkerMethodWhenWorkerIdIsValidAndReturnedByvalidateStringNumber() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		workerController.deleteWorker(spyWorker);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
@@ -890,10 +889,10 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButNoWorkerFound() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
@@ -903,11 +902,11 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithOrders() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		worker.setOrders(asList(new CustomerOrder()));
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showError(
@@ -918,11 +917,11 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithNullOrders() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		worker.setOrders(null);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerRepository).delete(worker);
@@ -933,11 +932,11 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsValidButWorkerFoundButWithEmptyOrders() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		worker.setOrders(Collections.emptyList());
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		workerController.deleteWorker(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
@@ -956,10 +955,10 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndValidateIdThrowsNullPointerException() {
+	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsNullPointerException() {
 		Worker worker = new Worker();
 		doThrow(new NullPointerException("The id field cannot be null.")).when(validationConfigurations)
-				.validateId(any());
+				.validateStringNumber(any());
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be null.", worker);
@@ -967,11 +966,11 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndValidateIdThrowsIllegalArgumentException() {
+	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsIllegalArgumentException() {
 		Worker worker = new Worker();
-		worker.setWorkerId(0l);
+		worker.setWorkerId("0");
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateId(anyLong());
+				.when(validationConfigurations).validateStringNumber(anyString());
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showSearchOrderByWorkerIdError(
@@ -980,12 +979,12 @@ public class WorkerControllerTest {
 	}
 
 	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndReturnedByValidateId() {
+	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndReturnedByvalidateStringNumber() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		Worker spyWorker = spy(worker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.fetchOrdersByWorkerId(spyWorker);
 		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
 		verify(spyWorker).setWorkerId(workerId);
@@ -994,10 +993,10 @@ public class WorkerControllerTest {
 	@Test
 	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidButNoWorkerFound() {
 		Worker worker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		worker.setWorkerId(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 		workerController.fetchOrdersByWorkerId(worker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
 		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
@@ -1007,13 +1006,13 @@ public class WorkerControllerTest {
 	@Test
 	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndOrdersExists() {
 		Worker newWorker = new Worker();
-		long workerId = 1l;
+		String workerId = "1";
 		newWorker.setWorkerId(workerId);
 		Worker savedWorker = new Worker();
 		savedWorker.setWorkerId(workerId);
 		savedWorker.setOrders(Collections.emptyList());
 		when(workerRepository.findById(workerId)).thenReturn(savedWorker);
-		when(validationConfigurations.validateId(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
 
 		workerController.fetchOrdersByWorkerId(newWorker);
 		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);

@@ -3,7 +3,7 @@ package com.mycompany.orderAssignmentSystem.controller.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +27,8 @@ public class ValidationConfigurationsForValidateDateTimeMethodTest {
 
 	@Test
 	public void testDateTimeMethodWithPreviousTwoDaysDate() {
-		LocalDateTime dateTime = LocalDateTime.now();
-		LocalDateTime twoDaysBeforeToday = dateTime.minusDays(2);
+		LocalDate dateTime = LocalDate.now();
+		LocalDate twoDaysBeforeToday = dateTime.minusDays(2);
 		assertThatThrownBy(() -> validationConfigurations.validateDate(twoDaysBeforeToday))
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Please provide a valid date that is not before today's date.");
@@ -36,8 +36,8 @@ public class ValidationConfigurationsForValidateDateTimeMethodTest {
 
 	@Test
 	public void testDateTimeMethodWithPreviousOneDaysDate() {
-		LocalDateTime dateTime = LocalDateTime.now();
-		LocalDateTime oneDaysBeforeToday = dateTime.minusDays(1);
+		LocalDate dateTime = LocalDate.now();
+		LocalDate oneDaysBeforeToday = dateTime.minusDays(1);
 		assertThatThrownBy(() -> validationConfigurations.validateDate(oneDaysBeforeToday))
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Please provide a valid date that is not before today's date.");
@@ -45,14 +45,14 @@ public class ValidationConfigurationsForValidateDateTimeMethodTest {
 
 	@Test
 	public void testDateTimeMethodWithCurrentDate() {
-		LocalDateTime dateTime = LocalDateTime.now();
+		LocalDate dateTime = LocalDate.now();
 		assertThat(dateTime).isEqualTo(validationConfigurations.validateDate(dateTime));
 	}
 
 	@Test
 	public void testDateTimeMethodWithAfterSevenMonthDate() {
-		LocalDateTime dateTime = LocalDateTime.now();
-		LocalDateTime sevenDaysBeforeToday = dateTime.plusMonths(7);
+		LocalDate dateTime = LocalDate.now();
+		LocalDate sevenDaysBeforeToday = dateTime.plusMonths(7);
 //		System.out.println(sevenDaysBeforeToday);
 		assertThatThrownBy(() -> validationConfigurations.validateDate(sevenDaysBeforeToday))
 				.isInstanceOf(IllegalArgumentException.class)
@@ -61,7 +61,7 @@ public class ValidationConfigurationsForValidateDateTimeMethodTest {
 
 	@Test
 	public void testDateTimeMethodWithDatePlusSixMonths() {
-		LocalDateTime dateTime = LocalDateTime.now().plusMonths(6);
+		LocalDate dateTime = LocalDate.now().plusMonths(6);
 		assertThat(dateTime).isEqualTo(validationConfigurations.validateDate(dateTime));
 	}
 

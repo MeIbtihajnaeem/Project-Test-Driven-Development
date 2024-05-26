@@ -3,7 +3,6 @@ package com.mycompany.orderAssignmentSystem.view.swing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
@@ -393,7 +392,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAWorkerIsSelected() {
 		JListFixture list = window.list("listWorkers");
 		JButtonFixture deleteButton = window.button(JButtonMatcher.withName("btnDelete"));
-		Worker worker = new Worker(1l, "Naeem Ibtihaj", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "Naeem Ibtihaj", "3401372678", OrderCategory.PLUMBER);
 
 		GuiActionRunner.execute(() -> {
 
@@ -414,9 +413,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testsShowAllWorkersAddWorkerDescriptionToTheListWorkers() {
-		Worker worker1 = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker1 = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 
-		Worker worker2 = new Worker(2L, "Bob", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker("2", "Bob", "3401372678", OrderCategory.PLUMBER);
 
 		GuiActionRunner.execute(() -> workerSwingView.showAllWorkers(Arrays.asList(worker1, worker2)));
 		String[] listContents = window.list("listWorkers").contents();
@@ -429,12 +428,13 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testsShowSearchOrderAddOrderDescriptionToTheListOrders() {
+		String appointmentDate = "12-12-2024";
 
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
-		CustomerOrder order1 = new CustomerOrder(1l, "John", "Piazza Luigi", "3401372678", LocalDateTime.now(),
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
+		CustomerOrder order1 = new CustomerOrder("1", "John", "Piazza Luigi", "3401372678", appointmentDate,
 				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
 
-		CustomerOrder order2 = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", LocalDateTime.now(),
+		CustomerOrder order2 = new CustomerOrder("2", "Bob", "Piazza Luigi", "3401372679", appointmentDate,
 				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
 
 		GuiActionRunner.execute(() -> workerSwingView.showOrderByWorkerId(Arrays.asList(order1, order2)));
@@ -448,7 +448,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 		GuiActionRunner.execute(() -> workerSwingView.showError("error message", worker));
 		window.label("showErrorLbl").requireText("error message: " + worker);
 	}
@@ -470,7 +470,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testShowNotFoundErrorShouldShowTheMessageInTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 		GuiActionRunner.execute(() -> workerSwingView.showErrorNotFound("error message", worker));
 		window.label("showErrorNotFoundLbl").requireText("error message: " + worker);
 	}
@@ -481,7 +481,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testShowOrderByWorkerIdErrorShouldShowTheMessageInTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 		GuiActionRunner.execute(() -> workerSwingView.showSearchOrderByWorkerIdError("error message", worker));
 		window.label("showErrorLblSearchOrder").requireText("error message: " + worker);
 	}
@@ -492,7 +492,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerAddedShouldAddTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 		GuiActionRunner.execute(() -> workerSwingView.workerAdded(worker));
 		String[] listContents = window.list("listWorkers").contents();
 		assertThat(listContents).containsExactly(worker.toString());
@@ -505,7 +505,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerFetchShouldFetchTheWorkerToTheFieldsAndResetTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 		GuiActionRunner.execute(() -> workerSwingView.showFetchedWorker(worker));
 		String name = window.textBox("txtWorkerName").target().getText();
 		String phoneNumber = window.textBox("txtWorkerPhone").target().getText();
@@ -523,9 +523,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerModifiedShouldModifyAndAddTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 		GuiActionRunner.execute(() -> workerSwingView.workerAdded(worker));
-		Worker updatedWorker = new Worker(1L, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
+		Worker updatedWorker = new Worker("1", "Bob", "3401372678", OrderCategory.ELECTRICIAN);
 
 		GuiActionRunner.execute(() -> workerSwingView.workerModified(updatedWorker));
 		String[] listContents = window.list("listWorkers").contents();
@@ -539,9 +539,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerModifiedShouldNotModifyAndDonotAddTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 		GuiActionRunner.execute(() -> workerSwingView.workerAdded(worker));
-		Worker updatedWorker = new Worker(2L, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
+		Worker updatedWorker = new Worker("2", "Bob", "3401372678", OrderCategory.ELECTRICIAN);
 
 		GuiActionRunner.execute(() -> workerSwingView.workerModified(updatedWorker));
 		String[] listContents = window.list("listWorkers").contents();
@@ -555,9 +555,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerRemovedShouldRemoveTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
 
-		Worker worker2 = new Worker(1L, "Bob", "3401372679", OrderCategory.ELECTRICIAN);
+		Worker worker2 = new Worker("1", "Bob", "3401372679", OrderCategory.ELECTRICIAN);
 
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Worker> listOrderModel = workerSwingView.getWorkerListModel();
@@ -577,14 +577,14 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerSearchShouldModifyAndShowOnlySearchedWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker1 = new Worker(1L, "John", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker(2L, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
+		Worker worker1 = new Worker("1", "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker("2", "Bob", "3401372678", OrderCategory.ELECTRICIAN);
 
 		GuiActionRunner.execute(() -> {
 			workerSwingView.workerAdded(worker1);
 			workerSwingView.workerAdded(worker2);
 		});
-		Worker searchWorker = new Worker(2L, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
+		Worker searchWorker = new Worker("2", "Bob", "3401372678", OrderCategory.ELECTRICIAN);
 
 		GuiActionRunner.execute(() -> workerSwingView.showSearchResultForWorker(Arrays.asList(searchWorker)));
 		String[] listContents = window.list("listWorkers").contents();
@@ -598,17 +598,19 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testOrderSearchShouldModifyAndShowOnlySearchedOrdersToTheListAndResetTheErrorLabel() {
-		CustomerOrder order1 = new CustomerOrder(1l, "John", "Piazza Luigi", "3401372678", LocalDateTime.now(),
+		String appointmentDate = "12-12-2024";
+
+		CustomerOrder order1 = new CustomerOrder("1", "John", "Piazza Luigi", "3401372678", appointmentDate,
 				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.COMPLETED, new Worker());
 
-		CustomerOrder order2 = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", LocalDateTime.now(),
+		CustomerOrder order2 = new CustomerOrder("2", "Bob", "Piazza Luigi", "3401372679", appointmentDate,
 				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
 
 		GuiActionRunner.execute(() -> {
 			workerSwingView.getOrderListModel().addElement(order1);
 			workerSwingView.getOrderListModel().addElement(order2);
 		});
-		CustomerOrder searchedOrder = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", LocalDateTime.now(),
+		CustomerOrder searchedOrder = new CustomerOrder("2", "Bob", "Piazza Luigi", "3401372679", appointmentDate,
 				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
 		GuiActionRunner.execute(() -> workerSwingView.showOrderByWorkerId(Arrays.asList(searchedOrder)));
 		String[] listContents = window.list("listOrders").contents();
@@ -645,7 +647,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testUpdateButtonShouldDelegateToWorkerControllerUpdateWorker() {
-		long workerId = 1L;
+		String workerId = "1";
 
 		String name = "Naeem";
 		String updatedName = "Ibtihaj";
@@ -660,7 +662,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 			workerSwingView.workerAdded(worker);
 		});
 
-		window.textBox("txtWorkerId").enterText(Long.toString(workerId));
+		window.textBox("txtWorkerId").enterText(workerId);
 		window.textBox("txtWorkerName").enterText(updatedName);
 		window.textBox("txtWorkerPhone").enterText(phoneNumber);
 		window.comboBox("cmbWorkerCategory").selectItem(categoryIndex);
@@ -676,9 +678,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testFetchButtonShouldDelegateToWorkerControllerFetchWorkerById() {
-		Long workerId = 1l;
+		String workerId = "1";
 
-		window.textBox("txtWorkerId").enterText(Long.toString(workerId));
+		window.textBox("txtWorkerId").enterText(workerId);
 
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 		Worker worker = new Worker();
@@ -715,7 +717,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testClearSearchWorkerButtonShouldDelegateToWorkerControllerShowAllWorkers() {
 		String searchText = "Ibtihaj";
 		int searchOptionIndex = 1;
-		long workerId = 1L;
+		String workerId = "1";
 		int categoryIndex = 0;
 		String name = "Naeem";
 		String phoneNumber = "3401372678";
@@ -740,8 +742,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testDeleteButtonShouldDelegateToWorkerControllerRemoveWorker() {
-		long workerId = 1L;
-		long workerId2 = 2L;
+		String workerId = "1";
+		String workerId2 = "2";
 
 		String name = "Naeem";
 		String name2 = "Bob";
@@ -769,10 +771,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 * controller to search orders by worker ID.
 	 */
 	@Test
-	public void testSearcOrderButtonShouldDelegateToWorkerControllerSearchOrderByWorkerId() {
+	public void testSearchOrderButtonShouldDelegateToWorkerControllerSearchOrderByWorkerId() {
 		Worker worker = new Worker();
 		String workerId = "1";
-		worker.setWorkerId(Long.parseLong(workerId));
+		worker.setWorkerId(workerId);
 		window.textBox("txtOrdersByWorkerId").enterText(workerId);
 
 		window.button(JButtonMatcher.withName("btnSearchOrder")).click();

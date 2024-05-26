@@ -14,7 +14,7 @@ import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 public class Worker {
 
 	/** The worker id. */
-	private Long workerId;
+	private String workerId;
 
 	/** The worker name. */
 	private String workerName;
@@ -42,7 +42,7 @@ public class Worker {
 	 * @param workerPhoneNumber the worker phone number
 	 * @param workerCategory    the worker category
 	 */
-	public Worker(Long workerId, String workerName, String workerPhoneNumber, OrderCategory workerCategory) {
+	public Worker(String workerId, String workerName, String workerPhoneNumber, OrderCategory workerCategory) {
 		super();
 		this.workerId = workerId;
 		this.workerName = workerName;
@@ -55,7 +55,7 @@ public class Worker {
 	 *
 	 * @return the worker id
 	 */
-	public Long getWorkerId() {
+	public String getWorkerId() {
 		return workerId;
 	}
 
@@ -64,7 +64,7 @@ public class Worker {
 	 *
 	 * @param workerId the new worker id
 	 */
-	public void setWorkerId(Long workerId) {
+	public void setWorkerId(String workerId) {
 		this.workerId = workerId;
 	}
 
@@ -168,6 +168,11 @@ public class Worker {
 		return Objects.equals(orders, other.orders) && workerCategory == other.workerCategory
 				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
 				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
+	}
+
+	@Override
+	public String toString() {
+		return this.workerId + ") " + this.workerName + " -- " + this.workerCategory;
 	}
 
 	/**

@@ -6,6 +6,7 @@ package com.mycompany.orderAssignmentSystem.view;
 import java.util.List;
 
 import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
+import com.mycompany.orderAssignmentSystem.model.Worker;
 
 /**
  * Interface for displaying and interacting with customer orders in the system.
@@ -18,6 +19,8 @@ public interface OrderView {
 	 * @param order the list of customer orders to be displayed
 	 */
 	void showAllOrder(List<CustomerOrder> order);
+	
+	void showAllWorkers(List<Worker> worker);
 
 	/**
 	 * Notifies when a new customer order is added.

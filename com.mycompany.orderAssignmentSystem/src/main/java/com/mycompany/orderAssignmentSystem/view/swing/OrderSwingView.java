@@ -7,8 +7,16 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -22,9 +30,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.mycompany.orderAssignmentSystem.controller.OrderController;
+import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
+import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
+import com.mycompany.orderAssignmentSystem.model.Worker;
+import com.mycompany.orderAssignmentSystem.view.OrderView;
 
-public class OrderSwingView extends JFrame {
+public class OrderSwingView extends JFrame implements OrderView {
 
 	private static final long serialVersionUID = 2L;
 	private JPanel contentPane;
@@ -34,7 +48,6 @@ public class OrderSwingView extends JFrame {
 	private JTextField txtCustomerPhone;
 	private JTextField txtOrderDescription;
 	private JTextField txtSearchOrder;
-	private JTextField txtDatePicker;
 
 	private JButton btnFetch;
 	private JButton btnAdd;
@@ -42,16 +55,35 @@ public class OrderSwingView extends JFrame {
 	private JButton btnClearSearch;
 	private JButton btnSearchOrder;
 	private JButton btnDelete;
-	private JButton btnSelectDate;
 
 	private JLabel showErrorNotFoundLbl;
+	private JTextField txtSelectedDate;
 	private JLabel showError;
 	private JLabel showSearchErrorLbl;
 	private OrderController orderController;
+
+	// List of combo box
+
+	private JComboBox<OrderCategory> cmbOrderCategory;
+	private JComboBox<OrderSearchOptions> cmbSearchBy;
+	private JComboBox<OrderStatus> cmbOrderStatus;
+
+	// List of orders and worker
+	private DefaultComboBoxModel<Worker> workerListModel;
+	private DefaultListModel<CustomerOrder> orderListModel;
 	private JList<CustomerOrder> listOrders;
+	private JComboBox<Worker> cmbWorker;
 
 	public void setOrderController(OrderController orderController) {
 		this.orderController = orderController;
+	}
+
+	public DefaultComboBoxModel<Worker> getWorkerListModel() {
+		return workerListModel;
+	}
+
+	public DefaultListModel<CustomerOrder> getOrderListModel() {
+		return orderListModel;
 	}
 
 	/**
@@ -74,6 +106,115 @@ public class OrderSwingView extends JFrame {
 	 * Create the frame.
 	 */
 	public OrderSwingView() {
+
+		cmbOrderCategory = new JComboBox<OrderCategory>();
+		cmbSearchBy = new JComboBox<OrderSearchOptions>();
+		cmbOrderStatus = new JComboBox<OrderStatus>();
+		workerListModel = new DefaultComboBoxModel<>();
+		cmbWorker = new JComboBox<Worker>(workerListModel);
+		txtOrderId = new JTextField();
+		txtSelectedDate = new JTextField();
+		txtCustomerName = new JTextField();
+		txtCustomerAddress = new JTextField();
+		txtCustomerPhone = new JTextField();
+		txtOrderDescription = new JTextField();
+		btnAdd = new JButton("Add");
+		btnUpdate = new JButton("Update");
+		btnFetch = new JButton("Fetch");
+		txtSearchOrder = new JTextField();
+
+		for (OrderCategory category : OrderCategory.values()) {
+			cmbOrderCategory.addItem(category);
+		}
+
+		for (OrderStatus status : OrderStatus.values()) {
+			cmbOrderStatus.addItem(status);
+		}
+		for (OrderSearchOptions searchOption : OrderSearchOptions.values()) {
+			cmbSearchBy.addItem(searchOption);
+		}
+		cmbOrderCategory.setSelectedItem(null);
+		cmbSearchBy.setSelectedItem(null);
+		cmbOrderStatus.setSelectedItem(null);
+
+		KeyListener changeTextBoxValueListener = new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+
+				if (e.getSource() == txtOrderId || e.getSource() == txtCustomerName
+						|| e.getSource() == txtCustomerAddress || e.getSource() == txtCustomerPhone
+						|| e.getSource() == txtOrderDescription || e.getSource() == txtSelectedDate) {
+					handleButtonAndComboBoxStates();
+
+				} else if (e.getSource() == txtSearchOrder) {
+
+					handleSearchAndClearButtonStates();
+
+				}
+			}
+
+		};
+
+		ActionListener changeComboBoxValueListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == cmbOrderCategory || e.getSource() == cmbOrderStatus
+						|| e.getSource() == cmbWorker) {
+					handleButtonAndComboBoxStates();
+
+				} else if (e.getSource() == cmbSearchBy) {
+					handleSearchAndClearButtonStates();
+
+				}
+			}
+		};
+
+		ActionListener crudActionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CustomerOrder order = new CustomerOrder();
+				if (e.getSource() == btnAdd) {
+					order.setCustomerName(txtCustomerName.getText());
+					order.setCustomerAddress(txtCustomerAddress.getText());
+					order.setCustomerPhoneNumber(txtCustomerPhone.getText());
+					order.setOrderDescription(txtOrderDescription.getText());
+					order.setAppointmentDate(txtSelectedDate.getText());
+					order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
+					order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
+					order.setWorker((Worker) cmbWorker.getSelectedItem());
+					orderController.createOrUpdateOrder(order, OperationType.ADD);
+				} else if (e.getSource() == btnUpdate) {
+					order.setOrderId(txtOrderId.getText());
+					order.setCustomerName(txtCustomerName.getText());
+					order.setCustomerAddress(txtCustomerAddress.getText());
+					order.setCustomerPhoneNumber(txtCustomerPhone.getText());
+					order.setOrderDescription(txtOrderDescription.getText());
+					order.setAppointmentDate(txtSelectedDate.getText());
+					order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
+					order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
+					order.setWorker((Worker) cmbWorker.getSelectedItem());
+					orderController.createOrUpdateOrder(order, OperationType.UPDATE);
+				} else if (e.getSource() == btnFetch) {
+					order.setOrderId(txtOrderId.getText());
+					orderController.fetchOrderById(order);
+				} else if (e.getSource() == btnSearchOrder) {
+					String searchText = txtSearchOrder.getText();
+					OrderSearchOptions searchOption = (OrderSearchOptions) cmbSearchBy.getSelectedItem();
+					orderController.searchOrder(searchText, searchOption);
+				} else if (e.getSource() == btnClearSearch) {
+					orderController.allOrders();
+				} else if (e.getSource() == btnDelete) {
+					orderController.deleteOrder(listOrders.getSelectedValue());
+				}
+
+//				else {
+//					worker.setWorkerId(Long.parseLong(txtOrdersByWorkerId.getText()));
+//					workerController.fetchOrdersByWorkerId(worker);
+//				}
+
+			}
+		};
+
 		setTitle("Order Form");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 742, 629);
@@ -107,28 +248,6 @@ public class OrderSwingView extends JFrame {
 		gbc_btnManageWorker.gridy = 0;
 		contentPane.add(btnManageWorker, gbc_btnManageWorker);
 
-		txtDatePicker = new JTextField();
-		txtDatePicker.setName("txtDatePicker");
-		txtDatePicker.setFont(new Font("Arial", Font.PLAIN, 12));
-		txtDatePicker.setColumns(10);
-		GridBagConstraints gbc_txtDatePicker = new GridBagConstraints();
-		gbc_txtDatePicker.ipady = 10;
-		gbc_txtDatePicker.ipadx = 10;
-		gbc_txtDatePicker.insets = new Insets(0, 0, 5, 5);
-		gbc_txtDatePicker.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtDatePicker.gridx = 3;
-		gbc_txtDatePicker.gridy = 1;
-		contentPane.add(txtDatePicker, gbc_txtDatePicker);
-
-		btnSelectDate = new JButton("Select Date");
-		btnSelectDate.setName("btnSelectDate");
-		GridBagConstraints gbc_btnSelectDate = new GridBagConstraints();
-		gbc_btnSelectDate.gridwidth = 2;
-		gbc_btnSelectDate.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSelectDate.gridx = 4;
-		gbc_btnSelectDate.gridy = 1;
-		contentPane.add(btnSelectDate, gbc_btnSelectDate);
-
 		JLabel lblWorkerId = new JLabel("Order ID");
 		lblWorkerId.setIconTextGap(8);
 		lblWorkerId.setFont(new Font("Arial", Font.BOLD, 14));
@@ -139,10 +258,10 @@ public class OrderSwingView extends JFrame {
 		gbc_lblWorkerId.gridy = 1;
 		contentPane.add(lblWorkerId, gbc_lblWorkerId);
 
-		txtOrderId = new JTextField();
 		txtOrderId.setName("txtOrderId");
 		txtOrderId.setFont(new Font("Arial", Font.PLAIN, 12));
 		txtOrderId.setColumns(10);
+		txtOrderId.addKeyListener(changeTextBoxValueListener);
 		GridBagConstraints gbc_txtOrderId = new GridBagConstraints();
 		gbc_txtOrderId.ipady = 10;
 		gbc_txtOrderId.ipadx = 10;
@@ -162,6 +281,20 @@ public class OrderSwingView extends JFrame {
 		gbc_lblAppointmentDate.gridy = 1;
 		contentPane.add(lblAppointmentDate, gbc_lblAppointmentDate);
 
+		txtSelectedDate.setName("txtSelectedDate");
+		txtSelectedDate.addKeyListener(changeTextBoxValueListener);
+
+		txtSelectedDate.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtSelectedDate.setColumns(10);
+		GridBagConstraints gbc_lblSelectedDate = new GridBagConstraints();
+		gbc_lblSelectedDate.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblSelectedDate.ipady = 10;
+		gbc_lblSelectedDate.ipadx = 10;
+		gbc_lblSelectedDate.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSelectedDate.gridx = 3;
+		gbc_lblSelectedDate.gridy = 1;
+		contentPane.add(txtSelectedDate, gbc_lblSelectedDate);
+
 		JLabel lblCustomerName = new JLabel("Customer Name");
 		lblCustomerName.setIconTextGap(8);
 		lblCustomerName.setFont(new Font("Arial", Font.BOLD, 14));
@@ -172,8 +305,9 @@ public class OrderSwingView extends JFrame {
 		gbc_lblCustomerName.gridy = 2;
 		contentPane.add(lblCustomerName, gbc_lblCustomerName);
 
-		txtCustomerName = new JTextField();
 		txtCustomerName.setName("txtCustomerName");
+		txtCustomerName.addKeyListener(changeTextBoxValueListener);
+
 		txtCustomerName.setFont(new Font("Arial", Font.PLAIN, 12));
 		txtCustomerName.setColumns(10);
 		GridBagConstraints gbc_txtCustomerName = new GridBagConstraints();
@@ -195,8 +329,9 @@ public class OrderSwingView extends JFrame {
 		gbc_lblOrderCategory.gridy = 2;
 		contentPane.add(lblOrderCategory, gbc_lblOrderCategory);
 
-		JComboBox cmbOrderCategory = new JComboBox();
 		cmbOrderCategory.setName("cmbOrderCategory");
+		cmbOrderCategory.addActionListener(changeComboBoxValueListener);
+
 		GridBagConstraints gbc_cmbOrderCategory = new GridBagConstraints();
 		gbc_cmbOrderCategory.ipady = 10;
 		gbc_cmbOrderCategory.ipadx = 20;
@@ -216,8 +351,9 @@ public class OrderSwingView extends JFrame {
 		gbc_lblWorkerPhoneNumber.gridy = 3;
 		contentPane.add(lblWorkerPhoneNumber, gbc_lblWorkerPhoneNumber);
 
-		txtCustomerAddress = new JTextField();
 		txtCustomerAddress.setName("txtCustomerAddress");
+		txtCustomerAddress.addKeyListener(changeTextBoxValueListener);
+
 		txtCustomerAddress.setFont(new Font("Arial", Font.PLAIN, 12));
 		txtCustomerAddress.setColumns(10);
 		GridBagConstraints gbc_txtCustomerAddress = new GridBagConstraints();
@@ -239,8 +375,9 @@ public class OrderSwingView extends JFrame {
 		gbc_lblOrderStatus.gridy = 3;
 		contentPane.add(lblOrderStatus, gbc_lblOrderStatus);
 
-		JComboBox cmbOrderStatus = new JComboBox();
 		cmbOrderStatus.setName("cmbOrderStatus");
+		cmbOrderStatus.addActionListener(changeComboBoxValueListener);
+
 		GridBagConstraints gbc_cmbOrderStatus = new GridBagConstraints();
 		gbc_cmbOrderStatus.ipady = 10;
 		gbc_cmbOrderStatus.ipadx = 20;
@@ -260,8 +397,9 @@ public class OrderSwingView extends JFrame {
 		gbc_lblCustomerPhone.gridy = 4;
 		contentPane.add(lblCustomerPhone, gbc_lblCustomerPhone);
 
-		txtCustomerPhone = new JTextField();
 		txtCustomerPhone.setName("txtCustomerPhone");
+		txtCustomerPhone.addKeyListener(changeTextBoxValueListener);
+
 		txtCustomerPhone.setFont(new Font("Arial", Font.PLAIN, 12));
 		txtCustomerPhone.setColumns(10);
 		GridBagConstraints gbc_txtCustomerPhone = new GridBagConstraints();
@@ -283,8 +421,8 @@ public class OrderSwingView extends JFrame {
 		gbc_lblWorkerCategory.gridy = 4;
 		contentPane.add(lblWorkerCategory, gbc_lblWorkerCategory);
 
-		JComboBox cmbWorker = new JComboBox();
 		cmbWorker.setName("cmbWorker");
+		cmbWorker.addActionListener(changeComboBoxValueListener);
 		GridBagConstraints gbc_cmbWorker = new GridBagConstraints();
 		gbc_cmbWorker.ipady = 10;
 		gbc_cmbWorker.ipadx = 20;
@@ -304,8 +442,8 @@ public class OrderSwingView extends JFrame {
 		gbc_lblOrderDescription.gridy = 5;
 		contentPane.add(lblOrderDescription, gbc_lblOrderDescription);
 
-		txtOrderDescription = new JTextField();
 		txtOrderDescription.setName("txtOrderDescription");
+		txtOrderDescription.addKeyListener(changeTextBoxValueListener);
 		txtOrderDescription.setFont(new Font("Arial", Font.PLAIN, 12));
 		txtOrderDescription.setColumns(10);
 		GridBagConstraints gbc_txtOrderDescription = new GridBagConstraints();
@@ -330,7 +468,6 @@ public class OrderSwingView extends JFrame {
 		gbc_showError.gridy = 6;
 		contentPane.add(showError, gbc_showError);
 
-		btnFetch = new JButton("Fetch");
 		btnFetch.setEnabled(false);
 		btnFetch.setName("btnFetch");
 		btnFetch.setForeground(Color.WHITE);
@@ -340,6 +477,7 @@ public class OrderSwingView extends JFrame {
 		btnFetch.setBackground(new Color(59, 89, 182));
 		btnFetch.setFocusPainted(false);
 		btnFetch.setPreferredSize(new Dimension(150, 40));
+		btnFetch.addActionListener(crudActionListener);
 
 		GridBagConstraints gbc_btnFetch = new GridBagConstraints();
 		gbc_btnFetch.ipady = 10;
@@ -349,7 +487,6 @@ public class OrderSwingView extends JFrame {
 		gbc_btnFetch.gridx = 0;
 		contentPane.add(btnFetch, gbc_btnFetch);
 
-		btnAdd = new JButton("Add");
 		btnAdd.setEnabled(false);
 		btnAdd.setName("btnAdd");
 		btnAdd.setForeground(Color.WHITE);
@@ -359,6 +496,8 @@ public class OrderSwingView extends JFrame {
 		btnAdd.setBackground(new Color(59, 89, 182));
 		btnAdd.setFocusPainted(false);
 		btnAdd.setPreferredSize(new Dimension(150, 40));
+		btnAdd.addActionListener(crudActionListener);
+
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.ipady = 10;
 		gbc_btnAdd.ipadx = 20;
@@ -367,7 +506,6 @@ public class OrderSwingView extends JFrame {
 		gbc_btnAdd.gridy = 7;
 		contentPane.add(btnAdd, gbc_btnAdd);
 
-		btnUpdate = new JButton("Update");
 		btnUpdate.setEnabled(false);
 		btnUpdate.setName("btnUpdate");
 		btnUpdate.setForeground(Color.WHITE);
@@ -377,6 +515,8 @@ public class OrderSwingView extends JFrame {
 		btnUpdate.setBackground(new Color(59, 89, 182));
 		btnUpdate.setFocusPainted(false);
 		btnUpdate.setPreferredSize(new Dimension(150, 40));
+		btnUpdate.addActionListener(crudActionListener);
+
 		GridBagConstraints gbc_btnUpdate = new GridBagConstraints();
 		gbc_btnUpdate.ipady = 10;
 		gbc_btnUpdate.ipadx = 20;
@@ -395,8 +535,8 @@ public class OrderSwingView extends JFrame {
 		gbc_lblSearchWorker.gridy = 8;
 		contentPane.add(lblSearchWorker, gbc_lblSearchWorker);
 
-		txtSearchOrder = new JTextField();
 		txtSearchOrder.setName("txtSearchOrder");
+		txtSearchOrder.addKeyListener(changeTextBoxValueListener);
 		txtSearchOrder.setFont(new Font("Arial", Font.PLAIN, 12));
 		txtSearchOrder.setColumns(10);
 		GridBagConstraints gbc_txtSearchOrder = new GridBagConstraints();
@@ -418,7 +558,8 @@ public class OrderSwingView extends JFrame {
 		gbc_lblSearchBy.gridy = 8;
 		contentPane.add(lblSearchBy, gbc_lblSearchBy);
 
-		JComboBox cmbSearchBy = new JComboBox();
+		cmbSearchBy.setName("cmbSearchBy");
+		cmbSearchBy.addActionListener(changeComboBoxValueListener);
 		GridBagConstraints gbc_cmbSearchBy = new GridBagConstraints();
 		gbc_cmbSearchBy.ipady = 10;
 		gbc_cmbSearchBy.ipadx = 20;
@@ -438,6 +579,7 @@ public class OrderSwingView extends JFrame {
 		btnSearchOrder.setBackground(new Color(59, 89, 182));
 		btnSearchOrder.setFocusPainted(false);
 		btnSearchOrder.setPreferredSize(new Dimension(150, 40));
+		btnSearchOrder.addActionListener(crudActionListener);
 		GridBagConstraints gbc_btnSearchOrder = new GridBagConstraints();
 		gbc_btnSearchOrder.ipady = 10;
 		gbc_btnSearchOrder.ipadx = 20;
@@ -469,6 +611,7 @@ public class OrderSwingView extends JFrame {
 		btnClearSearch.setBackground(new Color(59, 89, 182));
 		btnClearSearch.setFocusPainted(false);
 		btnClearSearch.setPreferredSize(new Dimension(150, 40));
+		btnClearSearch.addActionListener(crudActionListener);
 		GridBagConstraints gbc_btnClearSearch = new GridBagConstraints();
 		gbc_btnClearSearch.ipady = 10;
 		gbc_btnClearSearch.ipadx = 20;
@@ -489,12 +632,17 @@ public class OrderSwingView extends JFrame {
 		gbc_scrollPane.gridy = 10;
 		contentPane.add(scrollPane, gbc_scrollPane);
 
-		listOrders = new JList<CustomerOrder>();
+		orderListModel = new DefaultListModel<>();
+		listOrders = new JList<>(orderListModel);
 		listOrders.setName("listOrders");
 		scrollPane.setViewportView(listOrders);
 
 		btnDelete = new JButton("Delete");
+		btnDelete.setName("btnDelete");
 		btnDelete.setEnabled(false);
+		btnDelete.addActionListener(crudActionListener);
+		listOrders.addListSelectionListener(e -> btnDelete.setEnabled(listOrders.getSelectedIndex() != -1));
+
 		btnDelete.setForeground(Color.WHITE);
 		btnDelete.setOpaque(true);
 		btnDelete.setFont(new Font("Arial", Font.BOLD, 16));
@@ -522,6 +670,133 @@ public class OrderSwingView extends JFrame {
 		gbc_showErrorNotFoundLbl.gridy = 16;
 		contentPane.add(showErrorNotFoundLbl, gbc_showErrorNotFoundLbl);
 
+	}
+
+	protected void handleButtonAndComboBoxStates() {
+		boolean isOrderIdEmpty = txtOrderId.getText().trim().isEmpty();
+		boolean isCustomerNameEmpty = txtCustomerName.getText().trim().isEmpty();
+		boolean isCustomerAddressEmpty = txtCustomerAddress.getText().trim().isEmpty();
+		boolean isCustomerPhoneNumberEmpty = txtCustomerPhone.getText().trim().isEmpty();
+		boolean isOrderDescriptionEmpty = txtOrderDescription.getText().trim().isEmpty();
+		boolean isAppointmentDateEmpty = txtSelectedDate.getText().trim().isEmpty();
+		boolean isOrderCategoryEmpty = cmbOrderCategory.getSelectedItem() == null;
+		boolean isOrderStatusEmpty = cmbOrderStatus.getSelectedItem() == null;
+		boolean isAssignedWorkerEmpty = cmbWorker.getSelectedItem() == null;
+		btnAdd.setEnabled(isOrderIdEmpty && !isCustomerNameEmpty && !isCustomerAddressEmpty
+				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
+				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
+
+		btnUpdate.setEnabled(!isOrderIdEmpty && !isCustomerNameEmpty && !isCustomerAddressEmpty
+				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
+				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
+
+		btnFetch.setEnabled(!isOrderIdEmpty && isCustomerNameEmpty && isCustomerAddressEmpty
+				&& isCustomerPhoneNumberEmpty && isOrderDescriptionEmpty && isAppointmentDateEmpty);
+		if (btnFetch.isEnabled()) {
+			cmbWorker.setSelectedItem(null);
+			cmbOrderStatus.setSelectedItem(null);
+			cmbOrderCategory.setSelectedItem(null);
+		}
+
+	}
+
+	private void handleSearchAndClearButtonStates() {
+		boolean isSearchOrderTextEmpty = txtSearchOrder.getText().trim().isEmpty();
+		boolean isSearchOptionEmpty = cmbSearchBy.getSelectedItem() == null;
+		btnSearchOrder.setEnabled(!isSearchOrderTextEmpty && !isSearchOptionEmpty);
+		btnClearSearch.setEnabled(!isSearchOrderTextEmpty && !isSearchOptionEmpty);
+	}
+
+	@Override
+	public void showAllOrder(List<CustomerOrder> order) {
+		resetAllSearchStates();
+		order.stream().forEach(orderListModel::addElement);
+		resetErrorLabel();
+	}
+
+	@Override
+	public void showAllWorkers(List<Worker> worker) {
+		worker.stream().forEach(workerListModel::addElement);
+	}
+
+	@Override
+	public void orderAdded(CustomerOrder order) {
+		orderListModel.addElement(order);
+		resetErrorLabel();
+	}
+
+	@Override
+	public void orderModified(CustomerOrder order) {
+		for (int i = 0; i < orderListModel.getSize(); i++) {
+			if (orderListModel.getElementAt(i).getOrderId().equals(order.getOrderId())) {
+				orderListModel.removeElementAt(i);
+				orderListModel.addElement(order);
+				resetErrorLabel();
+			} else {
+				resetErrorLabel();
+			}
+		}
+
+	}
+
+	@Override
+	public void showFetchedOrder(CustomerOrder order) {
+		txtOrderId.setText(order.getOrderId().toString());
+		txtCustomerName.setText(order.getCustomerName());
+		txtCustomerAddress.setText(order.getCustomerAddress());
+		txtCustomerPhone.setText(order.getCustomerPhoneNumber());
+		txtOrderDescription.setText(order.getOrderDescription());
+		txtSelectedDate.setText(order.getAppointmentDate().toString());
+		cmbOrderCategory.setSelectedItem(order.getOrderCategory());
+		cmbOrderStatus.setSelectedItem(order.getOrderStatus());
+		cmbWorker.setSelectedItem(order.getWorker());
+		resetErrorLabel();
+	}
+
+	@Override
+	public void showSearchResultForOrder(List<CustomerOrder> order) {
+		orderListModel.removeAllElements();
+		order.stream().forEach(orderListModel::addElement);
+		resetErrorLabel();
+
+	}
+
+	@Override
+	public void orderRemoved(CustomerOrder order) {
+		orderListModel.removeElement(order);
+		resetErrorLabel();
+	}
+
+	@Override
+	public void showError(String message, CustomerOrder order) {
+		// TODO Auto-generated method stub
+		showError.setText(message + ": " + order);
+
+	}
+
+	@Override
+	public void showErrorNotFound(String message, CustomerOrder order) {
+		// TODO Auto-generated method stub
+		showErrorNotFoundLbl.setText(message + ": " + order);
+
+	}
+
+	@Override
+	public void showSearchError(String message, String searchText) {
+		// TODO Auto-generated method stub
+		showSearchErrorLbl.setText(message + ": " + searchText);
+
+	}
+
+	private void resetAllSearchStates() {
+		txtSearchOrder.setText(" ");
+		cmbSearchBy.setSelectedItem(null);
+	}
+
+	private void resetErrorLabel() {
+		showError.setText(" ");
+		showErrorNotFoundLbl.setText(" ");
+		showSearchErrorLbl.setText(" ");
 	}
 
 }

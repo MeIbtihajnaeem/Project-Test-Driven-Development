@@ -40,9 +40,12 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 
 	@Test
 	public void testStringNumberMethodWithLargeStringEqualsToTwentyCharacters() {
-		String number = "00000000000000000000";
-		long resultNumber = 0L;
-		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
+		
+		assertThatThrownBy(() -> {
+			String number = "11111111111111111111";
+			validationConfigurations.validateStringNumber(number);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Please enter a valid number.");
 	}
 
 	@Test
@@ -83,21 +86,31 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 	@Test
 	public void testStringNumberMethodWithValidNumber() {
 		String number = "1234567890";
-		long resultNumber = 1234567890L;
-		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
+		assertEquals(number, validationConfigurations.validateStringNumber(number));
 	}
 
 	@Test
 	public void testStringNumberMethodWithNegativeNumber() {
-		String number = "-123";
-		long resultNumber = -123L;
-		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
+//		String number = "-123";
+//		long resultNumber = -123L;
+//		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
+		
+		assertThatThrownBy(() -> {
+			String number = "-123";
+			validationConfigurations.validateStringNumber(number);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The id field cannot be less than 1. Please provide a valid id.");
 	}
 
 	@Test
 	public void testStringNumberMethodWithZero() {
-		String number = "0";
-		long resultNumber = 0L;
-		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
+		assertThatThrownBy(() -> {
+			String number = "0";
+			validationConfigurations.validateStringNumber(number);
+		}).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("The id field cannot be less than 1. Please provide a valid id.");
+//		String number = "0";
+//		long resultNumber = 0L;
+//		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
 	}
 }
