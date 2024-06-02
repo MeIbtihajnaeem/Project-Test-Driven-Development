@@ -95,13 +95,9 @@ public class OrderController {
 	}
 
 	private void update(CustomerOrder order) {
-		order.setOrderId(validationConfigurations.validateStringNumber(order.getOrderId()));
-
+		Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
+		order.setOrderId(id);
 		Worker worker = getValidWorker(order);
-		CustomerOrder savedOrder = orderRepository.findById(order.getWorker().getWorkerId());
-		if (savedOrder.getWorker().getWorkerId() == order.getWorker().getWorkerId()) {
-			throw new IllegalArgumentException("Cannot update order because it is assigned to the same worker.");
-		}
 		if (worker.getOrders() == null) {
 			order = orderRepository.save(order);
 			orderView.orderModified(order);
@@ -162,7 +158,8 @@ public class OrderController {
 
 		try {
 			Objects.requireNonNull(order, "Order is null.");
-			order.setOrderId(validationConfigurations.validateStringNumber(order.getOrderId()));
+			Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
+			order.setOrderId(id);
 			CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
 			if (savedOrder == null) {
 				throw new NoSuchElementException("Order with ID " + order.getOrderId() + " not found.");
@@ -189,7 +186,8 @@ public class OrderController {
 	public void deleteOrder(CustomerOrder order) {
 		try {
 			Objects.requireNonNull(order, "Order is null");
-			order.setOrderId(validationConfigurations.validateStringNumber(order.getOrderId()));
+			Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
+			order.setOrderId(id);
 			CustomerOrder existingOrder = orderRepository.findById(order.getOrderId());
 			if (existingOrder == null) {
 				throw new NoSuchElementException("No order found with ID: " + order.getOrderId());
@@ -349,7 +347,7 @@ public class OrderController {
 	 * @return the list of orders
 	 */
 	private List<CustomerOrder> searchByWorkerId(String searchText) {
-		String workerId = validateId(searchText);
+		Long workerId = validateId(searchText);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
 			throw new NoSuchElementException("No result found with ID: " + workerId);
@@ -368,7 +366,7 @@ public class OrderController {
 	 * @return the customer order
 	 */
 	private CustomerOrder searchByOrderId(String searchText) {
-		String orderId = validateId(searchText);
+		Long orderId = validateId(searchText);
 		CustomerOrder order = orderRepository.findById(orderId);
 		if (order == null) {
 			throw new NoSuchElementException("No result found with ID: " + orderId);
@@ -382,8 +380,8 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the ID as a Long
 	 */
-	private String validateId(String searchText) {
-		String id = validationConfigurations.validateStringNumber(searchText);
+	private Long validateId(String searchText) {
+		Long id = validationConfigurations.validateStringNumber(searchText);
 		return id;
 	}
 
@@ -401,7 +399,8 @@ public class OrderController {
 		order.setOrderCategory(validationConfigurations.validateCategory(order.getOrderCategory()));
 		order.setOrderStatus(validationConfigurations.validateStatus(order.getOrderStatus()));
 		Objects.requireNonNull(order.getWorker(), "The worker field cannot be empty.");
-		order.getWorker().setWorkerId(validationConfigurations.validateStringNumber(order.getWorker().getWorkerId()));
+		order.getWorker()
+				.setWorkerId(validationConfigurations.validateStringNumber(order.getWorker().getWorkerId().toString()));
 	}
 
 	/**

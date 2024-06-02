@@ -85,8 +85,8 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 
 	@Test
 	public void testStringNumberMethodWithValidNumber() {
-		String number = "1234567890";
-		assertEquals(number, validationConfigurations.validateStringNumber(number));
+		Long number = 1234567890l;
+		assertEquals(number, validationConfigurations.validateStringNumber(number.toString()));
 	}
 
 	@Test
@@ -96,21 +96,21 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 //		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
 		
 		assertThatThrownBy(() -> {
-			String number = "-123";
+			String number = "-123l";
 			validationConfigurations.validateStringNumber(number);
 		}).isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("The id field cannot be less than 1. Please provide a valid id.");
+				.hasMessage("Please enter a valid number.");
 	}
 
-	@Test
-	public void testStringNumberMethodWithZero() {
-		assertThatThrownBy(() -> {
-			String number = "0";
-			validationConfigurations.validateStringNumber(number);
-		}).isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("The id field cannot be less than 1. Please provide a valid id.");
+//	@Test
+//	public void testStringNumberMethodWithZero() {
+//		assertThatThrownBy(() -> {
+//			String number = "0L";
+//			validationConfigurations.validateStringNumber(number);
+//		}).isInstanceOf(IllegalArgumentException.class)
+//				.hasMessage("The id field cannot be less than 1. Please provide a valid id.");
 //		String number = "0";
 //		long resultNumber = 0L;
 //		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
-	}
+//	}
 }

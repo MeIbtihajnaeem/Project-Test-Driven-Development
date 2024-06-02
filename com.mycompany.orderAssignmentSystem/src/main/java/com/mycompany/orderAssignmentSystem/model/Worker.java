@@ -3,30 +3,52 @@
  */
 package com.mycompany.orderAssignmentSystem.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 
 /**
  * Represents a worker in the system.
  */
+@Entity
 public class Worker {
 
 	/** The worker id. */
-	private String workerId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long workerId;
 
 	/** The worker name. */
+	@Column(name = "workerName")
 	private String workerName;
 
 	/** The worker phone number. */
+	@Column(name = "workerPhoneNumber")
 	private String workerPhoneNumber;
 
 	/** The worker category. */
+	@Column(name = "workerCategory")
+	@Enumerated(EnumType.STRING)
 	private OrderCategory workerCategory;
 
 	/** The orders. */
-	private List<CustomerOrder> orders;
+	@OneToMany
+	@JoinTable(name = "Worker_Order", joinColumns = { @JoinColumn(name = "ord_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "work_id") })
+	private List<CustomerOrder> orders = new ArrayList<>();
 
 	/**
 	 * Default constructor.
@@ -42,7 +64,7 @@ public class Worker {
 	 * @param workerPhoneNumber the worker phone number
 	 * @param workerCategory    the worker category
 	 */
-	public Worker(String workerId, String workerName, String workerPhoneNumber, OrderCategory workerCategory) {
+	public Worker(Long workerId, String workerName, String workerPhoneNumber, OrderCategory workerCategory) {
 		super();
 		this.workerId = workerId;
 		this.workerName = workerName;
@@ -55,7 +77,7 @@ public class Worker {
 	 *
 	 * @return the worker id
 	 */
-	public String getWorkerId() {
+	public Long getWorkerId() {
 		return workerId;
 	}
 
@@ -64,7 +86,7 @@ public class Worker {
 	 *
 	 * @param workerId the new worker id
 	 */
-	public void setWorkerId(String workerId) {
+	public void setWorkerId(Long workerId) {
 		this.workerId = workerId;
 	}
 

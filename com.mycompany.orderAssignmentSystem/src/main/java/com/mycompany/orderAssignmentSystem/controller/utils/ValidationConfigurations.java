@@ -29,7 +29,7 @@ public interface ValidationConfigurations {
 	 * @return the validated numeric value
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public String validateStringNumber(String str);
+	public Long validateStringNumber(String str);
 
 	/**
 	 * Validates an address.

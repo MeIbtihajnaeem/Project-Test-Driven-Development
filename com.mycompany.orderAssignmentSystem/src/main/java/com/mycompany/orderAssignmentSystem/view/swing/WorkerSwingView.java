@@ -7,17 +7,15 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -50,7 +48,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	private JPanel contentPane;
 
 	/** The txt worker id. */
-	private JTextField txtWorkerId;
+	private JFormattedTextField txtWorkerId;
 
 	/** The txt worker name. */
 	private JTextField txtWorkerName;
@@ -117,6 +115,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 	/** The list orders. */
 	private JList<CustomerOrder> listOrders;
+//	private ValidationConfigurations validationConfig;
 
 	/**
 	 * Launch the application.
@@ -141,7 +140,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 *
 	 * @return the worker list model
 	 */
-	DefaultListModel<Worker> getWorkerListModel() {
+	public DefaultListModel<Worker> getWorkerListModel() {
 		return workerListModel;
 	}
 
@@ -150,7 +149,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 *
 	 * @return the order list model
 	 */
-	DefaultListModel<CustomerOrder> getOrderListModel() {
+	public DefaultListModel<CustomerOrder> getOrderListModel() {
 		return orderListModel;
 	}
 
@@ -159,8 +158,48 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 */
 	public WorkerSwingView() {
 		// Initialisation of combo box by enumeration
+//		validationConfig = new ExtendedValidationConfigurations();
+
+//		NumberFormat format = NumberFormat.getInstance();
+//		NumberFormatter formatter = new NumberFormatter(format) {
+//			private static final long serialVersionUID = 2L;
+//
+//			@Override
+//			public Object stringToValue(String string) throws ParseException {
+//				if (string == null || string.trim().isEmpty()) {
+//					return null;
+//				}
+//				return super.stringToValue(string);
+//			}
+//
+//			@Override
+//			public String valueToString(Object value) throws ParseException {
+//				if (value == null) {
+//					return "";
+//				}
+//				return super.valueToString(value);
+//			}
+//		};
+//		formatter.setValueClass(Integer.class);
+//		formatter.setMaximum(Integer.MAX_VALUE);
+//		formatter.setAllowsInvalid(false);
+//		formatter.setCommitsOnValidEdit(true);
+		txtWorkerPhone = new JTextField();
+		txtWorkerName = new JTextField();
+
+		txtSearchWorker = new JTextField();
+		txtOrdersByWorkerId = new JTextField();
 		cmbWorkerCategory = new JComboBox<OrderCategory>();
 		cmbSearchByOptions = new JComboBox<WorkerSearchOption>();
+		workerListModel = new DefaultListModel<>();
+		orderListModel = new DefaultListModel<>();
+		btnFetch = new JButton("Fetch");
+		btnUpdate = new JButton("Update");
+		btnAdd = new JButton("Add");
+		btnSearchWorker = new JButton("Search Worker");
+		btnClearSearchWorker = new JButton("Clear");
+		btnDelete = new JButton("Delete");
+		btnSearchOrder = new JButton("Search Orders");
 		for (OrderCategory category : OrderCategory.values()) {
 			cmbWorkerCategory.addItem(category);
 		}
@@ -170,76 +209,88 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		cmbWorkerCategory.setSelectedItem(null);
 		cmbSearchByOptions.setSelectedItem(null);
 
-		KeyListener changeWorkerValueListener = new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
+//		KeyListener changeWorkerValueListener = new KeyAdapter() {
+//			@Override
+//			public void keyReleased(KeyEvent e) {
+//
+//				if (e.getSource() == txtSearchWorker) {
+//					handleSearchWorkerAndClearButtonStates();
+//
+//				} else if (e.getSource() == txtOrdersByWorkerId) {
+//
+//					handleSearchOrderByWorkerIdButtonStates();
+//				} else {
+//					handleButtonAndComboBoxStates();
+//
+//				}
+//			}
+//
+//			public void keyTyped(KeyEvent e) {
+//				if (e.getSource() == txtWorkerId) {
+//					char c = e.getKeyChar();
+//					if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+//						getToolkit().beep();
+//						e.consume();
+//					}
+//				}
+//				if (e.getSource() == txtOrdersByWorkerId) {
+//					char c = e.getKeyChar();
+//					if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+//						getToolkit().beep();
+//						e.consume();
+//					}
+//				}
+//
+//			}
+//
+//		};
 
-				if (e.getSource() == txtSearchWorker) {
-					handleSearchWorkerAndClearButtonStates();
-
-				} else if (e.getSource() == txtOrdersByWorkerId) {
-					handleSearchOrderByWorkerIdButtonStates();
-				} else {
-					handleButtonAndComboBoxStates();
-				}
-			}
-
-		};
-
-		ActionListener changeWorkerCategoryListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == cmbSearchByOptions) {
-					handleSearchWorkerAndClearButtonStates();
-
-				} else {
-					handleButtonAndComboBoxStates();
-				}
-			}
-		};
-		ActionListener crudActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Worker worker = new Worker();
-				if (e.getSource() == btnAdd) {
-					worker.setWorkerName(txtWorkerName.getText());
-					worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
-					worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
-					workerController.createOrUpdateWorker(worker, OperationType.ADD);
-				} else if (e.getSource() == btnUpdate) {
-					worker.setWorkerId(txtWorkerId.getText());
-					worker.setWorkerName(txtWorkerName.getText());
-					worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
-					worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
-					workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
-				} else if (e.getSource() == btnFetch) {
-					worker.setWorkerId(txtWorkerId.getText());
-					workerController.fetchWorkerById(worker);
-
-				} else {
-					worker.setWorkerId(txtOrdersByWorkerId.getText());
-					workerController.fetchOrdersByWorkerId(worker);
-				}
-
-			}
-		};
-		ActionListener filterActionListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == btnSearchWorker) {
-					String searchText = txtSearchWorker.getText();
-					WorkerSearchOption searchOption = (WorkerSearchOption) cmbSearchByOptions.getSelectedItem();
-					workerController.searchWorker(searchText, searchOption);
-				} else if (e.getSource() == btnClearSearchWorker) {
-					workerController.getAllWorkers();
-				} else {
-					workerController.deleteWorker(listWorkers.getSelectedValue());
-
-				}
-			}
-
-		};
+//		ActionListener changeWorkerCategoryListener = new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				if (e.getSource() == cmbSearchByOptions) {
+//					handleSearchWorkerAndClearButtonStates();
+//
+//				} else {
+//					handleButtonAndComboBoxStates();
+//				}
+//			}
+//		};
+//		ActionListener crudActionListener = new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//
+//				if (e.getSource() == btnAdd) {
+//					addWorkerMethod();
+//				} else if (e.getSource() == btnUpdate) {
+//					updateWorkerMethod();
+//				} else if (e.getSource() == btnFetch) {
+//					fetchWorkerMethod();
+//
+//				} else {
+//					getOrdersByWorkerIdMethod();
+//				}
+//
+//			}
+//
+//		};
+//		ActionListener filterActionListener = new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				if (e.getSource() == btnSearchWorker) {
+//					String searchText = txtSearchWorker.getText();
+//					WorkerSearchOption searchOption = (WorkerSearchOption) cmbSearchByOptions.getSelectedItem();
+//					workerController.searchWorker(searchText, searchOption);
+//				} else if (e.getSource() == btnClearSearchWorker) {
+//					workerController.getAllWorkers();
+//				} else {
+//					workerController.deleteWorker(listWorkers.getSelectedValue());
+//
+//				}
+//			}
+//
+//		};
 
 		setTitle("Worker View");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -287,8 +338,21 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblWorkerId.gridy = 1;
 		contentPane.add(lblWorkerId, gbc_lblWorkerId);
 
-		txtWorkerId = new JTextField();
-		txtWorkerId.addKeyListener(changeWorkerValueListener);
+		txtWorkerId = new JFormattedTextField();
+		txtWorkerId.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				handleButtonAndComboBoxStates();
+			}
+
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+					getToolkit().beep();
+					e.consume();
+				}
+			}
+
+		});
 		txtWorkerId.setName("txtWorkerId");
 		txtWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtWorkerId.setColumns(10);
@@ -311,8 +375,12 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblWorkerPhoneNumber.gridy = 1;
 		contentPane.add(lblWorkerPhoneNumber, gbc_lblWorkerPhoneNumber);
 
-		txtWorkerPhone = new JTextField();
-		txtWorkerPhone.addKeyListener(changeWorkerValueListener);
+		txtWorkerPhone.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				handleButtonAndComboBoxStates();
+			}
+
+		});
 		txtWorkerPhone.setName("txtWorkerPhone");
 		txtWorkerPhone.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtWorkerPhone.setColumns(10);
@@ -335,8 +403,12 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblWorkerName.gridy = 2;
 		contentPane.add(lblWorkerName, gbc_lblWorkerName);
 
-		txtWorkerName = new JTextField();
-		txtWorkerName.addKeyListener(changeWorkerValueListener);
+		txtWorkerName.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				handleButtonAndComboBoxStates();
+			}
+
+		});
 		txtWorkerName.setName("txtWorkerName");
 		txtWorkerName.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtWorkerName.setColumns(10);
@@ -359,7 +431,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblWorkerCategory.gridy = 2;
 		contentPane.add(lblWorkerCategory, gbc_lblWorkerCategory);
 
-		cmbWorkerCategory.addActionListener(changeWorkerCategoryListener);
+		cmbWorkerCategory.addActionListener(e -> handleButtonAndComboBoxStates());
 		cmbWorkerCategory.setName("cmbWorkerCategory");
 		GridBagConstraints gbc_cmbWorkerCategory = new GridBagConstraints();
 		gbc_cmbWorkerCategory.insets = new Insets(0, 0, 5, 5);
@@ -381,7 +453,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_showErrorLbl.gridy = 3;
 		contentPane.add(showErrorLbl, gbc_showErrorLbl);
 
-		btnFetch = new JButton("Fetch");
 		btnFetch.setEnabled(false);
 		btnFetch.setName("btnFetch");
 		btnFetch.setForeground(Color.WHITE);
@@ -391,6 +462,8 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnFetch.setBackground(new Color(59, 89, 182));
 		btnFetch.setFocusPainted(false);
 		btnFetch.setPreferredSize(new Dimension(150, 40));
+		btnFetch.addActionListener(e -> fetchWorkerMethod());
+
 		GridBagConstraints gbc_btnFetch = new GridBagConstraints();
 		gbc_btnFetch.ipady = 10;
 		gbc_btnFetch.ipadx = 20;
@@ -398,9 +471,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnFetch.gridx = 0;
 		gbc_btnFetch.gridy = 4;
 		contentPane.add(btnFetch, gbc_btnFetch);
-		btnFetch.addActionListener(crudActionListener);
 
-		btnUpdate = new JButton("Update");
 		btnUpdate.setEnabled(false);
 		btnUpdate.setName("btnUpdate");
 		btnUpdate.setForeground(Color.WHITE);
@@ -410,6 +481,8 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnUpdate.setBackground(new Color(59, 89, 182));
 		btnUpdate.setFocusPainted(false);
 		btnUpdate.setPreferredSize(new Dimension(150, 40));
+		btnUpdate.addActionListener(e -> updateWorkerMethod());
+
 		GridBagConstraints gbc_btnUpdate = new GridBagConstraints();
 		gbc_btnUpdate.ipady = 10;
 		gbc_btnUpdate.ipadx = 20;
@@ -417,9 +490,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnUpdate.gridx = 1;
 		gbc_btnUpdate.gridy = 4;
 		contentPane.add(btnUpdate, gbc_btnUpdate);
-		btnUpdate.addActionListener(crudActionListener);
 
-		btnAdd = new JButton("Add");
 		btnAdd.setEnabled(false);
 		btnAdd.setName("btnAdd");
 		btnAdd.setForeground(Color.WHITE);
@@ -429,6 +500,8 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnAdd.setBackground(new Color(59, 89, 182));
 		btnAdd.setFocusPainted(false);
 		btnAdd.setPreferredSize(new Dimension(150, 40));
+		btnAdd.addActionListener(e -> addWorkerMethod());
+
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.ipady = 10;
 		gbc_btnAdd.ipadx = 20;
@@ -436,8 +509,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnAdd.gridx = 2;
 		gbc_btnAdd.gridy = 4;
 		contentPane.add(btnAdd, gbc_btnAdd);
-
-		btnAdd.addActionListener(crudActionListener);
 
 		JLabel lblSearchWorker = new JLabel("Search Worker");
 		lblSearchWorker.setFont(new Font("Arial", Font.BOLD, 14));
@@ -451,8 +522,11 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblSearchWorker.gridy = 5;
 		contentPane.add(lblSearchWorker, gbc_lblSearchWorker);
 
-		txtSearchWorker = new JTextField();
-		txtSearchWorker.addKeyListener(changeWorkerValueListener);
+		txtSearchWorker.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				handleSearchOrderByWorkerIdButtonStates();
+			}
+		});
 
 		txtSearchWorker.setName("txtSearchWorker");
 		txtSearchWorker.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -475,7 +549,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblSearchBy.gridy = 5;
 		contentPane.add(lblSearchBy, gbc_lblSearchBy);
 
-		cmbSearchByOptions.addActionListener(changeWorkerCategoryListener);
+		cmbSearchByOptions.addActionListener(e -> handleSearchWorkerAndClearButtonStates());
 		cmbSearchByOptions.setName("cmbSearchByOptions");
 		GridBagConstraints gbc_cmbSearchByOptions = new GridBagConstraints();
 		gbc_cmbSearchByOptions.insets = new Insets(0, 0, 5, 5);
@@ -484,7 +558,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_cmbSearchByOptions.gridy = 5;
 		contentPane.add(cmbSearchByOptions, gbc_cmbSearchByOptions);
 
-		btnSearchWorker = new JButton("Search Worker");
 		btnSearchWorker.setEnabled(false);
 		btnSearchWorker.setName("btnSearchWorker");
 		btnSearchWorker.setForeground(Color.WHITE);
@@ -494,6 +567,12 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnSearchWorker.setBackground(new Color(59, 89, 182));
 		btnSearchWorker.setFocusPainted(false);
 		btnSearchWorker.setPreferredSize(new Dimension(150, 40));
+
+		btnSearchWorker.addActionListener(e -> {
+			String searchText = txtSearchWorker.getText();
+			WorkerSearchOption searchOption = (WorkerSearchOption) cmbSearchByOptions.getSelectedItem();
+			workerController.searchWorker(searchText, searchOption);
+		});
 		GridBagConstraints gbc_btnSearchWorker = new GridBagConstraints();
 		gbc_btnSearchWorker.ipady = 10;
 		gbc_btnSearchWorker.ipadx = 20;
@@ -501,7 +580,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnSearchWorker.gridx = 4;
 		gbc_btnSearchWorker.gridy = 5;
 		contentPane.add(btnSearchWorker, gbc_btnSearchWorker);
-		btnSearchWorker.addActionListener(filterActionListener);
 
 		showErrorLblSearchWorker = new JLabel("");
 		showErrorLblSearchWorker.setName("showErrorLblSearchWorker");
@@ -516,7 +594,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_showErrorLblSearchWorker.gridy = 6;
 		contentPane.add(showErrorLblSearchWorker, gbc_showErrorLblSearchWorker);
 
-		btnClearSearchWorker = new JButton("Clear");
 		btnClearSearchWorker.setEnabled(false);
 		btnClearSearchWorker.setName("btnClearSearchWorker");
 		btnClearSearchWorker.setForeground(Color.WHITE);
@@ -526,6 +603,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnClearSearchWorker.setBackground(new Color(59, 89, 182));
 		btnClearSearchWorker.setFocusPainted(false);
 		btnClearSearchWorker.setPreferredSize(new Dimension(150, 40));
+		btnClearSearchWorker.addActionListener(e -> workerController.getAllWorkers());
 		GridBagConstraints gbc_btnClearSearchWorker = new GridBagConstraints();
 		gbc_btnClearSearchWorker.ipady = 10;
 		gbc_btnClearSearchWorker.ipadx = 20;
@@ -533,7 +611,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnClearSearchWorker.gridx = 4;
 		gbc_btnClearSearchWorker.gridy = 6;
 		contentPane.add(btnClearSearchWorker, gbc_btnClearSearchWorker);
-		btnClearSearchWorker.addActionListener(filterActionListener);
 
 		scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -545,14 +622,12 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_scrollPane.gridy = 7;
 		contentPane.add(scrollPane, gbc_scrollPane);
 
-		workerListModel = new DefaultListModel<>();
 		listWorkers = new JList<Worker>(workerListModel);
 		listWorkers.setName("listWorkers");
 		listWorkers.addListSelectionListener(e -> btnDelete.setEnabled(listWorkers.getSelectedIndex() != -1));
 		listWorkers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane.setViewportView(listWorkers);
 
-		btnDelete = new JButton("Delete");
 		btnDelete.setEnabled(false);
 
 		btnDelete.setName("btnDelete");
@@ -563,6 +638,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnDelete.setBackground(new Color(59, 89, 182));
 		btnDelete.setFocusPainted(false);
 		btnDelete.setPreferredSize(new Dimension(150, 40));
+		btnDelete.addActionListener(e -> workerController.deleteWorker(listWorkers.getSelectedValue()));
 		GridBagConstraints gbc_btnDelete = new GridBagConstraints();
 		gbc_btnDelete.ipady = 10;
 		gbc_btnDelete.ipadx = 20;
@@ -570,7 +646,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnDelete.gridx = 1;
 		gbc_btnDelete.gridy = 14;
 		contentPane.add(btnDelete, gbc_btnDelete);
-		btnDelete.addActionListener(filterActionListener);
 
 		JLabel lblSearchOrdersBy = new JLabel("Search Orders By Worker ID");
 		lblSearchOrdersBy.setFont(new Font("Arial", Font.BOLD, 14));
@@ -584,8 +659,20 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblSearchOrdersBy.gridy = 15;
 		contentPane.add(lblSearchOrdersBy, gbc_lblSearchOrdersBy);
 
-		txtOrdersByWorkerId = new JTextField();
-		txtOrdersByWorkerId.addKeyListener(changeWorkerValueListener);
+		txtOrdersByWorkerId.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				handleSearchOrderByWorkerIdButtonStates();
+			}
+
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+					getToolkit().beep();
+					e.consume();
+				}
+			}
+
+		});
 		txtOrdersByWorkerId.setName("txtOrdersByWorkerId");
 		txtOrdersByWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtOrdersByWorkerId.setColumns(10);
@@ -596,7 +683,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_txtOrdersByWorkerId.gridy = 15;
 		contentPane.add(txtOrdersByWorkerId, gbc_txtOrdersByWorkerId);
 
-		btnSearchOrder = new JButton("Search Orders");
 		btnSearchOrder.setEnabled(false);
 		btnSearchOrder.setName("btnSearchOrder");
 		btnSearchOrder.setForeground(Color.WHITE);
@@ -606,6 +692,8 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnSearchOrder.setBackground(new Color(59, 89, 182));
 		btnSearchOrder.setFocusPainted(false);
 		btnSearchOrder.setPreferredSize(new Dimension(150, 40));
+		btnSearchOrder.addActionListener(e -> getOrdersByWorkerIdMethod());
+
 		GridBagConstraints gbc_btnSearchOrder = new GridBagConstraints();
 		gbc_btnSearchOrder.ipady = 10;
 		gbc_btnSearchOrder.ipadx = 20;
@@ -613,7 +701,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnSearchOrder.gridx = 2;
 		gbc_btnSearchOrder.gridy = 15;
 		contentPane.add(btnSearchOrder, gbc_btnSearchOrder);
-		btnSearchOrder.addActionListener(crudActionListener);
 
 		scrollPane_1 = new JScrollPane();
 		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
@@ -625,7 +712,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_scrollPane_1.gridy = 16;
 		contentPane.add(scrollPane_1, gbc_scrollPane_1);
 
-		orderListModel = new DefaultListModel<>();
 		listOrders = new JList<>(orderListModel);
 		listOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listOrders.setName("listOrders");
@@ -711,7 +797,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	@Override
 	public void showAllWorkers(List<Worker> worker) {
 		resetAllSearchStates();
-
+		workerListModel.clear();
 		worker.stream().forEach(workerListModel::addElement);
 		resetErrorLabel();
 	}
@@ -752,6 +838,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 */
 	@Override
 	public void showFetchedWorker(Worker worker) {
+		System.out.println(worker.toString());
 		txtWorkerName.setText(worker.getWorkerName());
 		txtWorkerPhone.setText(worker.getWorkerPhoneNumber());
 		cmbWorkerCategory.setSelectedItem(worker.getWorkerCategory());
@@ -777,7 +864,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 */
 	@Override
 	public void showOrderByWorkerId(List<CustomerOrder> orders) {
-		orderListModel.removeAllElements();
+//		orderListModel.removeAllElements();
 		orders.stream().forEach(orderListModel::addElement);
 		resetErrorLabel();
 	}
@@ -854,6 +941,39 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		txtSearchWorker.setText(" ");
 		txtOrdersByWorkerId.setText(" ");
 		cmbSearchByOptions.setSelectedItem(null);
+	}
+
+	private void getOrdersByWorkerIdMethod() {
+		Worker worker = new Worker();
+		Long id = Long.parseLong(txtOrdersByWorkerId.getText());
+		worker.setWorkerId(id);
+		workerController.fetchOrdersByWorkerId(worker);
+	}
+
+	private void fetchWorkerMethod() {
+		Worker worker = new Worker();
+		Long id = Long.parseLong(txtWorkerId.getText());
+
+		worker.setWorkerId(id);
+		workerController.fetchWorkerById(worker);
+	}
+
+	private void updateWorkerMethod() {
+		Worker worker = new Worker();
+		Long id = Long.parseLong(txtWorkerId.getText());
+		worker.setWorkerId(id);
+		worker.setWorkerName(txtWorkerName.getText());
+		worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
+		worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
+		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
+	}
+
+	private void addWorkerMethod() {
+		Worker worker = new Worker();
+		worker.setWorkerName(txtWorkerName.getText());
+		worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
+		worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
+		workerController.createOrUpdateWorker(worker, OperationType.ADD);
 	}
 
 }

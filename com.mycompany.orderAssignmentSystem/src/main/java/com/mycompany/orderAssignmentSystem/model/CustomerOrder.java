@@ -7,39 +7,61 @@ package com.mycompany.orderAssignmentSystem.model;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 
 /**
  * Represents an order placed by a customer in the system.
  */
+@Entity
 public class CustomerOrder {
 
 	/** The order id. */
-	private String orderId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long orderId;
 
 	/** The customer name. */
+	@Column(name = "customer_name")
 	private String customerName;
 
 	/** The customer address. */
+	@Column(name = "customer_address")
 	private String customerAddress;
 
 	/** The customer phone number. */
+	@Column(name = "customer_phone")
 	private String customerPhoneNumber;
 
 	/** The appointment date. */
+	@Column(name = "appointment_date")
 	private String appointmentDate;
 
 	/** The order description. */
+	@Column(name = "order_description")
 	private String orderDescription;
 
 	/** The order category. */
+	@Column(name = "order_category")
+	@Enumerated(EnumType.STRING)
 	private OrderCategory orderCategory;
 
 	/** The order status. */
+	@Column(name = "order_status")
+	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 
 	/** The worker assigned to the order. */
+	@OneToOne
 	private Worker worker;
 
 	/**
@@ -62,7 +84,7 @@ public class CustomerOrder {
 	 * @param orderStatus         the order status
 	 * @param worker              the worker assigned to the order
 	 */
-	public CustomerOrder(String orderId, String customerName, String customerAddress, String customerPhoneNumber,
+	public CustomerOrder(Long orderId, String customerName, String customerAddress, String customerPhoneNumber,
 			String appointmentDate, String orderDescription, OrderCategory orderCategory, OrderStatus orderStatus,
 			Worker worker) {
 		super();
@@ -82,7 +104,7 @@ public class CustomerOrder {
 	 *
 	 * @return the order id
 	 */
-	public String getOrderId() {
+	public Long getOrderId() {
 		return orderId;
 	}
 
@@ -91,7 +113,7 @@ public class CustomerOrder {
 	 *
 	 * @param orderId the new order id
 	 */
-	public void setOrderId(String orderId) {
+	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
 
@@ -239,9 +261,6 @@ public class CustomerOrder {
 		this.worker = worker;
 	}
 
-	
-	
-	
 	@Override
 	public int hashCode() {
 		return Objects.hash(appointmentDate, customerAddress, customerName, customerPhoneNumber, orderCategory,
@@ -273,7 +292,5 @@ public class CustomerOrder {
 				+ appointmentDate + ", orderDescription=" + orderDescription + ", orderCategory=" + orderCategory
 				+ ", orderStatus=" + orderStatus + ", worker=" + worker + "]";
 	}
-	
-	
 
 }

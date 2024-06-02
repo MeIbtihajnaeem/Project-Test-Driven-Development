@@ -624,7 +624,7 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		String workerId = "1";
+		Long workerId = 1l;
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -654,7 +654,7 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		String workerId = "1";
+		Long workerId = 1l;
 		worker.setWorkerId(workerId);
 
 		Worker spyWorker = spy(worker);
@@ -666,7 +666,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(spyWorker);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(category)).thenReturn(category);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -689,8 +689,8 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		String orderId = "1";
-		String workerId = "1";
+		Long orderId = 1l;
+		Long workerId = 1l;
 		worker.setWorkerId(workerId);
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
@@ -719,7 +719,7 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.COMPLETED;
 		Worker worker = new Worker();
-		String workerId = "1";
+		Long workerId = 1l;
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(category);
 		order.setCustomerName(customerName);
@@ -731,7 +731,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(category)).thenReturn(category);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -757,7 +757,7 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -773,7 +773,7 @@ public class OrderControllerTest {
 
 		when(workerRepository.findById(workerId)).thenReturn(null);
 
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -798,7 +798,7 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -811,7 +811,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -836,7 +836,7 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -849,7 +849,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -876,7 +876,7 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -889,7 +889,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
 
@@ -915,7 +915,7 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -930,7 +930,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -958,7 +958,7 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -973,7 +973,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(orderCategory);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 
 		when(validationConfigurations.validateCategory(workerCategory)).thenReturn(workerCategory);
 		when(validationConfigurations.validateStatus(status)).thenReturn(status);
@@ -1000,7 +1000,7 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		String workerId = "1";
+		Long workerId = 1l;
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1030,7 +1030,7 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		String workerId = "1";
+		Long workerId = 1l;
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1040,7 +1040,7 @@ public class OrderControllerTest {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(worker);
-		order.setOrderId("0");
+		order.setOrderId(0l);
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
 				.when(validationConfigurations).validateStringNumber(anyString());
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
@@ -1061,8 +1061,8 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		String orderId = "1";
-		String workerId = "2";
+		Long orderId = 1l;
+		Long workerId = 2l;
 		worker.setWorkerId(workerId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1075,7 +1075,7 @@ public class OrderControllerTest {
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
 
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.createOrUpdateOrder(spyOrder, OperationType.UPDATE);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -1094,11 +1094,11 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1130,11 +1130,11 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
 
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
 		order.setCustomerPhoneNumber(customerPhoneNumber);
@@ -1146,7 +1146,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError("Order and worker categories must align", order);
@@ -1164,8 +1164,8 @@ public class OrderControllerTest {
 		OrderCategory orderCategory = OrderCategory.PLUMBER;
 		OrderCategory workerCategory = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
-		String workerId = "1";
-		String orderId = "1";
+		Long workerId = 1l;
+		Long orderId = 1l;
 		Worker worker = new Worker(workerId, "Worker Name", "1234567890", workerCategory);
 		CustomerOrder order = new CustomerOrder(orderId, customerName, address, customerPhoneNumber, appointmentDate,
 				actualDescription, orderCategory, status, worker);
@@ -1174,7 +1174,7 @@ public class OrderControllerTest {
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1194,9 +1194,9 @@ public class OrderControllerTest {
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -1211,7 +1211,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		Worker savedWorker = new Worker();
-		String savedWorkerId = "2";
+		Long savedWorkerId = 2l;
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1221,7 +1221,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
@@ -1241,9 +1241,9 @@ public class OrderControllerTest {
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -1258,7 +1258,7 @@ public class OrderControllerTest {
 		order.setWorker(worker);
 
 		Worker savedWorker = new Worker();
-		String savedWorkerId = "2";
+		Long savedWorkerId = 2l;
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1269,7 +1269,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
@@ -1289,9 +1289,9 @@ public class OrderControllerTest {
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		worker.setWorkerCategory(workerCategory);
@@ -1309,7 +1309,7 @@ public class OrderControllerTest {
 		order.setOrderStatus(status);
 		order.setWorker(worker);
 		Worker savedWorker = new Worker();
-		String savedWorkerId = "2";
+		Long savedWorkerId = 2l;
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1320,7 +1320,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showError(
@@ -1331,7 +1331,7 @@ public class OrderControllerTest {
 
 	@Test
 	public void testUpdateOrderMethodWhenWorkerOrdersHaveNoPendingOrders() {
-		String orderId = "1";
+		Long orderId = 1l;
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
@@ -1341,7 +1341,7 @@ public class OrderControllerTest {
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		String workerId = "1";
+		Long workerId = 1l;
 
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
@@ -1351,7 +1351,7 @@ public class OrderControllerTest {
 				actualDescription, orderCategory, status, worker);
 
 		Worker savedWorker = new Worker();
-		String savedWorkerId = "2";
+		Long savedWorkerId = 2l;
 		savedWorker.setWorkerId(savedWorkerId);
 		savedWorker.setWorkerCategory(workerCategory);
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
@@ -1362,7 +1362,7 @@ public class OrderControllerTest {
 		when(orderRepository.save(order)).thenReturn(order);
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);
@@ -1382,8 +1382,8 @@ public class OrderControllerTest {
 		OrderCategory category = OrderCategory.PLUMBER;
 		OrderStatus status = OrderStatus.PENDING;
 		Worker worker = new Worker();
-		String orderId = "1";
-		String workerId = "1";
+		Long orderId = 1l;
+		Long workerId = 1l;
 		worker.setWorkerId(workerId);
 		order.setOrderId(orderId);
 		order.setCustomerName(customerName);
@@ -1425,7 +1425,7 @@ public class OrderControllerTest {
 	@Test
 	public void testFetchOrderByIdMethodWhenvalidateStringNumberThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		order.setOrderId("0");
+		order.setOrderId(0l);
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
 				.when(validationConfigurations).validateStringNumber(anyString());
 		orderController.fetchOrderById(order);
@@ -1437,10 +1437,10 @@ public class OrderControllerTest {
 	@Test
 	public void testFetchOrderByIdMethodWhenvalidateStringNumberReturnsValidId() {
 		CustomerOrder order = new CustomerOrder();
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.fetchOrderById(spyOrder);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -1449,10 +1449,10 @@ public class OrderControllerTest {
 	@Test
 	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZeroAndOrderNotFound() {
 		CustomerOrder order = new CustomerOrder();
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(null);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 
 		orderController.fetchOrderById(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1463,7 +1463,7 @@ public class OrderControllerTest {
 	@Test
 	public void testFetchOrderByIdMethodWhenOrderIdIsGreaterThanZeroAndOrderFound() {
 		CustomerOrder order = new CustomerOrder();
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
 		String customerName = "Muhammad Ibtihaj";
 		String customerPhoneNumber = "3401372678";
@@ -1474,7 +1474,7 @@ public class OrderControllerTest {
 		OrderCategory orderCategory = OrderCategory.ELECTRICIAN;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		OrderStatus status = OrderStatus.PENDING;
-		String workerId = "1";
+		Long workerId = 1l;
 
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
@@ -1482,7 +1482,7 @@ public class OrderControllerTest {
 
 		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
 				appointmentDate, actualDescription, orderCategory, status, worker);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 
 		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
 		orderController.fetchOrderById(order);
@@ -1516,7 +1516,7 @@ public class OrderControllerTest {
 	@Test
 	public void testDeleteOrderMethodWhenvalidateStringNumberThrowsIllegalArgumentException() {
 		CustomerOrder order = new CustomerOrder();
-		order.setOrderId("0");
+		order.setOrderId(0l);
 		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
 				.when(validationConfigurations).validateStringNumber(anyString());
 		orderController.deleteOrder(order);
@@ -1528,10 +1528,10 @@ public class OrderControllerTest {
 	@Test
 	public void testDeleteOrderMethodWhenvalidateStringNumberReturnsValidId() {
 		CustomerOrder order = new CustomerOrder();
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
 		CustomerOrder spyOrder = spy(order);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		orderController.deleteOrder(spyOrder);
 		assertThat(spyOrder.getOrderId()).isEqualTo(orderId);
 		verify(spyOrder).setOrderId(orderId);
@@ -1540,9 +1540,9 @@ public class OrderControllerTest {
 	@Test
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidButNoOrderFoundWithId() {
 		CustomerOrder order = new CustomerOrder();
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.deleteOrder(order);
@@ -1554,9 +1554,9 @@ public class OrderControllerTest {
 	@Test
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidAndOrderFound() {
 		CustomerOrder order = new CustomerOrder();
-		String orderId = "1";
+		Long orderId = 1l;
 		order.setOrderId(orderId);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(order);
 		orderController.deleteOrder(order);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1653,10 +1653,10 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberButOrderNotFound() {
 		String searchText = "1";
-		String orderId = "1";
+		Long orderId = 1l;
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(null);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1667,11 +1667,11 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsOrderId_SearchTextIs_ValidNumberAndOrderFound() {
 		String searchText = "1";
-		String orderId = "1";
+		Long orderId = 1l;
 		CustomerOrder order = new CustomerOrder();
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
-		when(validationConfigurations.validateStringNumber(orderId)).thenReturn(orderId);
+		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
 		when(orderRepository.findById(orderId)).thenReturn(order);
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1732,10 +1732,10 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButWorkerNotFound() {
 		String searchText = "1";
-		String workerId = "1";
+		Long workerId = 1l;
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(null);
 
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
@@ -1747,11 +1747,11 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButOrdersAreNull() {
 		String searchText = "1";
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1762,12 +1762,12 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberButOrdersAreEmpty() {
 		String searchText = "1";
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setOrders(Collections.emptyList());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
@@ -1778,13 +1778,13 @@ public class OrderControllerTest {
 	@Test
 	public void searchOrder_WhenSearchOptionIsWorkerId_SearchTextIs_ValidNumberAndOrderFound() {
 		String searchText = "1";
-		String workerId = "1";
+		Long workerId = 1l;
 		Worker worker = new Worker();
 		CustomerOrder order = new CustomerOrder();
 		worker.setOrders(asList(order));
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
 		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(workerId);
-		when(validationConfigurations.validateStringNumber(workerId)).thenReturn(workerId);
+		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);

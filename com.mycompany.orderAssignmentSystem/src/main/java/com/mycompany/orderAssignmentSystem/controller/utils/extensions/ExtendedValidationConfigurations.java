@@ -75,7 +75,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @return the validated numeric value
 	 * @throws IllegalArgumentException if validation fails
 	 */
-	public String validateStringNumber(String str) {
+	public Long validateStringNumber(String str) {
 		if (str == null || str == "") {
 			LOGGER.info("The text cannot be empty.");
 			throw new NullPointerException("The number cannot be empty.");
@@ -97,18 +97,14 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		if (!matcher.matches()) {
 			throw new IllegalArgumentException("Please enter a valid number.");
 		}
-		Long orderId = 0l;
+
 		try {
-			orderId = Long.parseLong(str);
+			Long orderId = Long.parseLong(str);
+			return orderId;
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Please enter a valid number.");
 		}
-		if (orderId <= 0) {
-			LOGGER.info("The id field cannot be less than 1. Please provide a valid id.");
 
-			throw new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id.");
-		}
-		return str;
 	}
 
 	/**

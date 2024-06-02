@@ -12,18 +12,43 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<awaitility-version>4.0.2</awaitility-version>
+		<hibernate-core-version46>5.4.32.Final</hibernate-core-version46>
+		<javax.persistence-api-version>2.2</javax.persistence-api-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<junit.version>4.13.1</junit.version>
 		<lang3.version>3.0</lang3.version>
-		<mockito.version>4.11.0</mockito.version>
+		<mockito.version>3.7.0</mockito.version>
 		<log4j.version>2.23.1</log4j.version>
+		<postgresql.version>42.7.2</postgresql.version>
 		<assertj-swing-junit-version>3.17.1</assertj-swing-junit-version>
+		<postgres.user>testUser</postgres.user>
+		<postgres.password>test123</postgres.password>
+		<postgres.dbName>orderWorkerTestDb</postgres.dbName>
 
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>${javax.persistence-api-version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate-core-version46}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -53,8 +78,12 @@
 			<scope>test</scope>
 		</dependency>
 
-
-
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>${awaitility-version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -165,6 +194,139 @@
 				<artifactId>maven-site-plugin</artifactId>
 				<version>4.0.0-M13</version>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/it/java</source>
+							</sources>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.34.1</version>
+				<configuration>
+					<images>
+						<image>
+							<name>orderworkerassignment</name>
+							<build>
+								<contextDir>${project.basedir}</contextDir>
+							</build>
+							<run>
+								<network>
+									<mode>custom</mode>
+									<name>my-network</name>
+								</network>
+								<wait>
+									<log>Hello World!</log>
+									<time>10000</time>
+								</wait>
+								<dependsOn>
+									<container>postgres</container>
+								</dependsOn>
+							</run>
+						</image>
+						<image>
+							<name>postgres:14.1-alpine</name>
+							<alias>postgres</alias>
+							<run>
+								<network>
+									<mode>custom</mode>
+									<name>my-network</name>
+									<alias>postgresdb</alias>
+								</network>
+								<ports>
+									<port>5432:5432</port>
+								</ports>
+								<env>
+									<POSTGRES_USER>${--postgres-user}</POSTGRES_USER>
+									<POSTGRES_PASSWORD>
+										${--postgres-pass}</POSTGRES_PASSWORD>
+									<POSTGRES_DB>${--postgres-database}</POSTGRES_DB>
+								</env>
+							</run>
+						</image>
+						<image>
+							<alias>app</alias>
+							<external>
+								<type>compose</type>
+								<basedir>${project.basedir}</basedir>
+							</external>
+							<run>
+								<wait>
+									<log>Hello World!</log>
+									<time>10000</time>
+								</wait>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>docker-start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+					<execution>
+						<id>default-it</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+
+					<execution>
+						<id>e2e-tests</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/*IT.java</exclude>
+							</excludes>
+							<includes>
+								<include>**/*E2E.java</include>
+							</includes>
+							<includes>
+								<include>**/*BDD.java</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -189,6 +351,21 @@
 								<phase>verify</phase>
 							</execution>
 						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>integration-testing</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>

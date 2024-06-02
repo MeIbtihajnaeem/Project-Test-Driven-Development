@@ -57,6 +57,7 @@ public class WorkerController {
 	 */
 	public void getAllWorkers() {
 		LOGGER.info("Retrieving all workers");
+
 		workerView.showAllWorkers(workerRepository.findAll());
 	}
 
@@ -75,9 +76,10 @@ public class WorkerController {
 	}
 
 	private void update(Worker worker) {
-		worker.setWorkerId(validationConfigurations.validateStringNumber(worker.getWorkerId()));
+		Long id = validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
+		worker.setWorkerId(id);
 		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
-		if (existingWorker != null) {
+		if (existingWorker != null && existingWorker.getWorkerId() != worker.getWorkerId()) {
 			throw new IllegalArgumentException(
 					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
 		}
@@ -146,7 +148,7 @@ public class WorkerController {
 			if (savedWorker == null) {
 				throw new NoSuchElementException("Worker with id " + worker.getWorkerId() + " Not Found.");
 			}
-			workerView.showFetchedWorker(worker);
+			workerView.showFetchedWorker(savedWorker);
 			LOGGER.info("Worker Fetched: {}", worker);
 
 		} catch (NullPointerException | IllegalArgumentException e) {
@@ -195,9 +197,13 @@ public class WorkerController {
 
 		try {
 			validateWorkerAndWorkerId(worker);
+			LOGGER.info("Orders Fetched: 1");
 			Worker existingWorker = validateWorkerExistence(worker);
+			if (existingWorker.getOrders().isEmpty()) {
+				throw new NullPointerException("No Orders found for this worker: " + worker.getWorkerId());
+			}
+			LOGGER.info("Orders Fetched: 2");
 			workerView.showOrderByWorkerId(existingWorker.getOrders());
-			LOGGER.info("Orders Fetched: {}", worker);
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
 			workerView.showSearchOrderByWorkerIdError(e.getMessage(), worker);
@@ -308,8 +314,7 @@ public class WorkerController {
 	 * @return the worker with the specified ID
 	 */
 	private Worker searchByWorkerId(String searchText) {
-		String workerId = validationConfigurations.validateStringNumber(searchText);
-		workerId = validationConfigurations.validateStringNumber(workerId);
+		Long workerId = validationConfigurations.validateStringNumber(searchText);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
 			throw new NoSuchElementException("No result found with id: " + workerId);
@@ -328,6 +333,7 @@ public class WorkerController {
 		if (existingWorker == null) {
 			throw new NoSuchElementException("No Worker found with ID: " + worker.getWorkerId());
 		}
+
 		return existingWorker;
 	}
 
@@ -338,7 +344,7 @@ public class WorkerController {
 	 */
 	private void validateWorkerAndWorkerId(Worker worker) {
 		Objects.requireNonNull(worker, "Worker is null");
-		worker.setWorkerId(validationConfigurations.validateStringNumber(worker.getWorkerId()));
+		worker.setWorkerId(validationConfigurations.validateStringNumber(worker.getWorkerId().toString()));
 	}
 
 	/**

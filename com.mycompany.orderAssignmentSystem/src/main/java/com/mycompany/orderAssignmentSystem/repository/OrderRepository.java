@@ -42,7 +42,7 @@ public interface OrderRepository {
 	 * @param orderId the ID of the customer order
 	 * @return the found customer order, or null if not found
 	 */
-	public CustomerOrder findById(String orderId);
+	public CustomerOrder findById(Long orderId);
 
 	/**
 	 * Finds customer orders by customer name.
