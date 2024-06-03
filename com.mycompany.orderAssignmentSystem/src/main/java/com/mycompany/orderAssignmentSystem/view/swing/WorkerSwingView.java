@@ -824,11 +824,11 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 			if (workerListModel.getElementAt(i).getWorkerId().equals(worker.getWorkerId())) {
 				workerListModel.removeElementAt(i);
 				workerListModel.addElement(worker);
-				resetErrorLabel();
-			} else {
-				resetErrorLabel();
+
 			}
 		}
+		resetErrorLabel();
+
 	}
 
 	/**
@@ -838,7 +838,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 */
 	@Override
 	public void showFetchedWorker(Worker worker) {
-		System.out.println(worker.toString());
 		txtWorkerName.setText(worker.getWorkerName());
 		txtWorkerPhone.setText(worker.getWorkerPhoneNumber());
 		cmbWorkerCategory.setSelectedItem(worker.getWorkerCategory());

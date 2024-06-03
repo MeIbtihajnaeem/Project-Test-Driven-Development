@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -652,6 +653,8 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 		orderListModel = new DefaultListModel<>();
 		listOrders = new JList<>(orderListModel);
+		listOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 		listOrders.setName("listOrders");
 		scrollPane.setViewportView(listOrders);
 
@@ -728,6 +731,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 	@Override
 	public void showAllOrder(List<CustomerOrder> order) {
 		resetAllSearchStates();
+		orderListModel.clear();
 		order.stream().forEach(orderListModel::addElement);
 		resetErrorLabel();
 	}
@@ -749,11 +753,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 			if (orderListModel.getElementAt(i).getOrderId().equals(order.getOrderId())) {
 				orderListModel.removeElementAt(i);
 				orderListModel.addElement(order);
-				resetErrorLabel();
-			} else {
-				resetErrorLabel();
 			}
 		}
+		resetErrorLabel();
 
 	}
 

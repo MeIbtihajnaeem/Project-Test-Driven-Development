@@ -7,8 +7,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
 
@@ -37,7 +37,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		Worker worker = entityManager.find(Worker.class, workerId);
 //		if (worker != null) {
 //			TypedQuery<CustomerOrder> query = entityManager
-//					.createQuery("SELECT o FROM CustomerOrder o where o.worker_id=:worker_id", CustomerOrder.class);
+//					.createQuery("SELECT o FROM CustomerOrder o where o.work_id=:worker_id", CustomerOrder.class);
 //			query.setParameter("worker_id", workerId);
 //			worker.setOrders(query.getResultList());
 //			System.out.println(worker.getOrders());
@@ -45,6 +45,10 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 //		transaction.commit();
 
 		return worker;
+//		return entityManager.createQuery(
+//				"SELECT w FROM Worker w, CustomerOrder o where o.worker_id=w.workerId AND w.workerId:=" + workerId,
+//				Worker.class).getSingleResult();
+
 	}
 
 	@Override

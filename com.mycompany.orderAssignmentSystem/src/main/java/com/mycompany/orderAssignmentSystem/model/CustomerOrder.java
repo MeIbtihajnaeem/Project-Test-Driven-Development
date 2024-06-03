@@ -99,6 +99,20 @@ public class CustomerOrder {
 		this.worker = worker;
 	}
 
+	public CustomerOrder(String customerName, String customerAddress, String customerPhoneNumber,
+			String appointmentDate, String orderDescription, OrderCategory orderCategory, OrderStatus orderStatus,
+			Worker worker) {
+		super();
+		this.customerName = customerName;
+		this.customerAddress = customerAddress;
+		this.customerPhoneNumber = customerPhoneNumber;
+		this.appointmentDate = appointmentDate;
+		this.orderDescription = orderDescription;
+		this.orderCategory = orderCategory;
+		this.orderStatus = orderStatus;
+		this.worker = worker;
+	}
+
 	/**
 	 * Gets the order id.
 	 *
@@ -287,10 +301,11 @@ public class CustomerOrder {
 
 	@Override
 	public String toString() {
-		return "CustomerOrder [orderId=" + orderId + ", customerName=" + customerName + ", customerAddress="
-				+ customerAddress + ", customerPhoneNumber=" + customerPhoneNumber + ", appointmentDate="
-				+ appointmentDate + ", orderDescription=" + orderDescription + ", orderCategory=" + orderCategory
-				+ ", orderStatus=" + orderStatus + ", worker=" + worker + "]";
+		return "Order ID: " + orderId + ") " + "Name: " + customerName + ", " + "Address: " + customerAddress + ", "
+				+ "Phone: " + customerPhoneNumber + ", " + "Date: " + appointmentDate + ", " + "Description: "
+				+ orderDescription + ", " + "Category: " + orderCategory + ", " + "Status: " + orderStatus + ", "
+				+ "Worker: "
+				+ (worker != null ? worker.getWorkerId() + " - " + worker.getWorkerName() : "No Worker Assigned");
 	}
 
 }

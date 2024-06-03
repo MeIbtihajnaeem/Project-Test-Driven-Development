@@ -72,6 +72,14 @@ public class Worker {
 		this.workerCategory = workerCategory;
 	}
 
+	public Worker(String workerName, String workerPhoneNumber, OrderCategory workerCategory) {
+		super();
+
+		this.workerName = workerName;
+		this.workerPhoneNumber = workerPhoneNumber;
+		this.workerCategory = workerCategory;
+	}
+
 	/**
 	 * Gets the worker id.
 	 *

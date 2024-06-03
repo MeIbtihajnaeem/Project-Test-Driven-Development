@@ -89,7 +89,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	@GUITest
 	public void testAddButtonSuccess() {
 		String name = "Naeem";
 		String phoneNumber = "3401372678";
@@ -193,9 +192,13 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		String updatedPhoneNumber = "4401372678";
 		window.textBox("txtWorkerPhone").enterText(updatedPhoneNumber);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
+//		assertThat(window.list("listWorkers").contents()).isEqualTo(worker.toString());
+
 		window.label("showErrorLbl")
 				.requireText("The phone number must start with 3. Please provide a valid phone number.: " + worker);
 	}
+
+	// TODO: fetch Button Error
 
 	@Test
 	@GUITest
@@ -315,12 +318,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtOrdersByWorkerId").enterText(worker1.getWorkerId().toString());
 
 		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
-//		try {
-//			Thread.sleep(30000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
 		assertThat(window.list("listOrders").contents()).containsExactly(order.toString());
 
 	}

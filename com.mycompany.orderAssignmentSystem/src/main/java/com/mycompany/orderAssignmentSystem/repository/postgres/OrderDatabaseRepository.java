@@ -52,7 +52,7 @@ public class OrderDatabaseRepository implements OrderRepository {
 	@Override
 	public List<CustomerOrder> findByCustomerName(String name) {
 		TypedQuery<CustomerOrder> query = entityManager
-				.createQuery("SELECT o FROM CustomerOrder o where o.customer_name=:name", CustomerOrder.class);
+				.createQuery("SELECT o FROM CustomerOrder o where o.customerName=:name", CustomerOrder.class);
 		query.setParameter("name", name);
 		return query.getResultList();
 	}

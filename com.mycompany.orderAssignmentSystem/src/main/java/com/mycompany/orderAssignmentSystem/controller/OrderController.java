@@ -173,7 +173,7 @@ public class OrderController {
 			return;
 		} catch (NoSuchElementException e) {
 			LOGGER.error("Error Finding: " + e.getMessage());
-			orderView.showErrorNotFound(e.getMessage(), order);
+			orderView.showErrorNotFound(e.getMessage(), null);
 			return;
 		}
 	}
@@ -221,6 +221,7 @@ public class OrderController {
 			if (searchOption == null) {
 				throw new NullPointerException("Search option cannot be empty.");
 			}
+
 			List<CustomerOrder> orders = Collections.emptyList();
 
 			switch (searchOption) {
