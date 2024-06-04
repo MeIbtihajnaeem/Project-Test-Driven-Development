@@ -18,13 +18,9 @@ import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurat
 import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
 import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.OrderDatabaseRepository;
 import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
 import com.mycompany.orderAssignmentSystem.view.WorkerView;
 
@@ -42,8 +38,6 @@ public class WorkerControllerIT {
 	@InjectMocks
 	private WorkerController workerController;
 
-	private OrderRepository orderRepository;
-
 	private AutoCloseable closeable;
 
 //	private OrderRepository orderRepository;
@@ -60,7 +54,6 @@ public class WorkerControllerIT {
 		entityManager = entityManagerFactory.createEntityManager();
 		validationConfig = new ExtendedValidationConfigurations();
 		workerRepository = new WorkerDatabaseRepository(entityManager);
-		orderRepository = new OrderDatabaseRepository(entityManager);
 		workerController = new WorkerController(workerRepository, workerView, validationConfig);
 	}
 
@@ -130,21 +123,21 @@ public class WorkerControllerIT {
 
 	}
 
-	@Test
-	public void testFetchOrdersByWorkerId() {
-		Worker worker = new Worker();
-		worker.setWorkerName("John");
-		worker.setWorkerPhoneNumber("3401372678");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		CustomerOrder order = new CustomerOrder();
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		worker.setOrders(asList(savedOrder));
-		Worker savedWorker = workerRepository.save(worker);
-		workerController.fetchOrdersByWorkerId(savedWorker);
-		verify(workerView).showOrderByWorkerId(savedWorker.getOrders());
-	}
+//	@Test
+//	public void testFetchOrdersByWorkerId() {
+//		Worker worker = new Worker();
+//		worker.setWorkerName("John");
+//		worker.setWorkerPhoneNumber("3401372678");
+//		worker.setWorkerCategory(OrderCategory.PLUMBER);
+//		CustomerOrder order = new CustomerOrder();
+//		order.setOrderCategory(OrderCategory.PLUMBER);
+//		order.setOrderStatus(OrderStatus.PENDING);
+//		CustomerOrder savedOrder = orderRepository.save(order);
+//		worker.setOrders(asList(savedOrder));
+//		Worker savedWorker = workerRepository.save(worker);
+//		workerController.fetchOrdersByWorkerId(savedWorker);
+//		verify(workerView).showOrderByWorkerId(savedWorker.getOrders());
+//	}
 
 	@Test
 	public void testSearchWorkerWithWorkerId() {

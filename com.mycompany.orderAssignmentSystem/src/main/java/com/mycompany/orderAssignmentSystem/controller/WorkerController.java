@@ -192,27 +192,27 @@ public class WorkerController {
 	 *
 	 * @param worker the worker whose orders are to be fetched
 	 */
-	public void fetchOrdersByWorkerId(Worker worker) {
-		LOGGER.info("Fetch a orders by worker Id");
-
-		try {
-			validateWorkerAndWorkerId(worker);
-			LOGGER.info("Orders Fetched: 1");
-			Worker existingWorker = validateWorkerExistence(worker);
-			if (existingWorker.getOrders().isEmpty()) {
-				throw new NullPointerException("No Orders found for this worker: " + worker.getWorkerId());
-			}
-			LOGGER.info("Orders Fetched: 2");
-			workerView.showOrderByWorkerId(existingWorker.getOrders());
-		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
-			workerView.showSearchOrderByWorkerIdError(e.getMessage(), worker);
-		} catch (NoSuchElementException e) {
-			LOGGER.error("Error finding worker: {}", e.getMessage());
-			workerView.showErrorNotFound(e.getMessage(), worker);
-		}
-
-	}
+//	public void fetchOrdersByWorkerId(Worker worker) {
+//		LOGGER.info("Fetch a orders by worker Id");
+//
+//		try {
+//			validateWorkerAndWorkerId(worker);
+//			LOGGER.info("Orders Fetched: 1");
+//			Worker existingWorker = validateWorkerExistence(worker);
+//			if (existingWorker.getOrders().isEmpty()) {
+//				throw new NullPointerException("No Orders found for this worker: " + worker.getWorkerId());
+//			}
+//			LOGGER.info("Orders Fetched: 2");
+//			workerView.showOrderByWorkerId(existingWorker.getOrders());
+//		} catch (NullPointerException | IllegalArgumentException e) {
+//			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
+//			workerView.showSearchOrderByWorkerIdError(e.getMessage(), worker);
+//		} catch (NoSuchElementException e) {
+//			LOGGER.error("Error finding worker: {}", e.getMessage());
+//			workerView.showErrorNotFound(e.getMessage(), worker);
+//		}
+//
+//	}
 
 	/**
 	 * Searches for workers based on the specified search option and text.

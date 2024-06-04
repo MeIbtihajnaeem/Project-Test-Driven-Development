@@ -81,7 +81,7 @@ public class OrderController {
 			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
 		}
 		Worker worker = getValidWorker(order);
-		if (worker.getOrders() == null) {
+		if (worker.getOrders().isEmpty()) {
 			order = orderRepository.save(order);
 			orderView.orderAdded(order);
 			LOGGER.info("New order created: {}", order);
@@ -98,7 +98,7 @@ public class OrderController {
 		Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
 		order.setOrderId(id);
 		Worker worker = getValidWorker(order);
-		if (worker.getOrders() == null) {
+		if (worker.getOrders().isEmpty()) {
 			order = orderRepository.save(order);
 			orderView.orderModified(order);
 			LOGGER.info("Order Updated: {}", order);
@@ -173,7 +173,7 @@ public class OrderController {
 			return;
 		} catch (NoSuchElementException e) {
 			LOGGER.error("Error Finding: " + e.getMessage());
-			orderView.showErrorNotFound(e.getMessage(), null);
+			orderView.showErrorNotFound(e.getMessage(), order);
 			return;
 		}
 	}
@@ -354,7 +354,7 @@ public class OrderController {
 			throw new NoSuchElementException("No result found with ID: " + workerId);
 		}
 		List<CustomerOrder> orders = worker.getOrders();
-		if (orders == null || orders.isEmpty()) {
+		if (orders.isEmpty()) {
 			throw new NoSuchElementException("No orders found with worker ID: " + workerId);
 		}
 		return orders;

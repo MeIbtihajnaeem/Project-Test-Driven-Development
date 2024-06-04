@@ -87,6 +87,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 	public Worker save(Worker worker) {
 		EntityTransaction transaction = entityManager.getTransaction();
 		transaction.begin();
+
 		Worker newWorker = entityManager.merge(worker);
 		transaction.commit();
 		return newWorker;

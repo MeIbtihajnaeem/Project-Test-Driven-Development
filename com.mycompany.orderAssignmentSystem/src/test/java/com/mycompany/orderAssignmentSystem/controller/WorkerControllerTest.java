@@ -947,77 +947,77 @@ public class WorkerControllerTest {
 
 	// Tests for search order by worker id
 
-	public void testFetchOrdersByWorkerIdMethodWithNullWorker() {
-		workerController.fetchOrdersByWorkerId(null);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showError("Worker is null", null);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsNullPointerException() {
-		Worker worker = new Worker();
-		doThrow(new NullPointerException("The id field cannot be null.")).when(validationConfigurations)
-				.validateStringNumber(any());
-		workerController.fetchOrdersByWorkerId(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be null.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsIllegalArgumentException() {
-		Worker worker = new Worker();
-		worker.setWorkerId(0l);
-		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
-				.when(validationConfigurations).validateStringNumber(anyString());
-		workerController.fetchOrdersByWorkerId(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showSearchOrderByWorkerIdError(
-				"The id field cannot be less than 1. Please provide a valid id.", worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndReturnedByvalidateStringNumber() {
-		Worker worker = new Worker();
-		Long workerId = 1l;
-		worker.setWorkerId(workerId);
-		Worker spyWorker = spy(worker);
-		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
-		workerController.fetchOrdersByWorkerId(spyWorker);
-		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
-		verify(spyWorker).setWorkerId(workerId);
-	}
-
-	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidButNoWorkerFound() {
-		Worker worker = new Worker();
-		Long workerId = 1l;
-		worker.setWorkerId(workerId);
-		when(workerRepository.findById(workerId)).thenReturn(null);
-		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
-		workerController.fetchOrdersByWorkerId(worker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
-
-	@Test
-	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndOrdersExists() {
-		Worker newWorker = new Worker();
-		Long workerId = 1l;
-		newWorker.setWorkerId(workerId);
-		Worker savedWorker = new Worker();
-		savedWorker.setWorkerId(workerId);
-		savedWorker.setOrders(Collections.emptyList());
-		when(workerRepository.findById(workerId)).thenReturn(savedWorker);
-		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
-
-		workerController.fetchOrdersByWorkerId(newWorker);
-		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
-		inOrder.verify(workerView).showOrderByWorkerId(savedWorker.getOrders());
-		verifyNoMoreInteractions(ignoreStubs(workerRepository));
-	}
+//	public void testFetchOrdersByWorkerIdMethodWithNullWorker() {
+//		workerController.fetchOrdersByWorkerId(null);
+//		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+//		inOrder.verify(workerView).showError("Worker is null", null);
+//		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+//	}
+//
+//	@Test
+//	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsNullPointerException() {
+//		Worker worker = new Worker();
+//		doThrow(new NullPointerException("The id field cannot be null.")).when(validationConfigurations)
+//				.validateStringNumber(any());
+//		workerController.fetchOrdersByWorkerId(worker);
+//		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+//		inOrder.verify(workerView).showSearchOrderByWorkerIdError("The id field cannot be null.", worker);
+//		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+//	}
+//
+//	@Test
+//	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsIllegalArgumentException() {
+//		Worker worker = new Worker();
+//		worker.setWorkerId(0l);
+//		doThrow(new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id."))
+//				.when(validationConfigurations).validateStringNumber(anyString());
+//		workerController.fetchOrdersByWorkerId(worker);
+//		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+//		inOrder.verify(workerView).showSearchOrderByWorkerIdError(
+//				"The id field cannot be less than 1. Please provide a valid id.", worker);
+//		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+//	}
+//
+//	@Test
+//	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndReturnedByvalidateStringNumber() {
+//		Worker worker = new Worker();
+//		Long workerId = 1l;
+//		worker.setWorkerId(workerId);
+//		Worker spyWorker = spy(worker);
+//		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
+//		workerController.fetchOrdersByWorkerId(spyWorker);
+//		assertThat(spyWorker.getWorkerId()).isEqualTo(workerId);
+//		verify(spyWorker).setWorkerId(workerId);
+//	}
+//
+//	@Test
+//	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidButNoWorkerFound() {
+//		Worker worker = new Worker();
+//		Long workerId = 1l;
+//		worker.setWorkerId(workerId);
+//		when(workerRepository.findById(workerId)).thenReturn(null);
+//		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
+//		workerController.fetchOrdersByWorkerId(worker);
+//		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+//		inOrder.verify(workerView).showErrorNotFound("No Worker found with ID: " + worker.getWorkerId(), worker);
+//		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+//	}
+//
+//	@Test
+//	public void testFetchOrdersByWorkerIdMethodWhenWorkerIdIsValidAndOrdersExists() {
+//		Worker newWorker = new Worker();
+//		Long workerId = 1l;
+//		newWorker.setWorkerId(workerId);
+//		Worker savedWorker = new Worker();
+//		savedWorker.setWorkerId(workerId);
+//		savedWorker.setOrders(Collections.emptyList());
+//		when(workerRepository.findById(workerId)).thenReturn(savedWorker);
+//		when(validationConfigurations.validateStringNumber(workerId.toString())).thenReturn(workerId);
+//
+//		workerController.fetchOrdersByWorkerId(newWorker);
+//		InOrder inOrder = Mockito.inOrder(workerView, workerRepository);
+//		inOrder.verify(workerView).showOrderByWorkerId(savedWorker.getOrders());
+//		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+//	}
 
 }

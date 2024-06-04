@@ -26,9 +26,7 @@ import org.mockito.MockitoAnnotations;
 import com.mycompany.orderAssignmentSystem.controller.WorkerController;
 import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
 import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 
 /**
@@ -93,12 +91,12 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label(JLabelMatcher.withText("Worker Category"));
 		window.label(JLabelMatcher.withText("Search Worker"));
 		window.label(JLabelMatcher.withText("Search By"));
-		window.label(JLabelMatcher.withText("Search Orders By Worker ID"));
+//		window.label(JLabelMatcher.withText("Search Orders By Worker ID"));
 
 		// Verify Error Labels
 		window.label(JLabelMatcher.withName("showErrorLbl")).requireText("");
 		window.label(JLabelMatcher.withName("showErrorLblSearchWorker")).requireText("");
-		window.label(JLabelMatcher.withName("showErrorLblSearchOrder")).requireText("");
+//		window.label(JLabelMatcher.withName("showErrorLblSearchOrder")).requireText("");
 		window.label(JLabelMatcher.withName("showErrorNotFoundLbl")).requireText("");
 
 		// Verify TextFields
@@ -106,7 +104,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("txtWorkerName").requireEnabled();
 		window.textBox("txtWorkerPhone").requireEnabled();
 		window.textBox("txtSearchWorker").requireEnabled();
-		window.textBox("txtOrdersByWorkerId").requireEnabled();
+//		window.textBox("txtOrdersByWorkerId").requireEnabled();
 
 		// Verify Combo Box
 		window.comboBox("cmbWorkerCategory").requireEnabled();
@@ -114,7 +112,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 		// Verify ListLayout JList
 		window.list("listWorkers");
-		window.list("listOrders");
+//		window.list("listOrders");
 
 		// Verify Buttons using text
 		window.button(JButtonMatcher.withText("Manage Order")).requireEnabled();
@@ -124,7 +122,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Delete")).requireDisabled();
 		window.button(JButtonMatcher.withText("Clear")).requireDisabled();
 		window.button(JButtonMatcher.withText("Search Worker")).requireDisabled();
-		window.button(JButtonMatcher.withText("Search Orders")).requireDisabled();
+//		window.button(JButtonMatcher.withText("Search Orders")).requireDisabled();
 
 	}
 
@@ -203,21 +201,21 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 * Verify that the "Search Order" button is enabled when the search order by
 	 * worker ID string field is not empty.
 	 */
-	@Test
-	public void testWhenSearchOrderByWorkerIdStringIsNotEmptyAndSearchOrderButtonShouldBeEnabled() {
-		window.textBox("txtOrdersByWorkerId").enterText("1");
-		window.button(JButtonMatcher.withName("btnSearchOrder")).requireEnabled();
-	}
+//	@Test
+//	public void testWhenSearchOrderByWorkerIdStringIsNotEmptyAndSearchOrderButtonShouldBeEnabled() {
+//		window.textBox("txtOrdersByWorkerId").enterText("1");
+//		window.button(JButtonMatcher.withName("btnSearchOrder")).requireEnabled();
+//	}
 
 	/**
 	 * Verify that the "Search Order" button is disabled when the search order by
 	 * worker ID string field is empty.
 	 */
-	@Test
-	public void testWhenSearchOrderByWorkerIdStringIsEmptyAndSearchOrderButtonShouldBeDisabled() {
-		window.textBox("txtOrdersByWorkerId").enterText(" ");
-		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
-	}
+//	@Test
+//	public void testWhenSearchOrderByWorkerIdStringIsEmptyAndSearchOrderButtonShouldBeDisabled() {
+//		window.textBox("txtOrdersByWorkerId").enterText(" ");
+//		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
+//	}
 
 	/**
 	 * Verify that the "Update" button is disabled when the worker ID is empty, but
@@ -426,21 +424,21 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 * Verify that the "Show Search Order" functionality adds order descriptions to
 	 * the list of orders.
 	 */
-	@Test
-	public void testsShowSearchOrderAddOrderDescriptionToTheListOrders() {
-		String appointmentDate = "12-12-2024";
-
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		CustomerOrder order1 = new CustomerOrder(1l, "John", "Piazza Luigi", "3401372678", appointmentDate,
-				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
-
-		CustomerOrder order2 = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", appointmentDate,
-				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
-
-		GuiActionRunner.execute(() -> workerSwingView.showOrderByWorkerId(Arrays.asList(order1, order2)));
-		String[] listContents = window.list("listOrders").contents();
-		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
-	}
+//	@Test
+//	public void testsShowSearchOrderAddOrderDescriptionToTheListOrders() {
+//		String appointmentDate = "12-12-2024";
+//
+//		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+//		CustomerOrder order1 = new CustomerOrder(1l, "John", "Piazza Luigi", "3401372678", appointmentDate,
+//				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
+//
+//		CustomerOrder order2 = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", appointmentDate,
+//				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
+//
+//		GuiActionRunner.execute(() -> workerSwingView.showOrderByWorkerId(Arrays.asList(order1, order2)));
+//		String[] listContents = window.list("listOrders").contents();
+//		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
+//	}
 
 	/**
 	 * Verify that the "Show Error" functionality displays the message in the error
@@ -479,12 +477,12 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 * Verify that the "Show Order By Worker ID Error" functionality displays the
 	 * message in the error label.
 	 */
-	@Test
-	public void testShowOrderByWorkerIdErrorShouldShowTheMessageInTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		GuiActionRunner.execute(() -> workerSwingView.showSearchOrderByWorkerIdError("error message", worker));
-		window.label("showErrorLblSearchOrder").requireText("error message: " + worker);
-	}
+//	@Test
+//	public void testShowOrderByWorkerIdErrorShouldShowTheMessageInTheErrorLabel() {
+//		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+//		GuiActionRunner.execute(() -> workerSwingView.showSearchOrderByWorkerIdError("error message", worker));
+//		window.label("showErrorLblSearchOrder").requireText("error message: " + worker);
+//	}
 
 	/**
 	 * Verify that when a worker is added, it is added to the list of workers and
@@ -596,27 +594,27 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 * Verify that when searching for orders, only the searched orders are shown in
 	 * the list of orders and the error label is reset.
 	 */
-	@Test
-	public void testOrderSearchShouldModifyAndShowOnlySearchedOrdersToTheListAndResetTheErrorLabel() {
-		String appointmentDate = "12-12-2024";
-
-		CustomerOrder order1 = new CustomerOrder(1l, "John", "Piazza Luigi", "3401372678", appointmentDate,
-				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.COMPLETED, new Worker());
-
-		CustomerOrder order2 = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", appointmentDate,
-				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
-
-		GuiActionRunner.execute(() -> {
-			workerSwingView.getOrderListModel().addElement(order1);
-			workerSwingView.getOrderListModel().addElement(order2);
-		});
-		CustomerOrder searchedOrder = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", appointmentDate,
-				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
-		GuiActionRunner.execute(() -> workerSwingView.showOrderByWorkerId(Arrays.asList(searchedOrder)));
-		String[] listContents = window.list("listOrders").contents();
-		assertThat(listContents).containsExactly(searchedOrder.toString());
-		window.label("showErrorLbl").requireText(" ");
-	}
+//	@Test
+//	public void testOrderSearchShouldModifyAndShowOnlySearchedOrdersToTheListAndResetTheErrorLabel() {
+//		String appointmentDate = "12-12-2024";
+//
+//		CustomerOrder order1 = new CustomerOrder(1l, "John", "Piazza Luigi", "3401372678", appointmentDate,
+//				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.COMPLETED, new Worker());
+//
+//		CustomerOrder order2 = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", appointmentDate,
+//				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
+//
+//		GuiActionRunner.execute(() -> {
+//			workerSwingView.getOrderListModel().addElement(order1);
+//			workerSwingView.getOrderListModel().addElement(order2);
+//		});
+//		CustomerOrder searchedOrder = new CustomerOrder(2l, "Bob", "Piazza Luigi", "3401372679", appointmentDate,
+//				"Plumbing required", OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
+//		GuiActionRunner.execute(() -> workerSwingView.showOrderByWorkerId(Arrays.asList(searchedOrder)));
+//		String[] listContents = window.list("listOrders").contents();
+//		assertThat(listContents).containsExactly(searchedOrder.toString());
+//		window.label("showErrorLbl").requireText(" ");
+//	}
 
 	/**
 	 * Verify that clicking the "Add" button delegates to the worker controller to
@@ -770,16 +768,16 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 * Verify that clicking the "Search Order" button delegates to the worker
 	 * controller to search orders by worker ID.
 	 */
-	@Test
-	public void testSearchOrderButtonShouldDelegateToWorkerControllerSearchOrderByWorkerId() {
-		Worker worker = new Worker();
-		Long workerId = 1l;
-		worker.setWorkerId(workerId);
-		window.textBox("txtOrdersByWorkerId").enterText(workerId.toString());
-
-		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
-
-		verify(workerController).fetchOrdersByWorkerId(worker);
-
-	}
+//	@Test
+//	public void testSearchOrderButtonShouldDelegateToWorkerControllerSearchOrderByWorkerId() {
+//		Worker worker = new Worker();
+//		Long workerId = 1l;
+//		worker.setWorkerId(workerId);
+//		window.textBox("txtOrdersByWorkerId").enterText(workerId.toString());
+//
+//		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
+//
+//		verify(workerController).fetchOrdersByWorkerId(worker);
+//
+//	}
 }

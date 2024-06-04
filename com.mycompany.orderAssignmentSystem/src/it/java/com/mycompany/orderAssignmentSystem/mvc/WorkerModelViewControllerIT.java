@@ -106,12 +106,13 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 
-		Worker updatedWorker = new Worker(savedWorker.getWorkerId(), updatedName, phoneNumber, category);
-//		updatedWorker.setWorkerId(savedWorker.getWorkerId());
+//		Worker updatedWorker = new Worker(savedWorker.getWorkerId(), updatedName, phoneNumber, category);
+		savedWorker.setWorkerName(updatedName);
+		// updatedWorker.setWorkerId(savedWorker.getWorkerId());
 //		updatedWorker.setWorkerName(updatedName);
 //		updatedWorker.setWorkerPhoneNumber(savedWorker.getWorkerPhoneNumber());
 //		updatedWorker.setWorkerCategory(savedWorker.getWorkerCategory());
-		assertThat(workerRepository.findById(updatedWorker.getWorkerId())).isEqualTo(updatedWorker.toString());
+		assertThat(workerRepository.findById(savedWorker.getWorkerId())).isEqualTo(savedWorker);
 
 	}
 

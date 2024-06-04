@@ -31,7 +31,6 @@ import com.mycompany.orderAssignmentSystem.controller.WorkerController;
 import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 import com.mycompany.orderAssignmentSystem.view.WorkerView;
 
@@ -60,7 +59,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	private JTextField txtSearchWorker;
 
 	/** The txt orders by worker id. */
-	private JTextField txtOrdersByWorkerId;
+//	private JTextField txtOrdersByWorkerId;
 
 	/** The worker controller. */
 	private WorkerController workerController;
@@ -87,7 +86,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	private JButton btnClearSearchWorker;
 
 	/** The btn search order. */
-	private JButton btnSearchOrder;
+//	private JButton btnSearchOrder;
 
 	/** The show error while add, update or fetch has error. */
 	private JLabel showErrorLbl;
@@ -96,25 +95,25 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	private JLabel showErrorLblSearchWorker;
 
 	/** The show error while search order has error. */
-	private JLabel showErrorLblSearchOrder;
+//	private JLabel showErrorLblSearchOrder;
 
 	/** The show error while worker not found error. */
 	private JLabel showErrorNotFoundLbl;
 	private JScrollPane scrollPane;
 	private JButton btnDelete;
-	private JScrollPane scrollPane_1;
+//	private JScrollPane scrollPane_1;
 
 	/** The worker list model. */
 	private DefaultListModel<Worker> workerListModel;
 
 	/** The order list model. */
-	private DefaultListModel<CustomerOrder> orderListModel;
+//	private DefaultListModel<CustomerOrder> orderListModel;
 
 	/** The list workers. */
 	private JList<Worker> listWorkers;
 
 	/** The list orders. */
-	private JList<CustomerOrder> listOrders;
+//	private JList<CustomerOrder> listOrders;
 //	private ValidationConfigurations validationConfig;
 
 	/**
@@ -149,9 +148,9 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 *
 	 * @return the order list model
 	 */
-	public DefaultListModel<CustomerOrder> getOrderListModel() {
-		return orderListModel;
-	}
+//	public DefaultListModel<CustomerOrder> getOrderListModel() {
+//		return orderListModel;
+//	}
 
 	/**
 	 * Create the frame.
@@ -188,18 +187,18 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		txtWorkerName = new JTextField();
 
 		txtSearchWorker = new JTextField();
-		txtOrdersByWorkerId = new JTextField();
+//		txtOrdersByWorkerId = new JTextField();
 		cmbWorkerCategory = new JComboBox<OrderCategory>();
 		cmbSearchByOptions = new JComboBox<WorkerSearchOption>();
 		workerListModel = new DefaultListModel<>();
-		orderListModel = new DefaultListModel<>();
+//		orderListModel = new DefaultListModel<>();
 		btnFetch = new JButton("Fetch");
 		btnUpdate = new JButton("Update");
 		btnAdd = new JButton("Add");
 		btnSearchWorker = new JButton("Search Worker");
 		btnClearSearchWorker = new JButton("Clear");
 		btnDelete = new JButton("Delete");
-		btnSearchOrder = new JButton("Search Orders");
+//		btnSearchOrder = new JButton("Search Orders");
 		for (OrderCategory category : OrderCategory.values()) {
 			cmbWorkerCategory.addItem(category);
 		}
@@ -524,7 +523,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 		txtSearchWorker.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				handleSearchOrderByWorkerIdButtonStates();
+				handleSearchWorkerAndClearButtonStates();
 			}
 		});
 
@@ -647,88 +646,88 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_btnDelete.gridy = 14;
 		contentPane.add(btnDelete, gbc_btnDelete);
 
-		JLabel lblSearchOrdersBy = new JLabel("Search Orders By Worker ID");
-		lblSearchOrdersBy.setFont(new Font("Arial", Font.BOLD, 14));
-		lblSearchOrdersBy.setForeground(new Color(50, 50, 50));
-		lblSearchOrdersBy.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblSearchOrdersBy.setVerticalAlignment(SwingConstants.CENTER);
-		GridBagConstraints gbc_lblSearchOrdersBy = new GridBagConstraints();
-		gbc_lblSearchOrdersBy.anchor = GridBagConstraints.EAST;
-		gbc_lblSearchOrdersBy.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSearchOrdersBy.gridx = 0;
-		gbc_lblSearchOrdersBy.gridy = 15;
-		contentPane.add(lblSearchOrdersBy, gbc_lblSearchOrdersBy);
+//		JLabel lblSearchOrdersBy = new JLabel("Search Orders By Worker ID");
+//		lblSearchOrdersBy.setFont(new Font("Arial", Font.BOLD, 14));
+//		lblSearchOrdersBy.setForeground(new Color(50, 50, 50));
+//		lblSearchOrdersBy.setHorizontalAlignment(SwingConstants.RIGHT);
+//		lblSearchOrdersBy.setVerticalAlignment(SwingConstants.CENTER);
+//		GridBagConstraints gbc_lblSearchOrdersBy = new GridBagConstraints();
+//		gbc_lblSearchOrdersBy.anchor = GridBagConstraints.EAST;
+//		gbc_lblSearchOrdersBy.insets = new Insets(0, 0, 5, 5);
+//		gbc_lblSearchOrdersBy.gridx = 0;
+//		gbc_lblSearchOrdersBy.gridy = 15;
+//		contentPane.add(lblSearchOrdersBy, gbc_lblSearchOrdersBy);
 
-		txtOrdersByWorkerId.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				handleSearchOrderByWorkerIdButtonStates();
-			}
+//		txtOrdersByWorkerId.addKeyListener(new KeyAdapter() {
+//			public void keyReleased(KeyEvent e) {
+//				handleSearchOrderByWorkerIdButtonStates();
+//			}
+//
+//			public void keyTyped(KeyEvent e) {
+//				char c = e.getKeyChar();
+//				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+//					getToolkit().beep();
+//					e.consume();
+//				}
+//			}
+//
+//		});
+//		txtOrdersByWorkerId.setName("txtOrdersByWorkerId");
+//		txtOrdersByWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
+//		txtOrdersByWorkerId.setColumns(10);
+//		GridBagConstraints gbc_txtOrdersByWorkerId = new GridBagConstraints();
+//		gbc_txtOrdersByWorkerId.insets = new Insets(0, 0, 5, 5);
+//		gbc_txtOrdersByWorkerId.fill = GridBagConstraints.HORIZONTAL;
+//		gbc_txtOrdersByWorkerId.gridx = 1;
+//		gbc_txtOrdersByWorkerId.gridy = 15;
+//		contentPane.add(txtOrdersByWorkerId, gbc_txtOrdersByWorkerId);
+//
+//		btnSearchOrder.setEnabled(false);
+//		btnSearchOrder.setName("btnSearchOrder");
+//		btnSearchOrder.setForeground(Color.WHITE);
+//		btnSearchOrder.setOpaque(true);
+//		btnSearchOrder.setFont(new Font("Arial", Font.BOLD, 16));
+//		btnSearchOrder.setBorder(new LineBorder(new Color(0, 0, 0)));
+//		btnSearchOrder.setBackground(new Color(59, 89, 182));
+//		btnSearchOrder.setFocusPainted(false);
+//		btnSearchOrder.setPreferredSize(new Dimension(150, 40));
+//		btnSearchOrder.addActionListener(e -> getOrdersByWorkerIdMethod());
+//
+//		GridBagConstraints gbc_btnSearchOrder = new GridBagConstraints();
+//		gbc_btnSearchOrder.ipady = 10;
+//		gbc_btnSearchOrder.ipadx = 20;
+//		gbc_btnSearchOrder.insets = new Insets(0, 0, 5, 5);
+//		gbc_btnSearchOrder.gridx = 2;
+//		gbc_btnSearchOrder.gridy = 15;
+//		contentPane.add(btnSearchOrder, gbc_btnSearchOrder);
 
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
-					getToolkit().beep();
-					e.consume();
-				}
-			}
-
-		});
-		txtOrdersByWorkerId.setName("txtOrdersByWorkerId");
-		txtOrdersByWorkerId.setFont(new Font("Arial", Font.PLAIN, 16));
-		txtOrdersByWorkerId.setColumns(10);
-		GridBagConstraints gbc_txtOrdersByWorkerId = new GridBagConstraints();
-		gbc_txtOrdersByWorkerId.insets = new Insets(0, 0, 5, 5);
-		gbc_txtOrdersByWorkerId.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtOrdersByWorkerId.gridx = 1;
-		gbc_txtOrdersByWorkerId.gridy = 15;
-		contentPane.add(txtOrdersByWorkerId, gbc_txtOrdersByWorkerId);
-
-		btnSearchOrder.setEnabled(false);
-		btnSearchOrder.setName("btnSearchOrder");
-		btnSearchOrder.setForeground(Color.WHITE);
-		btnSearchOrder.setOpaque(true);
-		btnSearchOrder.setFont(new Font("Arial", Font.BOLD, 16));
-		btnSearchOrder.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnSearchOrder.setBackground(new Color(59, 89, 182));
-		btnSearchOrder.setFocusPainted(false);
-		btnSearchOrder.setPreferredSize(new Dimension(150, 40));
-		btnSearchOrder.addActionListener(e -> getOrdersByWorkerIdMethod());
-
-		GridBagConstraints gbc_btnSearchOrder = new GridBagConstraints();
-		gbc_btnSearchOrder.ipady = 10;
-		gbc_btnSearchOrder.ipadx = 20;
-		gbc_btnSearchOrder.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSearchOrder.gridx = 2;
-		gbc_btnSearchOrder.gridy = 15;
-		contentPane.add(btnSearchOrder, gbc_btnSearchOrder);
-
-		scrollPane_1 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-		gbc_scrollPane_1.gridwidth = 5;
-		gbc_scrollPane_1.gridheight = 4;
-		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
-		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_1.gridx = 0;
-		gbc_scrollPane_1.gridy = 16;
-		contentPane.add(scrollPane_1, gbc_scrollPane_1);
-
-		listOrders = new JList<>(orderListModel);
-		listOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listOrders.setName("listOrders");
-		scrollPane_1.setViewportView(listOrders);
-
-		showErrorLblSearchOrder = new JLabel("");
-		showErrorLblSearchOrder.setName("showErrorLblSearchOrder");
-		showErrorLblSearchOrder.setForeground(new Color(139, 0, 0));
-		showErrorLblSearchOrder.setFont(new Font("Verdana", Font.PLAIN, 16));
-		showErrorLblSearchOrder.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createLineBorder(Color.RED, 1), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-		GridBagConstraints gbc_showErrorLblSearchOrder = new GridBagConstraints();
-		gbc_showErrorLblSearchOrder.gridwidth = 5;
-		gbc_showErrorLblSearchOrder.insets = new Insets(0, 0, 5, 5);
-		gbc_showErrorLblSearchOrder.gridx = 0;
-		gbc_showErrorLblSearchOrder.gridy = 20;
-		contentPane.add(showErrorLblSearchOrder, gbc_showErrorLblSearchOrder);
+//		scrollPane_1 = new JScrollPane();
+//		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
+//		gbc_scrollPane_1.gridwidth = 5;
+//		gbc_scrollPane_1.gridheight = 4;
+//		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 0);
+//		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
+//		gbc_scrollPane_1.gridx = 0;
+//		gbc_scrollPane_1.gridy = 16;
+//		contentPane.add(scrollPane_1, gbc_scrollPane_1);
+//
+//		listOrders = new JList<>(orderListModel);
+//		listOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//		listOrders.setName("listOrders");
+//		scrollPane_1.setViewportView(listOrders);
+//
+//		showErrorLblSearchOrder = new JLabel("");
+//		showErrorLblSearchOrder.setName("showErrorLblSearchOrder");
+//		showErrorLblSearchOrder.setForeground(new Color(139, 0, 0));
+//		showErrorLblSearchOrder.setFont(new Font("Verdana", Font.PLAIN, 16));
+//		showErrorLblSearchOrder.setBorder(BorderFactory.createCompoundBorder(
+//				BorderFactory.createLineBorder(Color.RED, 1), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+//		GridBagConstraints gbc_showErrorLblSearchOrder = new GridBagConstraints();
+//		gbc_showErrorLblSearchOrder.gridwidth = 5;
+//		gbc_showErrorLblSearchOrder.insets = new Insets(0, 0, 5, 5);
+//		gbc_showErrorLblSearchOrder.gridx = 0;
+//		gbc_showErrorLblSearchOrder.gridy = 20;
+//		contentPane.add(showErrorLblSearchOrder, gbc_showErrorLblSearchOrder);
 
 		showErrorNotFoundLbl = new JLabel("");
 		showErrorNotFoundLbl.setName("showErrorNotFoundLbl");
@@ -784,10 +783,10 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	/**
 	 * Handle search order by worker id button states.
 	 */
-	private void handleSearchOrderByWorkerIdButtonStates() {
-		boolean isOrdersByWorkerId = txtOrdersByWorkerId.getText().trim().isEmpty();
-		btnSearchOrder.setEnabled(!isOrdersByWorkerId);
-	}
+//	private void handleSearchOrderByWorkerIdButtonStates() {
+//		boolean isOrdersByWorkerId = txtOrdersByWorkerId.getText().trim().isEmpty();
+//		btnSearchOrder.setEnabled(!isOrdersByWorkerId);
+//	}
 
 	/**
 	 * Show all workers.
@@ -861,12 +860,12 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 *
 	 * @param orders the orders
 	 */
-	@Override
-	public void showOrderByWorkerId(List<CustomerOrder> orders) {
-//		orderListModel.removeAllElements();
-		orders.stream().forEach(orderListModel::addElement);
-		resetErrorLabel();
-	}
+//	@Override
+//	public void showOrderByWorkerId(List<CustomerOrder> orders) {
+////		orderListModel.removeAllElements();
+//		orders.stream().forEach(orderListModel::addElement);
+//		resetErrorLabel();
+//	}
 
 	/**
 	 * Worker removed.
@@ -918,10 +917,10 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 * @param message the message
 	 * @param worker  the worker
 	 */
-	@Override
-	public void showSearchOrderByWorkerIdError(String message, Worker worker) {
-		showErrorLblSearchOrder.setText(message + ": " + worker);
-	}
+//	@Override
+//	public void showSearchOrderByWorkerIdError(String message, Worker worker) {
+//		showErrorLblSearchOrder.setText(message + ": " + worker);
+//	}
 
 	/**
 	 * Reset error label.
@@ -930,7 +929,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		showErrorLbl.setText(" ");
 		showErrorNotFoundLbl.setText(" ");
 		showErrorLblSearchWorker.setText(" ");
-		showErrorLblSearchOrder.setText(" ");
+//		showErrorLblSearchOrder.setText(" ");
 	}
 
 	/**
@@ -938,16 +937,16 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 */
 	private void resetAllSearchStates() {
 		txtSearchWorker.setText(" ");
-		txtOrdersByWorkerId.setText(" ");
+//		txtOrdersByWorkerId.setText(" ");
 		cmbSearchByOptions.setSelectedItem(null);
 	}
 
-	private void getOrdersByWorkerIdMethod() {
-		Worker worker = new Worker();
-		Long id = Long.parseLong(txtOrdersByWorkerId.getText());
-		worker.setWorkerId(id);
-		workerController.fetchOrdersByWorkerId(worker);
-	}
+//	private void getOrdersByWorkerIdMethod() {
+//		Worker worker = new Worker();
+//		Long id = Long.parseLong(txtOrdersByWorkerId.getText());
+//		worker.setWorkerId(id);
+//		workerController.fetchOrdersByWorkerId(worker);
+//	}
 
 	private void fetchWorkerMethod() {
 		Worker worker = new Worker();

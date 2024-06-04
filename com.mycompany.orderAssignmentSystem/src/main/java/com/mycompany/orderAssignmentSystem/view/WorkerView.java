@@ -5,7 +5,6 @@ package com.mycompany.orderAssignmentSystem.view;
 
 import java.util.List;
 
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 
 /**
@@ -53,7 +52,7 @@ public interface WorkerView {
 	 *
 	 * @param orders the list of orders assigned to the worker
 	 */
-	void showOrderByWorkerId(List<CustomerOrder> orders);
+//	void showOrderByWorkerId(List<CustomerOrder> orders);
 
 	/**
 	 * Notifies when a worker is removed.
@@ -94,6 +93,6 @@ public interface WorkerView {
 	 * @param message the error message to be displayed
 	 * @param worker  the worker associated with the error
 	 */
-	void showSearchOrderByWorkerIdError(String message, Worker worker);
+//	void showSearchOrderByWorkerIdError(String message, Worker worker);
 
 }

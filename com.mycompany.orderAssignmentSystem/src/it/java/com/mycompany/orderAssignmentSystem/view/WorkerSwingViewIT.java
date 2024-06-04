@@ -23,12 +23,8 @@ import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurat
 import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
 import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.OrderDatabaseRepository;
 import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
 import com.mycompany.orderAssignmentSystem.view.swing.WorkerSwingView;
 
@@ -46,7 +42,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
 	private EntityManager entityManager;
-	private OrderRepository orderRepository;
 	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
 
 	@Override
@@ -55,7 +50,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		entityManager = entityManagerFactory.createEntityManager();
 		workerRepository = new WorkerDatabaseRepository(entityManager);
 		validatedConfig = new ExtendedValidationConfigurations();
-		orderRepository = new OrderDatabaseRepository(entityManager);
 //		for (Worker worker : workerRepository.findAll()) {
 //			workerRepository.delete(worker);
 //		}
@@ -284,44 +278,44 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	// Search Order by worker button success
 
-	@Test
-	public void testSearchOrderByWorkerIdSuccess() {
-		Worker worker1 = new Worker();
-		worker1.setWorkerName("John");
-		worker1.setWorkerPhoneNumber("3401372678");
-		worker1.setWorkerCategory(OrderCategory.PLUMBER);
-
-		worker1 = workerRepository.save(worker1);
-		System.out.println("Created Worker");
-		System.out.println(worker1.toString());
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName(customerName);
-		order.setCustomerAddress(customerAddress);
-		order.setCustomerPhoneNumber(customerPhone); // Assuming the parameter name is customerPhone
-		order.setAppointmentDate(appointmentDate);
-		order.setOrderDescription(orderDescription);
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(worker1);
-
-		order = orderRepository.save(order);
-		System.out.println("Created Order");
-		System.out.println(order.toString());
-//		worker2.setOrders(Arrays.asList(order));
-//		worker2 = workerRepository.save(worker2);
-
-		window.textBox("txtOrdersByWorkerId").enterText(worker1.getWorkerId().toString());
-
-		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
-
-		assertThat(window.list("listOrders").contents()).containsExactly(order.toString());
-
-	}
+//	@Test
+//	public void testSearchOrderByWorkerIdSuccess() {
+//		Worker worker1 = new Worker();
+//		worker1.setWorkerName("John");
+//		worker1.setWorkerPhoneNumber("3401372678");
+//		worker1.setWorkerCategory(OrderCategory.PLUMBER);
+//
+//		worker1 = workerRepository.save(worker1);
+//		System.out.println("Created Worker");
+//		System.out.println(worker1.toString());
+//		String customerName = "Ibtihaj";
+//		String customerAddress = "Piazza Luigi";
+//		String customerPhone = "3401372678";
+//		String orderDescription = "Plumber Required";
+//		String appointmentDate = "12-12-2024";
+//		CustomerOrder order = new CustomerOrder();
+//		order.setCustomerName(customerName);
+//		order.setCustomerAddress(customerAddress);
+//		order.setCustomerPhoneNumber(customerPhone); // Assuming the parameter name is customerPhone
+//		order.setAppointmentDate(appointmentDate);
+//		order.setOrderDescription(orderDescription);
+//		order.setOrderCategory(OrderCategory.PLUMBER);
+//		order.setOrderStatus(OrderStatus.PENDING);
+//		order.setWorker(worker1);
+//
+//		order = orderRepository.save(order);
+//		System.out.println("Created Order");
+//		System.out.println(order.toString());
+////		worker2.setOrders(Arrays.asList(order));
+////		worker2 = workerRepository.save(worker2);
+//
+//		window.textBox("txtOrdersByWorkerId").enterText(worker1.getWorkerId().toString());
+//
+//		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
+//
+//		assertThat(window.list("listOrders").contents()).containsExactly(order.toString());
+//
+//	}
 
 	// Search Order by worker button error
 }
