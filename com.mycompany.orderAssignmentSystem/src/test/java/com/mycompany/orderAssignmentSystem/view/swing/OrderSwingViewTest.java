@@ -122,15 +122,17 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testWhenOrderIdIsEmptyCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsNotEmptyAndAddButtonShouldBeDisable() {
+	public void testWhenOrderIdIsEmptyCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsNotEmptyAndAddButtonShouldBeEnable() {
 		GuiActionRunner.execute(() -> {
 			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.resetAllFields();
 
 		});
+
 		String customerName = "Ibtihaj";
 		String customerAddress = "Piazza Luigi";
 		String customerPhone = "3401372678";
@@ -141,6 +143,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		int workerIndex = 0;
 //		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
 //		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
+		window.textBox("txtOrderId").enterText(" "); // Make sure orderId is empty
 		window.textBox("txtCustomerName").enterText(customerName);
 		window.textBox("txtCustomerAddress").enterText(customerAddress);
 		window.textBox("txtCustomerPhone").enterText(customerPhone);
@@ -160,7 +163,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
+			orderSwingView.resetAllFields();
 		});
 		Long orderId = 1l;
 		String customerName = "Ibtihaj";
@@ -193,7 +196,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
+			orderSwingView.resetAllFields();
 		});
 		Long orderId = 1l;
 		String customerName = "Ibtihaj";
@@ -226,7 +229,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
+			orderSwingView.resetAllFields();
 		});
 		String customerName = "Ibtihaj";
 		String customerAddress = "Piazza Luigi";
@@ -251,8 +254,30 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testWhenOrderIdIsNotEmptyButCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsEmptyAndFetchButtonShouldBeEnable() {
+		GuiActionRunner.execute(() -> {
+			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
+			orderSwingView.getWorkerListModel()
+					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel()
+					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.resetAllFields();
+		});
 		Long orderId = 1l;
 		window.textBox("txtOrderId").enterText(orderId.toString());
+		window.textBox("txtCustomerName").enterText(" ");
+		window.textBox("txtCustomerAddress").enterText(" ");
+		window.textBox("txtCustomerPhone").enterText(" ");
+		window.textBox("txtOrderDescription").enterText(" ");
+		window.textBox("txtSelectedDate").enterText(" ");
+		int categoryIndex = 0;
+		int statusIndex = 0;
+		int workerIndex = 0;
+		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
+		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
+		window.comboBox("cmbWorker").selectItem(workerIndex);
+		window.comboBox("cmbOrderCategory").clearSelection();
+		window.comboBox("cmbOrderStatus").clearSelection();
+		window.comboBox("cmbWorker").clearSelection();
 		window.button(JButtonMatcher.withName("btnFetch")).requireEnabled();
 		window.comboBox("cmbOrderCategory").requireNoSelection();
 		window.comboBox("cmbOrderStatus").requireNoSelection();
@@ -268,8 +293,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
+			orderSwingView.resetAllFields();
 		});
+		String orderId = "";
 		String customerName = "Ibtihaj";
 		String customerAddress = "Piazza Luigi";
 		String customerPhone = "3401372678";
@@ -280,6 +306,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		int workerIndex = 0;
 //		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
 //		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
+		window.textBox("txtOrderId").enterText(orderId);
 		window.textBox("txtCustomerName").enterText(customerName);
 		window.textBox("txtCustomerAddress").enterText(customerAddress);
 		window.textBox("txtCustomerPhone").enterText(customerPhone);
@@ -325,14 +352,16 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
+			orderSwingView.resetAllFields();
 		});
+		JTextComponentFixture orderId = window.textBox("txtOrderId");
 		JTextComponentFixture name = window.textBox("txtCustomerName");
 		JTextComponentFixture address = window.textBox("txtCustomerAddress");
 		JTextComponentFixture phone = window.textBox("txtCustomerPhone");
 		JTextComponentFixture description = window.textBox("txtOrderDescription");
 		JTextComponentFixture txtDate = window.textBox("txtSelectedDate");
 
+		orderId.enterText("");
 		name.enterText(" ");
 		address.enterText(" ");
 		phone.enterText(" ");
@@ -341,28 +370,32 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		JComboBoxFixture category = window.comboBox("cmbOrderCategory");
 		JComboBoxFixture status = window.comboBox("cmbOrderStatus");
 		JComboBoxFixture worker = window.comboBox("cmbWorker");
+		category.selectItem(0);
+		status.selectItem(0);
+		worker.selectItem(0);
 		category.clearSelection();
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
+		orderId.enterText("1");
 		name.enterText("name");
 		address.enterText("address");
 		phone.enterText("phone");
 		description.enterText("description");
 		txtDate.enterText("12/12/2024");
-
+		category.selectItem(0);
+		status.selectItem(0);
+		worker.selectItem(0);
 		category.clearSelection();
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
+		orderId.enterText("\b");
 		name.enterText(" ");
 		address.enterText(" ");
 		phone.enterText(" ");
 		description.enterText(" ");
 		txtDate.enterText(" ");
-		category.selectItem(0);
-		status.selectItem(0);
-		worker.selectItem(0);
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
 	}
 
@@ -374,7 +407,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
+			orderSwingView.resetAllFields();
 		});
 		JTextComponentFixture orderId = window.textBox("txtOrderId");
 		JTextComponentFixture name = window.textBox("txtCustomerName");
@@ -427,7 +460,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
 			orderSwingView.getWorkerListModel()
 					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
+			orderSwingView.resetAllFields();
 		});
 		JTextComponentFixture orderId = window.textBox("txtOrderId");
 		JTextComponentFixture name = window.textBox("txtCustomerName");
@@ -445,6 +478,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		JComboBoxFixture category = window.comboBox("cmbOrderCategory");
 		JComboBoxFixture status = window.comboBox("cmbOrderStatus");
 		JComboBoxFixture worker = window.comboBox("cmbWorker");
+		category.selectItem(0);
+		status.selectItem(0);
+		worker.selectItem(0);
 		category.clearSelection();
 		status.clearSelection();
 		worker.clearSelection();
@@ -455,21 +491,37 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		phone.enterText("phone");
 		description.enterText("description");
 		txtDate.enterText("12/12/2024");
-
+		category.selectItem(0);
+		status.selectItem(0);
+		worker.selectItem(0);
 		category.clearSelection();
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
-		orderId.enterText(" ");
+		orderId.enterText("\b");
 		name.enterText(" ");
 		address.enterText(" ");
 		phone.enterText(" ");
 		description.enterText(" ");
 		txtDate.enterText(" ");
-		category.selectItem(0);
-		status.selectItem(0);
-		worker.selectItem(0);
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
+	}
+
+	@Test
+	public void testWhenWorkerIdOnlyNumbersThenFetchButtonShouldBeFetchButtonEnabled() {
+		JTextComponentFixture orderId = window.textBox("txtOrderId");
+		orderId.enterText("a");
+		orderId.enterText("@");
+		orderId.enterText(" ");
+		orderId.enterText("\0");
+		orderId.enterText(":");
+		orderId.enterText("0");
+		orderId.enterText("\b");
+		orderId.enterText("9");
+		orderId.enterText("\b");
+		orderId.enterText("5");
+		window.button(JButtonMatcher.withName("btnFetch")).requireEnabled();
+
 	}
 
 	@Test
@@ -590,6 +642,23 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
+	public void testOrderModifiedShouldNotModifyAndAddTheOrderToTheListAndResetTheErrorLabel() {
+		CustomerOrder order = new CustomerOrder();
+		order.setOrderId(1l);
+		order.setOrderCategory(OrderCategory.PLUMBER);
+		order.setOrderStatus(OrderStatus.PENDING);
+		GuiActionRunner.execute(() -> orderSwingView.orderAdded(order));
+		CustomerOrder newOrder = new CustomerOrder();
+		newOrder.setOrderId(2l);
+		newOrder.setOrderCategory(OrderCategory.PLUMBER);
+		newOrder.setOrderStatus(OrderStatus.PENDING);
+		GuiActionRunner.execute(() -> orderSwingView.orderModified(newOrder));
+		String[] listContents = window.list("listOrders").contents();
+		assertThat(listContents).containsExactly(order.toString());
+		window.label("showError").requireText(" ");
+	}
+
+	@Test
 	public void testOrderFetchShouldFetchTheOrderToTheFieldsAndResetTheErrorLabel() {
 		Worker worker = new Worker();
 		worker.setWorkerId(1l);
@@ -619,9 +688,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(phone).isEqualTo(order.getCustomerPhoneNumber());
 		assertThat(description).isEqualTo(order.getOrderDescription());
 		assertThat(date).isEqualTo(order.getAppointmentDate().toString());
-		assertThat(category).isEqualTo(order.getOrderCategory());
-		assertThat(status).isEqualTo(order.getOrderStatus());
-		assertThat(selectedWorker).isEqualTo(order.getWorker());
+		assertThat(category).isEqualTo(null);
+		assertThat(status).isEqualTo(null);
+		assertThat(selectedWorker).isEqualTo(null);
 		window.label("showError").requireText(" ");
 	}
 

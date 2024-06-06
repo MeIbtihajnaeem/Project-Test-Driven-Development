@@ -56,6 +56,8 @@ public interface OrderView {
 	 * @param order the removed customer order
 	 */
 	void orderRemoved(CustomerOrder order);
+	
+	void resetAllFields();
 
 	/**
 	 * Displays an error message related to a specific customer order.

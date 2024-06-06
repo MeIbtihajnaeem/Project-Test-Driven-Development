@@ -121,6 +121,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		btnUpdate = new JButton("Update");
 		btnFetch = new JButton("Fetch");
 		txtSearchOrder = new JTextField();
+//		getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
 
 		for (OrderCategory category : OrderCategory.values()) {
 			cmbOrderCategory.addItem(category);
@@ -135,6 +136,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbOrderCategory.setSelectedItem(null);
 		cmbSearchBy.setSelectedItem(null);
 		cmbOrderStatus.setSelectedItem(null);
+		cmbWorker.setSelectedItem(null);
 
 //		KeyListener changeTextBoxValueListener = new KeyAdapter() {
 //			@Override
@@ -250,7 +252,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE))) {
 					getToolkit().beep();
 					e.consume();
 				}
@@ -539,6 +541,25 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnUpdate.gridx = 2;
 		gbc_btnUpdate.gridy = 7;
 		contentPane.add(btnUpdate, gbc_btnUpdate);
+		
+				btnClearSearch = new JButton("Clear");
+				btnClearSearch.setEnabled(false);
+				btnClearSearch.setName("btnClearSearch");
+				btnClearSearch.setForeground(Color.WHITE);
+				btnClearSearch.setOpaque(true);
+				btnClearSearch.setFont(new Font("Arial", Font.BOLD, 16));
+				btnClearSearch.setBorder(new LineBorder(new Color(0, 0, 0)));
+				btnClearSearch.setBackground(new Color(59, 89, 182));
+				btnClearSearch.setFocusPainted(false);
+				btnClearSearch.setPreferredSize(new Dimension(150, 40));
+				btnClearSearch.addActionListener(e -> resetAllFields());
+				GridBagConstraints gbc_btnClearSearch = new GridBagConstraints();
+				gbc_btnClearSearch.ipady = 10;
+				gbc_btnClearSearch.ipadx = 20;
+				gbc_btnClearSearch.insets = new Insets(0, 0, 5, 5);
+				gbc_btnClearSearch.gridx = 3;
+				gbc_btnClearSearch.gridy = 7;
+				contentPane.add(btnClearSearch, gbc_btnClearSearch);
 
 		JLabel lblSearchWorker = new JLabel("Search Order");
 		lblSearchWorker.setIconTextGap(8);
@@ -620,25 +641,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_showSearchErrorLbl.gridy = 9;
 		contentPane.add(showSearchErrorLbl, gbc_showSearchErrorLbl);
 
-		btnClearSearch = new JButton("Clear");
-		btnClearSearch.setEnabled(false);
-		btnClearSearch.setName("btnClearSearch");
-		btnClearSearch.setForeground(Color.WHITE);
-		btnClearSearch.setOpaque(true);
-		btnClearSearch.setFont(new Font("Arial", Font.BOLD, 16));
-		btnClearSearch.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnClearSearch.setBackground(new Color(59, 89, 182));
-		btnClearSearch.setFocusPainted(false);
-		btnClearSearch.setPreferredSize(new Dimension(150, 40));
-		btnClearSearch.addActionListener(e -> clearSearchAndFetchOrdersMethod());
-		GridBagConstraints gbc_btnClearSearch = new GridBagConstraints();
-		gbc_btnClearSearch.ipady = 10;
-		gbc_btnClearSearch.ipadx = 20;
-		gbc_btnClearSearch.insets = new Insets(0, 0, 5, 0);
-		gbc_btnClearSearch.gridx = 5;
-		gbc_btnClearSearch.gridy = 9;
-		contentPane.add(btnClearSearch, gbc_btnClearSearch);
-
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.ipady = 10;
@@ -712,12 +714,13 @@ public class OrderSwingView extends JFrame implements OrderView {
 				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
 
 		btnFetch.setEnabled(!isOrderIdEmpty && isCustomerNameEmpty && isCustomerAddressEmpty
-				&& isCustomerPhoneNumberEmpty && isOrderDescriptionEmpty && isAppointmentDateEmpty);
-		if (btnFetch.isEnabled()) {
-			cmbWorker.setSelectedItem(null);
-			cmbOrderStatus.setSelectedItem(null);
-			cmbOrderCategory.setSelectedItem(null);
-		}
+				&& isCustomerPhoneNumberEmpty && isOrderDescriptionEmpty && isAppointmentDateEmpty
+				&& isOrderCategoryEmpty && isOrderStatusEmpty && isAssignedWorkerEmpty);
+//		if (btnFetch.isEnabled()) {
+//			cmbWorker.setSelectedItem(null);
+//			cmbOrderStatus.setSelectedItem(null);
+//			cmbOrderCategory.setSelectedItem(null);
+//		}
 
 	}
 
@@ -733,7 +736,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		resetAllSearchStates();
 		orderListModel.clear();
 		order.stream().forEach(orderListModel::addElement);
-		resetErrorLabel();
+		resetErrorLabelAndClearComboBoxSelection();
 	}
 
 	@Override
@@ -744,18 +747,21 @@ public class OrderSwingView extends JFrame implements OrderView {
 	@Override
 	public void orderAdded(CustomerOrder order) {
 		orderListModel.addElement(order);
-		resetErrorLabel();
+		resetErrorLabelAndClearComboBoxSelection();
 	}
 
 	@Override
 	public void orderModified(CustomerOrder order) {
 		for (int i = 0; i < orderListModel.getSize(); i++) {
-			if (orderListModel.getElementAt(i).getOrderId().equals(order.getOrderId())) {
+			if (orderListModel.getElementAt(i)
+					.getOrderId().
+					equals(order.getOrderId()
+							)) {
 				orderListModel.removeElementAt(i);
 				orderListModel.addElement(order);
 			}
 		}
-		resetErrorLabel();
+		resetErrorLabelAndClearComboBoxSelection();
 
 	}
 
@@ -770,21 +776,21 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbOrderCategory.setSelectedItem(order.getOrderCategory());
 		cmbOrderStatus.setSelectedItem(order.getOrderStatus());
 		cmbWorker.setSelectedItem(order.getWorker());
-		resetErrorLabel();
+		resetErrorLabelAndClearComboBoxSelection();
 	}
 
 	@Override
 	public void showSearchResultForOrder(List<CustomerOrder> order) {
 		orderListModel.removeAllElements();
 		order.stream().forEach(orderListModel::addElement);
-		resetErrorLabel();
+		resetErrorLabelAndClearComboBoxSelection();
 
 	}
 
 	@Override
 	public void orderRemoved(CustomerOrder order) {
 		orderListModel.removeElement(order);
-		resetErrorLabel();
+		resetErrorLabelAndClearComboBoxSelection();
 	}
 
 	@Override
@@ -813,7 +819,10 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbSearchBy.setSelectedItem(null);
 	}
 
-	private void resetErrorLabel() {
+	private void resetErrorLabelAndClearComboBoxSelection() {
+		cmbWorker.setSelectedItem(null);
+		cmbOrderStatus.setSelectedItem(null);
+		cmbOrderCategory.setSelectedItem(null);
 		showError.setText(" ");
 		showErrorNotFoundLbl.setText(" ");
 		showSearchErrorLbl.setText(" ");
@@ -821,10 +830,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	private void deleteOrderMethod() {
 		orderController.deleteOrder(listOrders.getSelectedValue());
-	}
-
-	private void clearSearchAndFetchOrdersMethod() {
-		orderController.allOrders();
 	}
 
 	private void searchOrderByTextMethod() {
@@ -868,6 +873,24 @@ public class OrderSwingView extends JFrame implements OrderView {
 		order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
 		order.setWorker((Worker) cmbWorker.getSelectedItem());
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
+	}
+
+	@Override
+	public void resetAllFields() {
+		txtOrderId.setText("\b");
+		txtCustomerName.setText("");
+		txtCustomerAddress.setText("");
+		txtCustomerPhone.setText("");
+		txtOrderDescription.setText("");
+		txtSelectedDate.setText("");
+		txtSearchOrder.setText("");
+		cmbSearchBy.setSelectedItem(null);
+		cmbOrderCategory.setSelectedItem(null);
+		cmbOrderStatus.setSelectedItem(null);
+		cmbWorker.setSelectedItem(null);
+
+		orderController.allOrders();
+
 	}
 
 }

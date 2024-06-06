@@ -125,6 +125,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 //		window.button(JButtonMatcher.withText("Search Orders")).requireDisabled();
 
 	}
+	
+
 
 	/**
 	 * Verify that the "Add" button is disabled when the worker ID, worker name,
@@ -356,6 +358,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
 	}
 
+
+
 	/**
 	 * Verify that the "Fetch" button is disabled when either the worker ID, worker
 	 * name, or worker phone number fields are blank.
@@ -381,6 +385,23 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		name.setText(" ");
 		combo.selectItem(0);
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
+	}
+	
+	@Test
+	public void testWhenWorkerIdOnlyNumbersThenFetchButtonShouldBeFetchButtonEnabled() {
+		JTextComponentFixture workerId = window.textBox("txtWorkerId");
+		workerId.enterText("a");
+		workerId.enterText("@");
+		workerId.enterText(" ");
+		workerId.enterText("\0");
+		workerId.enterText(":");
+		workerId.enterText("0");
+		workerId.enterText("\b");
+		workerId.enterText("9");
+		workerId.enterText("\b");
+		workerId.enterText("5");
+		window.button(JButtonMatcher.withName("btnFetch")).requireEnabled();
+
 	}
 
 	/**
