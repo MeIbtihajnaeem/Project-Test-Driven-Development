@@ -88,7 +88,7 @@ public class WorkerController {
 		if (savedWorker == null) {
 			throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
 		}
-		if (savedWorker.getOrders() != null && !savedWorker.getOrders().isEmpty()) {
+		if (!savedWorker.getOrders().isEmpty()) {
 			throw new IllegalArgumentException(
 					"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
 		}
@@ -149,7 +149,7 @@ public class WorkerController {
 				throw new NoSuchElementException("Worker with id " + worker.getWorkerId() + " Not Found.");
 			}
 			workerView.showFetchedWorker(savedWorker);
-			LOGGER.info("Worker Fetched: {}", worker);
+			LOGGER.info("Worker Fetched: {}", savedWorker);
 
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while updating worker: {}", e.getMessage());

@@ -343,6 +343,48 @@ public class WorkerControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
+//	@Test
+//	public void testUpdateWorkerMethodWithExistingPhoneNumberSameWorkerId() {
+//	    String phoneNumber = "3401372678";
+//	    Long workerId = 1L;
+//	    Long existingWorkerId = 2L;
+//	    Worker existingWorker = new Worker(existingWorkerId,"Muhammad Ibtihaj", phoneNumber, OrderCategory.PLUMBER);
+//	    Worker worker = new Worker(workerId, "Muhammad Ibtihaj", phoneNumber, OrderCategory.PLUMBER);
+//
+//	    when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
+//		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(existingWorker);
+//		
+//	    workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
+//	    InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
+//		inOrder.verify(workerView).showError("Worker with phone number " + phoneNumber + " Already Exists", worker);
+//		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+//	}
+	
+	@Test
+	public void testUpdateWorkerMethodWithExistingPhoneNumberSameWorkerId() {
+		String phoneNumber = "3401372678";
+
+		String workerName = "Muhammad Ibtihaj";
+		OrderCategory category = OrderCategory.PLUMBER;
+		Long workerId = 1l;
+//		 Long existingWorkerId = 2L;
+//		  Worker existingWorker = new Worker(existingWorkerId,"Muhammad Ibtihaj", phoneNumber, OrderCategory.PLUMBER);
+		   
+		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
+		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(workerId);
+		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
+		when(workerRepository.findByPhoneNumber(phoneNumber)).thenReturn(worker);
+		worker.setOrders(asList(new CustomerOrder()));
+		when(workerRepository.findById(workerId)).thenReturn(worker);
+		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
+		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
+		inOrder.verify(workerView).showError(
+				"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders", worker);
+		verifyNoMoreInteractions(ignoreStubs(workerRepository));
+	}
+
+
+
 	@Test
 	public void testUpdateWorkerMethodWhenWorkerFoundButWithExistingOrders() {
 		String phoneNumber = "3401372678";
@@ -363,6 +405,8 @@ public class WorkerControllerTest {
 				"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
+	
+
 
 	@Test
 	public void testUpdateWorkerMethodWhenWorkerFoundButWithExistingOrdersNull() {
@@ -462,7 +506,7 @@ public class WorkerControllerTest {
 	@Test
 	public void testFetchWorkerMethodWhenValidationConfigurationsCallsvalidateStringNumberThrowsNullPointerException() {
 		Worker worker = new Worker();
-
+		worker.setWorkerId(0l);
 		doThrow(new NullPointerException("The id field cannot be null.")).when(validationConfigurations)
 				.validateStringNumber(any());
 		workerController.fetchWorkerById(worker);
@@ -530,7 +574,7 @@ public class WorkerControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(savedWorker);
 		workerController.fetchWorkerById(worker);
 		InOrder inOrder = Mockito.inOrder(workerRepository, workerView);
-		inOrder.verify(workerView).showFetchedWorker(worker);
+		inOrder.verify(workerView).showFetchedWorker(savedWorker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
 
@@ -853,6 +897,7 @@ public class WorkerControllerTest {
 	@Test
 	public void testDeleteWorkerMethodWhenWorkerIdIsZeroAndvalidateStringNumberThrowsNullPointerException() {
 		Worker worker = new Worker();
+		worker.setWorkerId(0l);
 		doThrow(new NullPointerException("The id field cannot be null.")).when(validationConfigurations)
 				.validateStringNumber(any());
 		workerController.deleteWorker(worker);
