@@ -81,13 +81,14 @@ public class OrderController {
 			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
 		}
 		Worker worker = getValidWorker(order);
-		if (worker.getOrders().isEmpty()) {
-			order = orderRepository.save(order);
-			orderView.orderAdded(order);
-			LOGGER.info("New order created: {}", order);
-			return;
+		if (worker.getOrders().isEmpty()==false) {
+//			order = orderRepository.save(order);
+//			orderView.orderAdded(order);
+//			LOGGER.info("New order created: {}", order);
+//			return;
+			checkForPendingOrders(worker.getOrders());
+
 		}
-		checkForPendingOrders(worker.getOrders());
 
 		order = orderRepository.save(order);
 		orderView.orderAdded(order);
@@ -98,14 +99,13 @@ public class OrderController {
 		Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
 		order.setOrderId(id);
 		Worker worker = getValidWorker(order);
-		if (worker.getOrders().isEmpty()) {
-			order = orderRepository.save(order);
-			orderView.orderModified(order);
-			LOGGER.info("Order Updated: {}", order);
-			return;
+		if (worker.getOrders().isEmpty()==false) {
+//			order = orderRepository.save(order);
+//			orderView.orderModified(order);
+//			LOGGER.info("Order Updated: {}", order);
+//			return;
+			checkForPendingOrders(worker.getOrders());
 		}
-		checkForPendingOrders(worker.getOrders());
-
 		order = orderRepository.save(order);
 		orderView.orderModified(order);
 		LOGGER.info("Order Updated: {}", order);

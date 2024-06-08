@@ -738,10 +738,10 @@ public class OrderSwingView extends JFrame implements OrderView {
 		order.stream().forEach(orderListModel::addElement);
 		resetErrorLabelAndClearComboBoxSelection();
 	}
-
 	@Override
 	public void showAllWorkers(List<Worker> worker) {
 		worker.stream().forEach(workerListModel::addElement);
+		cmbWorker.setSelectedItem(null);
 	}
 
 	@Override
@@ -776,14 +776,13 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbOrderCategory.setSelectedItem(order.getOrderCategory());
 		cmbOrderStatus.setSelectedItem(order.getOrderStatus());
 		cmbWorker.setSelectedItem(order.getWorker());
-		resetErrorLabelAndClearComboBoxSelection();
+		resetErrorLabels();
 	}
 
 	@Override
 	public void showSearchResultForOrder(List<CustomerOrder> order) {
 		orderListModel.removeAllElements();
 		order.stream().forEach(orderListModel::addElement);
-		resetErrorLabelAndClearComboBoxSelection();
 
 	}
 
@@ -823,6 +822,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbWorker.setSelectedItem(null);
 		cmbOrderStatus.setSelectedItem(null);
 		cmbOrderCategory.setSelectedItem(null);
+		resetErrorLabels();
+	}
+	private void resetErrorLabels() {
 		showError.setText(" ");
 		showErrorNotFoundLbl.setText(" ");
 		showSearchErrorLbl.setText(" ");

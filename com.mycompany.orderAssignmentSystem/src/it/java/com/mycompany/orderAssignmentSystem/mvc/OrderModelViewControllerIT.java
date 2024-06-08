@@ -148,9 +148,10 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		String updatedCustomerName = "Jhon";
 		window.textBox("txtCustomerName").enterText(updatedCustomerName);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
-		CustomerOrder updatedOrder = new CustomerOrder(savedOrder.getOrderId(), updatedCustomerName, customerAddress,
-				customerPhone, appointmentDate, orderDescription, category, status, savedWorker);
-		assertThat(orderRepository.findById(updatedOrder.getOrderId())).isEqualTo(updatedOrder);
+		order.setCustomerName(updatedCustomerName);
+		order.setOrderId(savedOrder.getOrderId());
+		
+		assertThat(orderRepository.findById(order.getOrderId())).isEqualTo(order);
 	}
 
 	@Test

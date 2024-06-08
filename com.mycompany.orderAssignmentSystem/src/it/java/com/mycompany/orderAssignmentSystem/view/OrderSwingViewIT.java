@@ -364,7 +364,7 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 				orderDescription, OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
 		GuiActionRunner.execute(() -> {
 			orderController.createOrUpdateOrder(order1, OperationType.ADD);
-			orderController.allWorkers();
+			orderController.allOrders();
 		});
 		Long orderId = 2l;
 

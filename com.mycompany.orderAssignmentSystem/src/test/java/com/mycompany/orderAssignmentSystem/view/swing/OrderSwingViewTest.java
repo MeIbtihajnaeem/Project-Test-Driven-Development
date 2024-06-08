@@ -688,9 +688,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(phone).isEqualTo(order.getCustomerPhoneNumber());
 		assertThat(description).isEqualTo(order.getOrderDescription());
 		assertThat(date).isEqualTo(order.getAppointmentDate().toString());
-		assertThat(category).isEqualTo(null);
-		assertThat(status).isEqualTo(null);
-		assertThat(selectedWorker).isEqualTo(null);
+		assertThat(category).isEqualTo(order.getOrderCategory());
+		assertThat(status).isEqualTo(order.getOrderStatus());
+		assertThat(selectedWorker).isEqualTo(order.getWorker());
 		window.label("showError").requireText(" ");
 	}
 
