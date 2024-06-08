@@ -6,9 +6,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.model.Worker;
 import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
 
@@ -21,39 +21,35 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 	}
 
 	@Override
-	@Transactional
-	public List<Worker> findAll() {
+	public synchronized List<Worker> findAll() {
 
 		return entityManager.createQuery("SELECT w FROM Worker w", Worker.class).getResultList();
 	}
 
 	@Override
-	@Transactional
-	public Worker findById(Long workerId) {
-//		EntityTransaction transaction = entityManager.getTransaction();
-//		transaction.begin();
-//		
+	public synchronized Worker findById(Long workerId) {
+		try {
+			entityManager.clear();
 
-		Worker worker = entityManager.find(Worker.class, workerId);
-//		if (worker != null) {
-//			TypedQuery<CustomerOrder> query = entityManager
-//					.createQuery("SELECT o FROM CustomerOrder o where o.work_id=:worker_id", CustomerOrder.class);
-//			query.setParameter("worker_id", workerId);
-//			worker.setOrders(query.getResultList());
-//			System.out.println(worker.getOrders());
-//		}
-//		transaction.commit();
+			Worker worker = entityManager.find(Worker.class, workerId);
 
-		return worker;
-//		return entityManager.createQuery(
-//				"SELECT w FROM Worker w, CustomerOrder o where o.worker_id=w.workerId AND w.workerId:=" + workerId,
-//				Worker.class).getSingleResult();
+			if (worker != null) {
+				TypedQuery<CustomerOrder> query = entityManager.createQuery(
+						"SELECT o FROM CustomerOrder o where o.worker.workerId=:worker_id", CustomerOrder.class);
+				query.setParameter("worker_id", workerId);
+				worker.setOrders(query.getResultList());
+				System.out.println(worker.getOrders());
+			}
+
+			return worker;
+		} catch (NoResultException e) {
+			return null;
+		}
 
 	}
 
 	@Override
-	@Transactional
-	public List<Worker> findByName(String workerName) {
+	public synchronized List<Worker> findByName(String workerName) {
 		TypedQuery<Worker> query = entityManager.createQuery("SELECT w FROM Worker w where w.workerName=:name",
 				Worker.class);
 		query.setParameter("name", workerName);
@@ -61,8 +57,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 	}
 
 	@Override
-	@Transactional
-	public List<Worker> findByOrderCategory(OrderCategory category) {
+	public synchronized List<Worker> findByOrderCategory(OrderCategory category) {
 		TypedQuery<Worker> query = entityManager.createQuery("SELECT w FROM Worker w where w.workerCategory=:category",
 				Worker.class);
 		query.setParameter("category", category.toString());
@@ -70,8 +65,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 	}
 
 	@Override
-	@Transactional
-	public Worker findByPhoneNumber(String phoneNumber) {
+	public synchronized Worker findByPhoneNumber(String phoneNumber) {
 		try {
 			TypedQuery<Worker> query = entityManager
 					.createQuery("SELECT w FROM Worker w where w.workerPhoneNumber=:phone", Worker.class);
@@ -80,26 +74,40 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		} catch (NoResultException e) {
 			return null;
 		}
+
 	}
 
 	@Override
-	@Transactional
-	public Worker save(Worker worker) {
+	public synchronized Worker save(Worker worker) {
 		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
+		try {
+			transaction.begin();
+			Worker newWorker = entityManager.merge(worker);
+			transaction.commit();
 
-		Worker newWorker = entityManager.merge(worker);
-		transaction.commit();
-		return newWorker;
+			return newWorker;
+
+		} catch (Exception e) {
+			transaction.rollback();
+			return null;
+		}
 	}
 
 	@Override
-	@Transactional
-	public void delete(Worker worker) {
+	public synchronized void delete(Worker worker) {
 		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.remove(worker);
-		transaction.commit();
+		entityManager.clear();
+		try {
+			transaction.begin();
+//			entityManager.clear();
+//			entityManager.remove(worker);
+			entityManager.remove(entityManager.contains(worker) ? worker : entityManager.merge(worker));
+
+			transaction.commit();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+			transaction.rollback();
+		}
 
 	}
 

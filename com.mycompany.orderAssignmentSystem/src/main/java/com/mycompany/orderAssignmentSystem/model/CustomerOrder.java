@@ -301,16 +301,13 @@ public class CustomerOrder {
 
 	@Override
 	public String toString() {
-	    if (orderId == null || customerName == null || customerAddress == null || 
-	        customerPhoneNumber == null || appointmentDate == null || orderDescription == null || 
-	        orderCategory == null || orderStatus == null) {
-	        return null;
-	    }
-	    return "Order ID: " + orderId + ", Name: " + customerName + ", Address: " + customerAddress + ", "
-	           + "Phone: " + customerPhoneNumber + ", Date: " + appointmentDate + ", Description: "
-	           + orderDescription + ", Category: " + orderCategory + ", Status: " + orderStatus + ", "
-	           + "Worker: " + (worker != null ? worker.getWorkerId() + " - " + worker.getWorkerName() : "No Worker Assigned");
+		if (customerName == null || customerAddress == null || customerPhoneNumber == null || appointmentDate == null
+				|| orderDescription == null || orderCategory == null || orderStatus == null || worker == null) {
+			return null;
+		}
+		return "Order ID: " + orderId + ", Name: " + customerName + ", Address: " + customerAddress + ", " + "Phone: "
+				+ customerPhoneNumber + ", Date: " + appointmentDate + ", Description: " + orderDescription
+				+ ", Category: " + orderCategory + ", Status: " + orderStatus + ", " + "Worker: " + worker;
 	}
-
 
 }

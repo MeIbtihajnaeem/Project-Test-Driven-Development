@@ -1361,6 +1361,7 @@ public class OrderControllerTest {
 		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
+		when(orderRepository.findById(orderId)).thenReturn(order);
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderRepository).save(order);

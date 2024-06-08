@@ -112,9 +112,29 @@ public class OrderControllerIT {
 		order.setOrderStatus(OrderStatus.PENDING);
 		order.setWorker(savedWorker);
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
-		Long orderId = orderRepository.findAll().get(0).getOrderId();
-		order.setOrderId(orderId);
-		verify(orderView).orderAdded(order);
+		CustomerOrder savedOrder = orderRepository.findAll().get(0);
+		verify(orderView).orderAdded(savedOrder);
+	}
+
+	@Test
+	public void testNewOrderWithWorkerHavePendingOrder() {
+		Worker worker = new Worker();
+		worker.setWorkerName("Jhon");
+		worker.setWorkerCategory(OrderCategory.PLUMBER);
+		Worker savedWorker = workerRepository.save(worker);
+		CustomerOrder order = new CustomerOrder();
+		order.setCustomerName("Jhon");
+		order.setCustomerAddress("Piazza Luigi Dalla");
+		order.setCustomerPhoneNumber("3401372678");
+		order.setAppointmentDate("12-12-2024");
+		order.setOrderDescription("No description");
+		order.setOrderCategory(OrderCategory.PLUMBER);
+		order.setOrderStatus(OrderStatus.PENDING);
+		order.setWorker(savedWorker);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
+		orderController.createOrUpdateOrder(order, OperationType.ADD);
+		verify(orderView).showError(
+				"Cannot assign a new order to this worker because they already have a pending order.", order);
 	}
 
 	@Test
@@ -132,10 +152,37 @@ public class OrderControllerIT {
 		order.setOrderCategory(OrderCategory.PLUMBER);
 		order.setOrderStatus(OrderStatus.PENDING);
 		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		savedOrder.setOrderStatus(OrderStatus.COMPLETED);
-		orderController.createOrUpdateOrder(savedOrder, OperationType.UPDATE);
+		order = orderRepository.save(order);
+		order.setOrderStatus(OrderStatus.COMPLETED);
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
+		CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
+
 		verify(orderView).orderModified(savedOrder);
+	}
+
+	@Test
+	public void testUpdateOrderWorkerHavePendingOrder() {
+		Worker worker1 = new Worker();
+		worker1.setWorkerName("Jhon");
+		worker1.setWorkerCategory(OrderCategory.PLUMBER);
+		Worker savedWorker1 = workerRepository.save(worker1);
+
+		Worker worker2 = new Worker();
+		worker2.setWorkerName("Bob");
+		worker2.setWorkerCategory(OrderCategory.PLUMBER);
+		Worker savedWorker2 = workerRepository.save(worker2);
+
+		CustomerOrder order1 = new CustomerOrder("Jhon", "Piazza Luigi Dalla", "3401372678", "12-12-2024",
+				"No description", OrderCategory.PLUMBER, OrderStatus.PENDING, savedWorker1);
+		CustomerOrder order2 = new CustomerOrder("Alic", "Piazza Luigi Dalla", "3401372678", "12-12-2024",
+				"No description", OrderCategory.PLUMBER, OrderStatus.PENDING, savedWorker2);
+
+		orderRepository.save(order1);
+		CustomerOrder savedOrder2 = orderRepository.save(order2);
+		savedOrder2.setWorker(savedWorker1);
+		orderController.createOrUpdateOrder(savedOrder2, OperationType.UPDATE);
+		verify(orderView).showError(
+				"Cannot assign a new order to this worker because they already have a pending order.", savedOrder2);
 	}
 
 	@Test

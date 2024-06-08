@@ -26,7 +26,7 @@ public interface WorkerRepository {
 	 * @param workerId the ID of the worker
 	 * @return the found worker, or null if not found
 	 */
-	public Worker findById(Long workerId);
+	public  Worker findById(Long workerId);
 
 	/**
 	 * Finds workers by their name.

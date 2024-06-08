@@ -63,17 +63,17 @@ public class OrderController {
 	/**
 	 * Retrieves all orders.
 	 */
-	public void allOrders() {
+	public synchronized void allOrders() {
 		LOGGER.info("Retrieving all orders");
 		orderView.showAllOrder(orderRepository.findAll());
 	}
 
-	public void allWorkers() {
+	public synchronized void allWorkers() {
 		LOGGER.info("Retrieving all workers");
 		orderView.showAllWorkers(workerRepository.findAll());
 	}
 
-	private void add(CustomerOrder order) {
+	private synchronized void add(CustomerOrder order) {
 		if (order.getOrderId() != null) {
 			throw new IllegalArgumentException("Unable to assign an order ID during order creation.");
 		}
@@ -81,32 +81,22 @@ public class OrderController {
 			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
 		}
 		Worker worker = getValidWorker(order);
-		if (worker.getOrders().isEmpty()==false) {
-//			order = orderRepository.save(order);
-//			orderView.orderAdded(order);
-//			LOGGER.info("New order created: {}", order);
-//			return;
-			checkForPendingOrders(worker.getOrders());
-
-		}
-
+		checkForPendingOrders(worker.getOrders());
 		order = orderRepository.save(order);
 		orderView.orderAdded(order);
 		LOGGER.info("New order created: {}", order);
 	}
 
-	private void update(CustomerOrder order) {
+	private synchronized void update(CustomerOrder order) {
 		Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
 		order.setOrderId(id);
 		Worker worker = getValidWorker(order);
-		if (worker.getOrders().isEmpty()==false) {
-//			order = orderRepository.save(order);
-//			orderView.orderModified(order);
-//			LOGGER.info("Order Updated: {}", order);
-//			return;
+		CustomerOrder savedOrder = orderRepository.findById(id);
+		if (worker.getWorkerId() != savedOrder.getWorker().getWorkerId()) {
 			checkForPendingOrders(worker.getOrders());
 		}
 		order = orderRepository.save(order);
+
 		orderView.orderModified(order);
 		LOGGER.info("Order Updated: {}", order);
 	}
@@ -116,7 +106,7 @@ public class OrderController {
 	 *
 	 * @param order the order
 	 */
-	public void createOrUpdateOrder(CustomerOrder order, OperationType operation) {
+	public synchronized void createOrUpdateOrder(CustomerOrder order, OperationType operation) {
 		try {
 			Objects.requireNonNull(operation, "Operation Type is null");
 			Objects.requireNonNull(order, "Order is null");
@@ -153,7 +143,7 @@ public class OrderController {
 	 *
 	 * @param order the order
 	 */
-	public void fetchOrderById(CustomerOrder order) {
+	public synchronized void fetchOrderById(CustomerOrder order) {
 		LOGGER.info("Fetching order by ID");
 
 		try {
@@ -183,7 +173,7 @@ public class OrderController {
 	 *
 	 * @param order the order
 	 */
-	public void deleteOrder(CustomerOrder order) {
+	public synchronized void deleteOrder(CustomerOrder order) {
 		try {
 			Objects.requireNonNull(order, "Order is null");
 			Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
@@ -214,7 +204,7 @@ public class OrderController {
 	 *                     CUSTOMER_NAME, CUSTOMER_PHONE, DATE, CATEGORY, STATUS,
 	 *                     WORKER_ID. If null, an exception is thrown.
 	 */
-	public void searchOrder(String searchText, OrderSearchOptions searchOption) {
+	public synchronized void searchOrder(String searchText, OrderSearchOptions searchOption) {
 		LOGGER.info("Searching orders by search options");
 		try {
 			searchText = validationConfigurations.validateSearchString(searchText);
@@ -266,7 +256,7 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the list of orders
 	 */
-	private List<CustomerOrder> searchByDate(String searchText) {
+	private synchronized List<CustomerOrder> searchByDate(String searchText) {
 		String date;
 		date = validationConfigurations.validateStringDate(searchText);
 
@@ -283,7 +273,7 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the list of orders
 	 */
-	private List<CustomerOrder> searchByCategory(String searchText) {
+	private synchronized List<CustomerOrder> searchByCategory(String searchText) {
 		OrderCategory category;
 		category = validationConfigurations.validateEnum(searchText, OrderCategory.class);
 		List<CustomerOrder> orders = orderRepository.findByOrderCategory(category);
@@ -299,7 +289,7 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the list of orders
 	 */
-	private List<CustomerOrder> searchByStatus(String searchText) {
+	private synchronized List<CustomerOrder> searchByStatus(String searchText) {
 		OrderStatus status;
 		status = validationConfigurations.validateEnum(searchText, OrderStatus.class);
 		List<CustomerOrder> orders = orderRepository.findByOrderStatus(status);
@@ -315,7 +305,7 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the list of orders
 	 */
-	private List<CustomerOrder> searchByCustomerName(String searchText) {
+	private synchronized List<CustomerOrder> searchByCustomerName(String searchText) {
 		String customerName;
 		customerName = validationConfigurations.validateName(searchText);
 		List<CustomerOrder> orders = orderRepository.findByCustomerName(customerName);
@@ -331,7 +321,7 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the list of orders
 	 */
-	private List<CustomerOrder> searchByCustomerPhoneNumber(String searchText) {
+	private synchronized List<CustomerOrder> searchByCustomerPhoneNumber(String searchText) {
 		String customerPhoneNumber;
 		customerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
 		List<CustomerOrder> orders = orderRepository.findByCustomerPhoneNumber(customerPhoneNumber);
@@ -347,7 +337,7 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the list of orders
 	 */
-	private List<CustomerOrder> searchByWorkerId(String searchText) {
+	private synchronized List<CustomerOrder> searchByWorkerId(String searchText) {
 		Long workerId = validateId(searchText);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
@@ -366,7 +356,7 @@ public class OrderController {
 	 * @param searchText the search text
 	 * @return the customer order
 	 */
-	private CustomerOrder searchByOrderId(String searchText) {
+	private synchronized CustomerOrder searchByOrderId(String searchText) {
 		Long orderId = validateId(searchText);
 		CustomerOrder order = orderRepository.findById(orderId);
 		if (order == null) {
@@ -410,7 +400,7 @@ public class OrderController {
 	 * @param order the order
 	 * @return the valid worker
 	 */
-	private Worker getValidWorker(CustomerOrder order) {
+	private synchronized Worker getValidWorker(CustomerOrder order) {
 		Worker worker = workerRepository.findById(order.getWorker().getWorkerId());
 		if (worker == null) {
 			throw new NoSuchElementException("Worker with this ID " + order.getWorker().getWorkerId() + " not found");

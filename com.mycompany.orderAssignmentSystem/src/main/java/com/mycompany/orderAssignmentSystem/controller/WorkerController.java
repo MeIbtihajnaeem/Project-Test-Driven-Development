@@ -55,13 +55,13 @@ public class WorkerController {
 	/**
 	 * Retrieves all workers from the repository and displays them.
 	 */
-	public void getAllWorkers() {
+	public synchronized void getAllWorkers() {
 		LOGGER.info("Retrieving all workers");
 
 		workerView.showAllWorkers(workerRepository.findAll());
 	}
 
-	private void add(Worker worker) {
+	private synchronized void add(Worker worker) {
 		if (worker.getWorkerId() != null) {
 			throw new IllegalArgumentException("Unable to assign a worker ID during worker creation.");
 		}
@@ -75,7 +75,7 @@ public class WorkerController {
 		LOGGER.info("New worker created: {}", worker);
 	}
 
-	private void update(Worker worker) {
+	private synchronized void update(Worker worker) {
 		Long id = validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
 		worker.setWorkerId(id);
 		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
@@ -103,7 +103,7 @@ public class WorkerController {
 	 *
 	 * @param worker the worker to be added
 	 */
-	public void createOrUpdateWorker(Worker worker, OperationType operation) {
+	public synchronized void createOrUpdateWorker(Worker worker, OperationType operation) {
 		try {
 			Objects.requireNonNull(worker, "Worker is null");
 			validateWorkerFields(worker);
@@ -137,7 +137,7 @@ public class WorkerController {
 	 *
 	 * @param worker the worker to be fetched
 	 */
-	public void fetchWorkerById(Worker worker) {
+	public synchronized void fetchWorkerById(Worker worker) {
 		LOGGER.info("Fetch a worker");
 
 		try {
@@ -165,7 +165,7 @@ public class WorkerController {
 	 *
 	 * @param worker the worker to be deleted
 	 */
-	public void deleteWorker(Worker worker) {
+	public synchronized void deleteWorker(Worker worker) {
 		LOGGER.info("Delete a worker");
 
 		try {
@@ -184,6 +184,9 @@ public class WorkerController {
 		} catch (NoSuchElementException e) {
 			LOGGER.error("Error finding worker: {}", e.getMessage());
 			workerView.showErrorNotFound(e.getMessage(), worker);
+		} catch (Exception e) {
+			LOGGER.error("Error Deleting worker: {}", e.getMessage());
+
 		}
 	}
 
@@ -222,7 +225,7 @@ public class WorkerController {
 	 *                     WORKER_NAME, WORKER_PHONE, WORKER_CATEGORY. If null, an
 	 *                     exception is thrown.
 	 */
-	public void searchWorker(String searchText, WorkerSearchOption searchOption) {
+	public synchronized void searchWorker(String searchText, WorkerSearchOption searchOption) {
 		LOGGER.info("Search workers by search Options");
 
 		try {
@@ -265,7 +268,7 @@ public class WorkerController {
 	 * @param searchText the phone number to search for
 	 * @return the worker with the specified phone number
 	 */
-	private Worker searchByWorkerPhoneNumber(String searchText) {
+	private synchronized Worker searchByWorkerPhoneNumber(String searchText) {
 		String workerPhoneNumber;
 		workerPhoneNumber = validationConfigurations.validatePhoneNumber(searchText);
 		Worker worker = workerRepository.findByPhoneNumber(workerPhoneNumber);
@@ -281,7 +284,7 @@ public class WorkerController {
 	 * @param searchText the category to search for
 	 * @return the list of workers with the specified category
 	 */
-	private List<Worker> searchByWorkerCategory(String searchText) {
+	private synchronized List<Worker> searchByWorkerCategory(String searchText) {
 		OrderCategory workerCategory;
 		workerCategory = validationConfigurations.validateEnum(searchText, OrderCategory.class);
 		List<Worker> workers = workerRepository.findByOrderCategory(workerCategory);
@@ -297,7 +300,7 @@ public class WorkerController {
 	 * @param searchText the name to search for
 	 * @return the list of workers with the specified name
 	 */
-	private List<Worker> searchByWorkerName(String searchText) {
+	private synchronized List<Worker> searchByWorkerName(String searchText) {
 		String workerName;
 		workerName = validationConfigurations.validateName(searchText);
 		List<Worker> workers = workerRepository.findByName(workerName);
@@ -313,7 +316,7 @@ public class WorkerController {
 	 * @param searchText the ID to search for
 	 * @return the worker with the specified ID
 	 */
-	private Worker searchByWorkerId(String searchText) {
+	private synchronized Worker searchByWorkerId(String searchText) {
 		Long workerId = validationConfigurations.validateStringNumber(searchText);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
@@ -328,7 +331,7 @@ public class WorkerController {
 	 * @param worker the worker to validate
 	 * @return the worker if found
 	 */
-	private Worker validateWorkerExistence(Worker worker) {
+	private synchronized Worker validateWorkerExistence(Worker worker) {
 		Worker existingWorker = workerRepository.findById(worker.getWorkerId());
 		if (existingWorker == null) {
 			throw new NoSuchElementException("No Worker found with ID: " + worker.getWorkerId());
