@@ -42,8 +42,8 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 			}
 
 			return worker;
-		} catch (NoResultException e) {
-			return null;
+		} catch (Exception e) {
+			throw new NullPointerException("failed to get worker by id.");
 		}
 
 	}
@@ -60,7 +60,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 	public synchronized List<Worker> findByOrderCategory(OrderCategory category) {
 		TypedQuery<Worker> query = entityManager.createQuery("SELECT w FROM Worker w where w.workerCategory=:category",
 				Worker.class);
-		query.setParameter("category", category.toString());
+		query.setParameter("category", category);
 		return query.getResultList();
 	}
 
@@ -89,14 +89,14 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 
 		} catch (Exception e) {
 			transaction.rollback();
-			return null;
+			throw new IllegalArgumentException("failed to create worker.");
 		}
 	}
 
 	@Override
 	public synchronized void delete(Worker worker) {
 		EntityTransaction transaction = entityManager.getTransaction();
-		entityManager.clear();
+//		entityManager.clear();
 		try {
 			transaction.begin();
 //			entityManager.clear();
@@ -107,6 +107,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			transaction.rollback();
+			throw new IllegalArgumentException("failed to delete worker.");
 		}
 
 	}
