@@ -29,9 +29,9 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 	@Override
 	public synchronized Worker findById(Long workerId) {
 		try {
-			entityManager.clear();
 
 			Worker worker = entityManager.find(Worker.class, workerId);
+			entityManager.clear();
 
 			if (worker != null) {
 				TypedQuery<CustomerOrder> query = entityManager.createQuery(

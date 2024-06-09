@@ -12,6 +12,8 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<h2-version46>2.2.224</h2-version46>
+
 		<awaitility-version>4.0.2</awaitility-version>
 		<hibernate-core-version46>5.4.32.Final</hibernate-core-version46>
 		<javax.persistence-api-version>2.2</javax.persistence-api-version>
@@ -31,6 +33,16 @@
 	</properties>
 
 	<dependencies>
+
+		<!-- H2 database just to micic postgresql for unit test -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2-version46}</version>
+			<scope>test</scope>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

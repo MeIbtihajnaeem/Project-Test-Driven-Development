@@ -276,27 +276,18 @@ public class CustomerOrder {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(appointmentDate, customerAddress, customerName, customerPhoneNumber, orderCategory,
-				orderDescription, orderId, orderStatus, worker);
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 		CustomerOrder other = (CustomerOrder) obj;
-		return Objects.equals(appointmentDate, other.appointmentDate)
-				&& Objects.equals(customerAddress, other.customerAddress)
-				&& Objects.equals(customerName, other.customerName)
-				&& Objects.equals(customerPhoneNumber, other.customerPhoneNumber)
-				&& orderCategory == other.orderCategory && Objects.equals(orderDescription, other.orderDescription)
-				&& Objects.equals(orderId, other.orderId) && orderStatus == other.orderStatus
-				&& Objects.equals(worker, other.worker);
+		return Objects.equals(orderId, other.orderId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(orderId);
 	}
 
 	@Override

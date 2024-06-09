@@ -175,29 +175,44 @@ public class Worker {
 	 *
 	 * @return the hash code value
 	 */
-	@Override
-	public int hashCode() {
-		return Objects.hash(orders, workerCategory, workerId, workerName, workerPhoneNumber);
-	}
+//	@Override
+//	public int hashCode() {
+//		return Objects.hash(orders, workerCategory, workerId, workerName, workerPhoneNumber);
+//	}
+//
+//	/**
+//	 * Compares this Worker object to another object for equality.
+//	 *
+//	 * @param obj the object to compare
+//	 * @return true if the objects are equal, false otherwise
+//	 */
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		Worker other = (Worker) obj;
+//		return Objects.equals(orders, other.orders) && workerCategory == other.workerCategory
+//				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
+//				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
+//	}
 
-	/**
-	 * Compares this Worker object to another object for equality.
-	 *
-	 * @param obj the object to compare
-	 * @return true if the objects are equal, false otherwise
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 		Worker other = (Worker) obj;
-		return Objects.equals(orders, other.orders) && workerCategory == other.workerCategory
-				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
-				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
+		return Objects.equals(workerId, other.workerId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(workerId);
 	}
 
 	@Override

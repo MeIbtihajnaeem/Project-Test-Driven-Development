@@ -87,7 +87,7 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		int categoryIndex = 0;
 		int statusIndex = 0;
 		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
+//		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 		Worker worker = new Worker();
 		worker.setWorkerName(name);
 		worker.setWorkerPhoneNumber(phoneNumber);
@@ -106,9 +106,9 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withName("btnAdd")).click();
 		CustomerOrder savedOrder = orderRepository.findAll().get(0);
-		CustomerOrder order = new CustomerOrder(savedOrder.getOrderId(), customerName, customerAddress, customerPhone,
-				appointmentDate, orderDescription, category, status, savedWorker);
-		assertThat(orderRepository.findById(savedOrder.getOrderId())).isEqualTo(order);
+//		CustomerOrder order = new CustomerOrder(savedOrder.getOrderId(), customerName, customerAddress, customerPhone,
+//				appointmentDate, orderDescription, category, status, savedWorker);
+		assertThat(orderRepository.findById(savedOrder.getOrderId())).isEqualTo(savedOrder);
 	}
 
 	// This method first save order in the database then fetch the
@@ -142,15 +142,15 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		order.setOrderCategory(category);
 		order.setOrderStatus(status);
 		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		window.textBox("txtOrderId").enterText(savedOrder.getOrderId().toString());
+		order = orderRepository.save(order);
+		window.textBox("txtOrderId").enterText(order.getOrderId().toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 		String updatedCustomerName = "Jhon";
 		window.textBox("txtCustomerName").enterText(updatedCustomerName);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 		order.setCustomerName(updatedCustomerName);
-		order.setOrderId(savedOrder.getOrderId());
-		
+		order.setOrderId(order.getOrderId());
+
 		assertThat(orderRepository.findById(order.getOrderId())).isEqualTo(order);
 	}
 

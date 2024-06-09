@@ -184,10 +184,7 @@ public class WorkerController {
 		} catch (NoSuchElementException e) {
 			LOGGER.error("Error finding worker: {}", e.getMessage());
 			workerView.showErrorNotFound(e.getMessage(), worker);
-		} catch (Exception e) {
-			LOGGER.error("Error Deleting worker: {}", e.getMessage());
-
-		}
+		} 
 	}
 
 	/**
