@@ -746,7 +746,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	}
 
 	private void openOrderForm() {
-		dispose();
+		this.setVisible(false);
 	}
 
 	/**

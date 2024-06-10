@@ -1,6 +1,7 @@
 package com.mycompany.orderAssignmentSystem.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -125,8 +126,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 //		window.button(JButtonMatcher.withText("Search Orders")).requireDisabled();
 
 	}
-	
-
 
 	/**
 	 * Verify that the "Add" button is disabled when the worker ID, worker name,
@@ -358,8 +357,6 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
 	}
 
-
-
 	/**
 	 * Verify that the "Fetch" button is disabled when either the worker ID, worker
 	 * name, or worker phone number fields are blank.
@@ -386,7 +383,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		combo.selectItem(0);
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
 	}
-	
+
 	@Test
 	public void testWhenWorkerIdOnlyNumbersThenFetchButtonShouldBeFetchButtonEnabled() {
 		JTextComponentFixture workerId = window.textBox("txtWorkerId");
@@ -637,10 +634,19 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 //		window.label("showErrorLbl").requireText(" ");
 //	}
 
+	@Test
+	public void testManageOrderButtonHideWorkerView() {
+
+		window.button(JButtonMatcher.withName("lblManageOrder")).click();
+
+		assertFalse(window.target().isVisible());
+	}
+
 	/**
 	 * Verify that clicking the "Add" button delegates to the worker controller to
 	 * create a new worker.
 	 */
+
 	@Test
 	public void testAddButtonShouldDelegateToWorkerControllerNewWorker() {
 		String name = "Naeem";

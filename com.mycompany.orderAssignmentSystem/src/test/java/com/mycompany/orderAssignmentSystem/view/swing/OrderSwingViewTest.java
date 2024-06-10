@@ -39,6 +39,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Mock
 	private OrderController orderController;
 
+	@Mock
+	private WorkerSwingView workerView;
+
 	private AutoCloseable closeable;
 
 //	private List<Worker> workers;
@@ -50,6 +53,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> {
 			orderSwingView = new OrderSwingView();
 			orderSwingView.setOrderController(orderController);
+			orderSwingView.setWorkerSwingView(workerView);
 
 			return orderSwingView;
 		});
@@ -728,6 +732,12 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		String[] listContents = window.list("listOrders").contents();
 		assertThat(listContents).containsExactly(order2.toString());
 		window.label("showSearchErrorLbl").requireText(" ");
+	}
+
+	@Test
+	public void testManageWorkerButtonShowsWorkerSwingView() {
+		window.button(JButtonMatcher.withName("btnManageWorker")).click();
+		verify(workerView).setVisible(true);
 	}
 
 	@Test
