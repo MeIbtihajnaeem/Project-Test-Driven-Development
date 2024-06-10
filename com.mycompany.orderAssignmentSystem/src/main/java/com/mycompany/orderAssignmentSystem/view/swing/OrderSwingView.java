@@ -2,7 +2,6 @@ package com.mycompany.orderAssignmentSystem.view.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -59,6 +58,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 	private JLabel showError;
 	private JLabel showSearchErrorLbl;
 	private OrderController orderController;
+	private WorkerSwingView workerSwingView;
 
 	// List of combo box
 
@@ -88,17 +88,21 @@ public class OrderSwingView extends JFrame implements OrderView {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					OrderSwingView frame = new OrderSwingView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					OrderSwingView frame = new OrderSwingView();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
+
+	public void setWorkerSwingView(WorkerSwingView workerSwingView) {
+		this.workerSwingView = workerSwingView;
 	}
 
 	/**
@@ -223,6 +227,8 @@ public class OrderSwingView extends JFrame implements OrderView {
 		btnManageWorker.setBackground(Color.RED);
 		btnManageWorker.setFocusPainted(false);
 		btnManageWorker.setPreferredSize(new Dimension(150, 40));
+		btnManageWorker.addActionListener(e -> openWorkerForm());
+
 		GridBagConstraints gbc_btnManageWorker = new GridBagConstraints();
 		gbc_btnManageWorker.ipady = 10;
 		gbc_btnManageWorker.ipadx = 20;
@@ -541,25 +547,25 @@ public class OrderSwingView extends JFrame implements OrderView {
 		gbc_btnUpdate.gridx = 2;
 		gbc_btnUpdate.gridy = 7;
 		contentPane.add(btnUpdate, gbc_btnUpdate);
-		
-				btnClearSearch = new JButton("Clear");
-				btnClearSearch.setEnabled(false);
-				btnClearSearch.setName("btnClearSearch");
-				btnClearSearch.setForeground(Color.WHITE);
-				btnClearSearch.setOpaque(true);
-				btnClearSearch.setFont(new Font("Arial", Font.BOLD, 16));
-				btnClearSearch.setBorder(new LineBorder(new Color(0, 0, 0)));
-				btnClearSearch.setBackground(new Color(59, 89, 182));
-				btnClearSearch.setFocusPainted(false);
-				btnClearSearch.setPreferredSize(new Dimension(150, 40));
-				btnClearSearch.addActionListener(e -> resetAllFields());
-				GridBagConstraints gbc_btnClearSearch = new GridBagConstraints();
-				gbc_btnClearSearch.ipady = 10;
-				gbc_btnClearSearch.ipadx = 20;
-				gbc_btnClearSearch.insets = new Insets(0, 0, 5, 5);
-				gbc_btnClearSearch.gridx = 3;
-				gbc_btnClearSearch.gridy = 7;
-				contentPane.add(btnClearSearch, gbc_btnClearSearch);
+
+		btnClearSearch = new JButton("Clear");
+		btnClearSearch.setEnabled(false);
+		btnClearSearch.setName("btnClearSearch");
+		btnClearSearch.setForeground(Color.WHITE);
+		btnClearSearch.setOpaque(true);
+		btnClearSearch.setFont(new Font("Arial", Font.BOLD, 16));
+		btnClearSearch.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnClearSearch.setBackground(new Color(59, 89, 182));
+		btnClearSearch.setFocusPainted(false);
+		btnClearSearch.setPreferredSize(new Dimension(150, 40));
+		btnClearSearch.addActionListener(e -> resetAllFields());
+		GridBagConstraints gbc_btnClearSearch = new GridBagConstraints();
+		gbc_btnClearSearch.ipady = 10;
+		gbc_btnClearSearch.ipadx = 20;
+		gbc_btnClearSearch.insets = new Insets(0, 0, 5, 5);
+		gbc_btnClearSearch.gridx = 3;
+		gbc_btnClearSearch.gridy = 7;
+		contentPane.add(btnClearSearch, gbc_btnClearSearch);
 
 		JLabel lblSearchWorker = new JLabel("Search Order");
 		lblSearchWorker.setIconTextGap(8);
@@ -695,6 +701,10 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	}
 
+	private void openWorkerForm() {
+		workerSwingView.setVisible(true);
+	}
+
 	protected void handleButtonAndComboBoxStates() {
 		boolean isOrderIdEmpty = txtOrderId.getText().trim().isEmpty();
 		boolean isCustomerNameEmpty = txtCustomerName.getText().trim().isEmpty();
@@ -738,6 +748,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		order.stream().forEach(orderListModel::addElement);
 		resetErrorLabelAndClearComboBoxSelection();
 	}
+
 	@Override
 	public void showAllWorkers(List<Worker> worker) {
 		worker.stream().forEach(workerListModel::addElement);
@@ -753,10 +764,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 	@Override
 	public void orderModified(CustomerOrder order) {
 		for (int i = 0; i < orderListModel.getSize(); i++) {
-			if (orderListModel.getElementAt(i)
-					.getOrderId().
-					equals(order.getOrderId()
-							)) {
+			if (orderListModel.getElementAt(i).getOrderId().equals(order.getOrderId())) {
 				orderListModel.removeElementAt(i);
 				orderListModel.addElement(order);
 			}
@@ -824,6 +832,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbOrderCategory.setSelectedItem(null);
 		resetErrorLabels();
 	}
+
 	private void resetErrorLabels() {
 		showError.setText(" ");
 		showErrorNotFoundLbl.setText(" ");

@@ -217,7 +217,7 @@ public class Worker {
 
 	@Override
 	public String toString() {
-		return this.workerId + ") " + this.workerName + " -- " + this.workerCategory;
+		return this.workerId + ") " + this.workerName + " -- " + this.workerCategory + " -- " + this.workerPhoneNumber;
 	}
 
 	/**

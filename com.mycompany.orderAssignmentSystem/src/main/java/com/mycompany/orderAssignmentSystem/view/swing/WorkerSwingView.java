@@ -2,7 +2,6 @@ package com.mycompany.orderAssignmentSystem.view.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -121,18 +120,18 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 *
 	 * @param args the arguments
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					WorkerSwingView frame = new WorkerSwingView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					WorkerSwingView frame = new WorkerSwingView();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Gets the worker list model.
@@ -315,6 +314,8 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		lblManageOrder.setBackground(Color.RED);
 		lblManageOrder.setFocusPainted(false);
 		lblManageOrder.setPreferredSize(new Dimension(150, 40));
+		lblManageOrder.addActionListener(e -> openOrderForm());
+
 		GridBagConstraints gbc_lblManageOrder = new GridBagConstraints();
 		gbc_lblManageOrder.gridheight = 2;
 		gbc_lblManageOrder.ipady = 10;
@@ -345,7 +346,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) )) {
+				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE))) {
 					getToolkit().beep();
 					e.consume();
 				}
@@ -742,6 +743,10 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		gbc_lblError.gridy = 21;
 		contentPane.add(showErrorNotFoundLbl, gbc_lblError);
 
+	}
+
+	private void openOrderForm() {
+		dispose();
 	}
 
 	/**

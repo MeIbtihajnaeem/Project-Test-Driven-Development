@@ -12,6 +12,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<picocli-version>4.6.1</picocli-version>
 		<h2-version46>2.2.224</h2-version46>
 
 		<awaitility-version>4.0.2</awaitility-version>
@@ -29,6 +30,7 @@
 		<postgres.user>testUser</postgres.user>
 		<postgres.password>test123</postgres.password>
 		<postgres.dbName>orderWorkerTestDb</postgres.dbName>
+		<cucumber.version>5.5.0</cucumber.version>
 
 	</properties>
 
@@ -41,8 +43,18 @@
 			<version>${h2-version46}</version>
 			<scope>test</scope>
 		</dependency>
-
-
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -95,6 +107,11 @@
 			<artifactId>awaitility</artifactId>
 			<version>${awaitility-version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>${picocli-version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -221,10 +238,25 @@
 						<configuration>
 							<sources>
 								<source>src/it/java</source>
+								<source>src/e2e/java</source>
+								<source>src/bdd/java</source>
 							</sources>
 						</configuration>
 					</execution>
-
+					<execution>
+						<id>add-test-resource</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>add-test-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/bdd/resources</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
