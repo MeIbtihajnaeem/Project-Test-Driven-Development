@@ -170,8 +170,8 @@ public class WorkerController {
 
 		try {
 			validateWorkerAndWorkerId(worker);
-			Worker existingWorker = validateWorkerExistence(worker);
-			if (existingWorker.getOrders() != null && !existingWorker.getOrders().isEmpty()) {
+			 worker = validateWorkerExistence(worker);
+			if (worker.getOrders() != null && !worker.getOrders().isEmpty()) {
 				throw new IllegalArgumentException(
 						"Cannot delete worker with orders this worker has " + worker.getOrders().size() + " Orders");
 			}

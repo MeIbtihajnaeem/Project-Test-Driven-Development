@@ -264,8 +264,8 @@ public class OrderWorkerSwingAppSteps extends ConfigSteps {
 
 	@Then("The user enters the following values in the worker view")
 	public void the_user_enters_the_following_values_in_the_worker_view(List<Map<String, String>> values) {
-		String[] textFields = { "WorkerName", "WorkerPhone" };
-		String[] comboBox = { "WorkerCategory", };
+		String[] textFields = { "WorkerId", "WorkerName", "WorkerPhone", "SearchWorker" };
+		String[] comboBox = { "WorkerCategory", "SearchByOptions" };
 		values.stream().flatMap(m -> m.entrySet().stream()).forEach(e -> {
 			boolean isTextField = Arrays.asList(textFields).contains(e.getKey());
 			boolean isComboBox = Arrays.asList(comboBox).contains(e.getKey());
@@ -285,8 +285,72 @@ public class OrderWorkerSwingAppSteps extends ConfigSteps {
 
 	@Then("An error is shown in worker view containing the following values")
 	public void an_error_is_shown_in_worker_view_containing_the_following_values(List<List<String>> values) {
+
 		values.forEach(value -> {
 			assertThat(workerViewWindow.label("showErrorLbl").text()).contains(value);
+		});
+	}
+
+	@Then("The worker view fields contains an element with the following values")
+	public void the_worker_view_fields_contains_an_element_with_the_following_values(List<Map<String, String>> values) {
+		String[] textFields = { "WorkerId", "WorkerName", "WorkerPhone" };
+		String[] comboBox = { "WorkerCategory", };
+		values.stream().flatMap(m -> m.entrySet().stream()).forEach(e -> {
+			boolean isTextField = Arrays.asList(textFields).contains(e.getKey());
+			boolean isComboBox = Arrays.asList(comboBox).contains(e.getKey());
+
+			String expectedValue = e.getValue();
+			if (isTextField) {
+				workerViewWindow.textBox("txt" + e.getKey()).requireText(expectedValue);
+			} else if (isComboBox) {
+				workerViewWindow.comboBox("cmb" + e.getKey())
+						.requireSelection(Pattern.compile(".*" + expectedValue + ".*"));
+			}
+		});
+
+	}
+
+	@Then("An no entry found error is shown in worker view containing the following values")
+	public void an_no_entry_found_error_is_shown_in_worker_view_containing_the_following_values(
+			List<List<String>> values) {
+
+		values.forEach(value -> {
+			assertThat(workerViewWindow.label("showErrorNotFoundLbl").text()).contains(value);
+		});
+	}
+
+	@Then("The user select worker from the list")
+	public void the_user_select_worker_from_the_list(List<String> values) {
+		workerViewWindow.list().selectItem(Pattern.compile(".*" + values.get(0) + ".*"));
+	}
+
+	@Then("The database deletes the worker with the following values")
+	public void the_database_deletes_the_worker_with_the_following_values(List<List<String>> values) {
+		try {
+			values.forEach(workerValue -> {
+				Long workerId = Long.parseLong(workerValue.get(0));
+				String workerName = workerValue.get(1);
+				String workerPhone = workerValue.get(2);
+				OrderCategory workerCategory = OrderCategory.valueOf(workerValue.get(3));
+				Worker worker = new Worker(workerId, workerName, workerPhone, workerCategory);
+
+				EntityTransaction transaction = entityManager.getTransaction();
+				transaction.begin();
+				// This is due to detached instance issue since the entity manager is not closed
+				// therefore we have to merge the object before deleting
+				entityManager.remove(entityManager.contains(worker) ? worker : entityManager.merge(worker));
+				transaction.commit();
+
+			});
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+	}
+
+	@Then("An search error is shown in worker view containing the following values")
+	public void an_search_error_is_shown_in_worker_view_containing_the_following_values(List<List<String>> values) {
+		values.forEach(value -> {
+			assertThat(workerViewWindow.label("showErrorLblSearchWorker").text()).contains(value);
 		});
 	}
 
