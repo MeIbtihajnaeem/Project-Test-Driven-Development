@@ -3,6 +3,6 @@
 **/.DS_Store
 *.log
 **/failed-gui-tests/
-orderAssignmentSystem/src/main/resources/META-INF
+com.mycompany.orderAssignmentSystem/src/main/resources/META-INF/persistence.xml
 
 
