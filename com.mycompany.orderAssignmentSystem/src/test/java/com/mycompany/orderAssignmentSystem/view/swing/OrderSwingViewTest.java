@@ -405,6 +405,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testWhenEitherOrderIdCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerAreBlankAndUpdateButtonShouldBeDisable() {
+		//sadf
 		GuiActionRunner.execute(() -> {
 			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
 			orderSwingView.getWorkerListModel()
@@ -444,7 +445,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
-		orderId.enterText(" ");
+		orderId.enterText("\b");
 		name.enterText(" ");
 		address.enterText(" ");
 		phone.enterText(" ");
