@@ -12,7 +12,7 @@ jobs:
       matrix:
         include:
           - java: 8
-            additional-maven-args: "-Pintegration-test"
+            additional-maven-args: "-Pintegration-testing"
     name: Build with Java ${{ matrix.java }}
     steps:
       - uses: actions/checkout@v2
