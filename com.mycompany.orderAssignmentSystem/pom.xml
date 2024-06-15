@@ -375,7 +375,6 @@
 	</build>
 
 	<profiles>
-
 		<profile>
 			<id>mutation-testing-with-coverage</id>
 			<build>
