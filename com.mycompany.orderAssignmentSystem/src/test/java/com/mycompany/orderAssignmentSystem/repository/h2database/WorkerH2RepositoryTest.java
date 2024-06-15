@@ -47,7 +47,7 @@ public class WorkerH2RepositoryTest {
 	@Test
 	public void testFindAllWhenNotEmpty() {
 		Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker("Alic", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker("Alic", "3401372679", OrderCategory.PLUMBER);
 		worker1 = workerDataRepository.save(worker1);
 		worker2 = workerDataRepository.save(worker2);
 		assertThat(workerDataRepository.findAll()).containsExactly(worker1, worker2);

@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  app:
+    build:
+      context: .
+    image: orderworkerassignment
+    networks:
+      - ibtihajNetwork
+    depends_on:
+      - pg_db
+    environment:
+      POSTGRES_DB: orderWorkerTestDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  pg_db:
+    restart: always
+    image: postgres:14.1-alpine
+    networks:
+      - ibtihajNetwork
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: orderWorkerTestDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+volumes:
+  postgres:
+    driver: local
+networks:
+  ibtihajNetwork:
+    driver: bridge
