@@ -3,4 +3,6 @@
 **/.DS_Store
 *.log
 **/failed-gui-tests/
+project/src/main/resources/META-INF/persistence.xml
+
 
