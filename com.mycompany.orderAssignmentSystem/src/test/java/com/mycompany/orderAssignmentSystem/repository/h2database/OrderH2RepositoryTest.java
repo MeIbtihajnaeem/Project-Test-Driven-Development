@@ -33,8 +33,8 @@ public class OrderH2RepositoryTest {
 
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 		entityManager = entityManagerFactory.createEntityManager();
-		orderDataRepository = new OrderDatabaseRepository(entityManager);
-		workerDataRepository = new WorkerDatabaseRepository(entityManager);
+		orderDataRepository = new OrderDatabaseRepository(entityManagerFactory);
+		workerDataRepository = new WorkerDatabaseRepository(entityManagerFactory);
 	}
 
 	@After
@@ -128,7 +128,7 @@ public class OrderH2RepositoryTest {
 				"No description", OrderCategory.PLUMBER, OrderStatus.PENDING, worker1);
 		order1 = orderDataRepository.save(order1);
 		entityManager.getTransaction().begin();
-		entityManager.remove(order1);
+		entityManager.remove(entityManager.contains(order1) ? order1 : entityManager.merge(order1));
 		entityManager.getTransaction().commit();
 		orderDataRepository.delete(order1);
 		assertThat(orderDataRepository.findAll()).isEmpty();

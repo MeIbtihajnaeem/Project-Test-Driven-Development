@@ -2,7 +2,6 @@ package com.mycompany.orderAssignmentSystem.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -36,14 +35,14 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
-	private EntityManager entityManager;
+//	private EntityManager entityManager;
 	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
 
 	@Override
 	protected void onSetUp() throws Exception {
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-		entityManager = entityManagerFactory.createEntityManager();
-		workerRepository = new WorkerDatabaseRepository(entityManager);
+//		entityManager = entityManagerFactory.createEntityManager();
+		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
 
 		GuiActionRunner.execute(() -> {
@@ -62,7 +61,7 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onTearDown() {
 		entityManagerFactory.close();
-		entityManager.close();
+//		entityManager.close();
 	}
 
 	@Test

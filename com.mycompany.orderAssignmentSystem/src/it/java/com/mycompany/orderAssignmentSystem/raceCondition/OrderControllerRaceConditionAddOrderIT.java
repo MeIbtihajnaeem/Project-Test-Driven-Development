@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -46,7 +45,7 @@ public class OrderControllerRaceConditionAddOrderIT {
 	private AutoCloseable closeable;
 
 	private EntityManagerFactory entityManagerFactory;
-	private EntityManager entityManager;
+//	private EntityManager entityManager;
 	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
 	private Worker worker = new Worker();
 	private CustomerOrder order = new CustomerOrder();
@@ -55,10 +54,10 @@ public class OrderControllerRaceConditionAddOrderIT {
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-		entityManager = entityManagerFactory.createEntityManager();
+//		entityManager = entityManagerFactory.createEntityManager();
 
-		orderRepository = new OrderDatabaseRepository(entityManager);
-		workerRepository = new WorkerDatabaseRepository(entityManager);
+		orderRepository = new OrderDatabaseRepository(entityManagerFactory);
+		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
 //		orderController = new OrderController(orderRepository, orderView, workerRepository, validationConfig);
 		worker.setWorkerName("Jhon");
@@ -78,10 +77,10 @@ public class OrderControllerRaceConditionAddOrderIT {
 
 	@After
 	public void releaseMocks() throws Exception {
-		entityManager.clear();
+//		entityManager.clear();
 
 		entityManagerFactory.close();
-		entityManager.close();
+//		entityManager.close();
 
 		closeable.close();
 	}

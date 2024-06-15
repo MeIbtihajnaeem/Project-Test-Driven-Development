@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -40,18 +39,18 @@ public class WorkerControllerRaceConditionAddWorkerIT {
 	private AutoCloseable closeable;
 
 	private EntityManagerFactory entityManagerFactory;
-	private EntityManager entityManager;
+//	private EntityManager entityManager;
 	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
 	private Worker worker = new Worker();
 
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
-		
+
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-		entityManager = entityManagerFactory.createEntityManager();
-		
-		workerRepository = new WorkerDatabaseRepository(entityManager);
+//		entityManager = entityManagerFactory.createEntityManager();
+
+		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
 
 		worker.setWorkerName("Alic");
@@ -61,9 +60,9 @@ public class WorkerControllerRaceConditionAddWorkerIT {
 
 	@After
 	public void releaseMocks() throws Exception {
-		entityManager.clear();
+//		entityManager.clear();
 		entityManagerFactory.close();
-		entityManager.close();
+//		entityManager.close();
 		closeable.close();
 	}
 

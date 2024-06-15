@@ -90,7 +90,7 @@ Feature: Order Application Frame Specification of the behavior of the Order Appl
 	Then The order view list contains an element with the following values
 		|	1 | Jhon | 3401372678 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Leo | 3401372671 | PLUMBER |
 	@DeleteError
-	Scenario: Delete an existing order
+	Scenario: Delete an existing order with error
 	Given The database contains the order with the following values
 		|	1 | Jhon | 3401372678 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Leo | 3401372671 | PLUMBER |
 		| 2 | Alic | 3401372679 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Bob | 3401372672 | PLUMBER |
@@ -126,3 +126,28 @@ Feature: Order Application Frame Specification of the behavior of the Order Appl
 	When The user clicks the order view "Search" button
 	Then An seach error is shown in order view containing the following values
 		| Leo |
+	@ClearSearch
+	Scenario: Search order then fetch order and verify every field is clear
+	Given The database contains the order with the following values
+		|	1 | Jhon | 3401372678 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Leo | 3401372678 | PLUMBER |
+		| 2 | Alic | 3401372679 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Bob | 3401372679 | PLUMBER |
+	When The Order View is shown
+	Then The user enters the following values in the order view
+		| SearchOrder | SearchBy | 
+		| Alic | CUSTOMER_NAME |
+	When The user clicks the order view "Search" button
+	Then The order view list contains an element with the following values
+		| 2 | Alic | 3401372679 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Bob | 3401372679 | PLUMBER |
+	And The user enters the following values in the order view
+		|OrderId|
+		| 1 |
+	When The user clicks the order view "Fetch" button
+	Then The order view fields contains an element with the following values
+		|OrderId| CustomerName | CustomerPhone | OrderCategory | OrderStatus |  CustomerAddress | SelectedDate	| OrderDescription| worker_name | worker_phone | worker_category |
+		|	1 | Jhon | 3401372678 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Leo | 3401372678 | PLUMBER |
+	When The user clicks the order view "Clear" button
+	Then The order view list contains an element with the following values
+		|	1 | Jhon | 3401372678 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Leo | 3401372678 | PLUMBER |
+		| 2 | Alic | 3401372679 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Bob | 3401372679 | PLUMBER |
+	And The order view fields are reset		
+		

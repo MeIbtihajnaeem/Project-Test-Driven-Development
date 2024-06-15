@@ -21,7 +21,6 @@ Feature: Worker Application Frame Specification of the behavior of the Worker Ap
 	Then The worker view list contains an element with the following values
 		| 1 | Leo | 3401372678 | PLUMBER |
 		| 2 | Bob | 3401372679 | PLUMBER |
-		
 	@AddNewWorkerForError
 	Scenario: Add a new Worker with wrong phone number
 	Given The database contains worker with the following values
@@ -53,7 +52,7 @@ Feature: Worker Application Frame Specification of the behavior of the Worker Ap
 		| WorkerId| WorkerName | WorkerPhone | WorkerCategory |
 		| 1 | Leo | 4401372678 | PLUMBER |
 	When The user clicks the worker view "Update" button
-	Then Then An error is shown in worker view containing the following values
+	Then An error is shown in worker view containing the following values
 		| 1 | Leo | 4401372678 | PLUMBER |
 	@FetchWorker
 	Scenario: Fetch an existing Worker with its id
@@ -128,3 +127,26 @@ Feature: Worker Application Frame Specification of the behavior of the Worker Ap
 	When The user clicks the worker view "Search Worker" button
 	Then An search error is shown in worker view containing the following values
 		| Leo |
+	@ClearSearch
+	Scenario: Search worker then verify search fields are clear
+	Given The database contains worker with the following values
+		|	1 | Jhon | 3401372678 | PLUMBER |
+		| 2 | Alic | 3401372679 | PLUMBER |
+	When The Worker View is shown
+	Then The user enters the following values in the worker view
+		| SearchWorker | SearchByOptions | 
+		| Alic | WORKER_NAME |
+	When The user clicks the worker view "Search Worker" button
+	Then The worker view list contains an element with the following values
+		| 2 | Alic | 3401372679 | PLUMBER |
+	When The user clicks the worker view "Clear" button
+	Then The worker view list contains an element with the following values
+		|	1 | Jhon | 3401372678 | PLUMBER |
+		| 2 | Alic | 3401372679 | PLUMBER |
+	And The worker view search filter are reset
+	
+	
+	
+	
+	
+	

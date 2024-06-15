@@ -3,7 +3,6 @@ package com.mycompany.orderAssignmentSystem.controller;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -48,16 +47,16 @@ public class OrderControllerIT {
 	private AutoCloseable closeable;
 
 	private EntityManagerFactory entityManagerFactory;
-	private EntityManager entityManager;
+//	private EntityManager entityManager;
 	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
 
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-		entityManager = entityManagerFactory.createEntityManager();
-		orderRepository = new OrderDatabaseRepository(entityManager);
-		workerRepository = new WorkerDatabaseRepository(entityManager);
+//		entityManager = entityManagerFactory.createEntityManager();
+		orderRepository = new OrderDatabaseRepository(entityManagerFactory);
+		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
 		orderController = new OrderController(orderRepository, orderView, workerRepository, validationConfig);
 	}
@@ -65,7 +64,7 @@ public class OrderControllerIT {
 	@After
 	public void releaseMocks() throws Exception {
 		entityManagerFactory.close();
-		entityManager.close();
+//		entityManager.close();
 		closeable.close();
 	}
 

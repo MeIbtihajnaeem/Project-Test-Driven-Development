@@ -5,7 +5,6 @@ import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -41,14 +40,14 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
-	private EntityManager entityManager;
+//	private EntityManager entityManager;
 	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
 
 	@Override
 	protected void onSetUp() throws Exception {
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-		entityManager = entityManagerFactory.createEntityManager();
-		workerRepository = new WorkerDatabaseRepository(entityManager);
+//		entityManager = entityManagerFactory.createEntityManager();
+		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validatedConfig = new ExtendedValidationConfigurations();
 //		for (Worker worker : workerRepository.findAll()) {
 //			workerRepository.delete(worker);
@@ -69,7 +68,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onTearDown() {
 		entityManagerFactory.close();
-		entityManager.close();
+//		entityManager.close();
 	}
 
 	@Test
@@ -184,8 +183,10 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 
 		String updatedPhoneNumber = "4401372678";
+
 		window.textBox("txtWorkerPhone").enterText(updatedPhoneNumber);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
+		worker.setWorkerPhoneNumber(updatedPhoneNumber);
 //		assertThat(window.list("listWorkers").contents()).isEqualTo(worker.toString());
 
 		window.label("showErrorLbl")

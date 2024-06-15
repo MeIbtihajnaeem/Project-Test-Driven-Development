@@ -29,7 +29,7 @@ public class WorkerH2RepositoryTest {
 
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 		entityManager = entityManagerFactory.createEntityManager();
-		workerDataRepository = new WorkerDatabaseRepository(entityManager);
+		workerDataRepository = new WorkerDatabaseRepository(entityManagerFactory);
 	}
 
 	@After
@@ -168,7 +168,7 @@ public class WorkerH2RepositoryTest {
 		Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
 		worker1 = workerDataRepository.save(worker1);
 		entityManager.getTransaction().begin();
-		entityManager.remove(worker1);
+		entityManager.remove(entityManager.contains(worker1) ? worker1 : entityManager.merge(worker1));
 		entityManager.getTransaction().commit();
 		workerDataRepository.delete(worker1);
 		assertThat(workerDataRepository.findAll()).isEmpty();

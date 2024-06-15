@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -25,7 +24,7 @@ import picocli.CommandLine.Option;
 @Command(mixinStandardHelpOptions = true)
 public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
+//	private static EntityManager entityManager;
 	private static Map<String, String> properties = new HashMap<>();
 
 	@Option(names = { "--postgres-host" }, description = "Postgresql host ")
@@ -65,9 +64,9 @@ public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 				properties.put("hibernate.hbm2ddl.auto", "update");
 
 				entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnitName, properties);
-				entityManager = entityManagerFactory.createEntityManager();
-				OrderDatabaseRepository orderRepository = new OrderDatabaseRepository(entityManager);
-				WorkerDatabaseRepository workerRepository = new WorkerDatabaseRepository(entityManager);
+//				entityManager = entityManagerFactory.createEntityManager();
+				OrderDatabaseRepository orderRepository = new OrderDatabaseRepository(entityManagerFactory);
+				WorkerDatabaseRepository workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 				WorkerSwingView workerView = new WorkerSwingView();
 				OrderSwingView orderView = new OrderSwingView();
 				ValidationConfigurations validationConfigurations = new ExtendedValidationConfigurations();

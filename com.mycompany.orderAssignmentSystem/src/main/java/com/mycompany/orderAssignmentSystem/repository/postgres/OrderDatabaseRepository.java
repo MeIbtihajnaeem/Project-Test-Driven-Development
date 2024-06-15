@@ -3,6 +3,7 @@ package com.mycompany.orderAssignmentSystem.repository.postgres;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 
@@ -12,21 +13,27 @@ import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
 import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
 
 public class OrderDatabaseRepository implements OrderRepository {
-	private EntityManager entityManager;
+	private EntityManagerFactory entityManagerFactory;;
 
-	public OrderDatabaseRepository(EntityManager entityManager) {
+	public OrderDatabaseRepository(EntityManagerFactory entityManagerFactory) {
 		super();
-		this.entityManager = entityManager;
+		this.entityManagerFactory = entityManagerFactory;
 	}
 
 	@Override
 	public synchronized List<CustomerOrder> findAll() {
-		return entityManager.createQuery("SELECT o FROM CustomerOrder o", CustomerOrder.class).getResultList();
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		List<CustomerOrder> resultList = entityManager.createQuery("SELECT o FROM CustomerOrder o", CustomerOrder.class)
+				.getResultList();
+		entityManager.close();
+		return resultList;
 
 	}
 
 	@Override
 	public synchronized CustomerOrder save(CustomerOrder order) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 		EntityTransaction transaction = entityManager.getTransaction();
 		try {
 			transaction.begin();
@@ -34,23 +41,29 @@ public class OrderDatabaseRepository implements OrderRepository {
 
 			order = entityManager.contains(order) ? order : entityManager.merge(order);
 			transaction.commit();
+			entityManager.close();
 			return order;
 		} catch (Exception e) {
 			transaction.rollback();
+			entityManager.close();
 			throw new IllegalArgumentException("failed to create order.");
 		}
 	}
 
 	@Override
 	public synchronized void delete(CustomerOrder order) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 		EntityTransaction transaction = entityManager.getTransaction();
 
 		try {
 			transaction.begin();
 			entityManager.remove(entityManager.contains(order) ? order : entityManager.merge(order));
 			transaction.commit();
+			entityManager.close();
 		} catch (Exception e) {
 			transaction.rollback();
+			entityManager.close();
 			throw new IllegalArgumentException("failed to delete order.");
 		}
 	}
@@ -58,8 +71,12 @@ public class OrderDatabaseRepository implements OrderRepository {
 	@Override
 
 	public synchronized CustomerOrder findById(Long orderId) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 //		try {
-		return entityManager.find(CustomerOrder.class, orderId);
+		CustomerOrder customerOrder = entityManager.find(CustomerOrder.class, orderId);
+		entityManager.close();
+		return customerOrder;
 //		} catch (NoResultException e) {
 //			return null;
 //		}
@@ -68,42 +85,62 @@ public class OrderDatabaseRepository implements OrderRepository {
 
 	@Override
 	public synchronized List<CustomerOrder> findByCustomerName(String name) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 		TypedQuery<CustomerOrder> query = entityManager
 				.createQuery("SELECT o FROM CustomerOrder o where o.customerName=:name", CustomerOrder.class);
 		query.setParameter("name", name);
-		return query.getResultList();
+		List<CustomerOrder> resultList = query.getResultList();
+		entityManager.close();
+		return resultList;
 	}
 
 	@Override
 	public synchronized List<CustomerOrder> findByCustomerPhoneNumber(String phoneNumber) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 		TypedQuery<CustomerOrder> query = entityManager
 				.createQuery("SELECT o FROM CustomerOrder o where o.customerPhoneNumber=:phone", CustomerOrder.class);
 		query.setParameter("phone", phoneNumber);
-		return query.getResultList();
+		List<CustomerOrder> resultList = query.getResultList();
+		entityManager.close();
+		return resultList;
 	}
 
 	@Override
 	public synchronized List<CustomerOrder> findByDate(String date) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 		TypedQuery<CustomerOrder> query = entityManager
 				.createQuery("SELECT o FROM CustomerOrder o where o.appointmentDate=:date", CustomerOrder.class);
 		query.setParameter("date", date);
-		return query.getResultList();
+		List<CustomerOrder> resultList = query.getResultList();
+		entityManager.close();
+		return resultList;
 	}
 
 	@Override
 	public synchronized List<CustomerOrder> findByOrderCategory(OrderCategory category) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 		TypedQuery<CustomerOrder> query = entityManager
 				.createQuery("SELECT o FROM CustomerOrder o where o.orderCategory=:category", CustomerOrder.class);
 		query.setParameter("category", category);
-		return query.getResultList();
+		List<CustomerOrder> resultList = query.getResultList();
+		entityManager.close();
+		return resultList;
 	}
 
 	@Override
 	public synchronized List<CustomerOrder> findByOrderStatus(OrderStatus status) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+
 		TypedQuery<CustomerOrder> query = entityManager
 				.createQuery("SELECT o FROM CustomerOrder o where o.orderStatus=:status", CustomerOrder.class);
 		query.setParameter("status", status);
-		return query.getResultList();
+		List<CustomerOrder> resultList = query.getResultList();
+		entityManager.close();
+		return resultList;
 	}
 
 }

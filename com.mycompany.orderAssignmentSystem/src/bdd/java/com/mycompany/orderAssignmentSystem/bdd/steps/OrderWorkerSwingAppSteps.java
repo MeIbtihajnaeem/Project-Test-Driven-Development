@@ -242,6 +242,21 @@ public class OrderWorkerSwingAppSteps extends ConfigSteps {
 		orderViewWindow.list().selectItem(Pattern.compile(".*" + values.get(0) + ".*"));
 	}
 
+	@Then("The order view fields are reset")
+	public void the_order_view_fields_are_reset() {
+		orderViewWindow.textBox("txtOrderId").requireText("\b");
+		orderViewWindow.textBox("txtCustomerName").requireText("");
+		orderViewWindow.textBox("txtCustomerAddress").requireText("");
+		orderViewWindow.textBox("txtCustomerPhone").requireText("");
+		orderViewWindow.textBox("txtOrderDescription").requireText("");
+		orderViewWindow.textBox("txtSelectedDate").requireText("");
+		orderViewWindow.textBox("txtSearchOrder").requireText(" ");
+		orderViewWindow.comboBox("cmbOrderCategory").requireNoSelection();
+		orderViewWindow.comboBox("cmbOrderStatus").requireNoSelection();
+		orderViewWindow.comboBox("cmbWorker").requireNoSelection();
+		orderViewWindow.comboBox("cmbSearchBy").requireNoSelection();
+	}
+
 	/// ------------ Worker View Methods
 
 	@When("The Worker View is shown")
@@ -352,6 +367,13 @@ public class OrderWorkerSwingAppSteps extends ConfigSteps {
 		values.forEach(value -> {
 			assertThat(workerViewWindow.label("showErrorLblSearchWorker").text()).contains(value);
 		});
+	}
+
+	@Then("The worker view search filter are reset")
+	public void the_worker_view_search_filter_are_reset() {
+		workerViewWindow.textBox("txtSearchWorker").requireText(" ");
+		workerViewWindow.comboBox("cmbSearchByOptions").requireNoSelection();
+
 	}
 
 }
