@@ -258,117 +258,6 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.34.1</version>
-				<configuration>
-					<images>
-						<image>
-							<name>orderworkerassignment</name>
-							<build>
-								<contextDir>${project.basedir}</contextDir>
-							</build>
-							<run>
-								<network>
-									<mode>custom</mode>
-									<name>my-network</name>
-								</network>
-								<wait>
-									<log>Hello World!</log>
-									<time>10000</time>
-								</wait>
-								<dependsOn>
-									<container>postgres</container>
-								</dependsOn>
-							</run>
-						</image>
-						<image>
-							<name>postgres:14.1-alpine</name>
-							<alias>postgres</alias>
-							<run>
-								<network>
-									<mode>custom</mode>
-									<name>my-network</name>
-									<alias>postgresdb</alias>
-								</network>
-								<ports>
-									<port>5432:5432</port>
-								</ports>
-								<env>
-									<POSTGRES_USER>${--postgres-user}</POSTGRES_USER>
-									<POSTGRES_PASSWORD>
-										${--postgres-pass}</POSTGRES_PASSWORD>
-									<POSTGRES_DB>${--postgres-database}</POSTGRES_DB>
-								</env>
-							</run>
-						</image>
-						<image>
-							<alias>app</alias>
-							<external>
-								<type>compose</type>
-								<basedir>${project.basedir}</basedir>
-							</external>
-							<run>
-								<wait>
-									<log>Hello World!</log>
-									<time>10000</time>
-								</wait>
-							</run>
-						</image>
-					</images>
-				</configuration>
-				<executions>
-					<execution>
-						<id>docker-start</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>start</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>docker-stop</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.1.2</version>
-				<executions>
-					<execution>
-						<id>default-it</id>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-
-					<execution>
-						<id>e2e-tests</id>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<excludes>
-								<exclude>**/*IT.java</exclude>
-							</excludes>
-							<includes>
-								<include>**/*E2E.java</include>
-							</includes>
-							<includes>
-								<include>**/*BDD.java</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -403,10 +292,114 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.34.1</version>
+						<configuration>
+							<images>
+								<image>
+									<name>orderworkerassignment</name>
+									<build>
+										<contextDir>${project.basedir}</contextDir>
+									</build>
+									<run>
+										<network>
+											<mode>custom</mode>
+											<name>my-network</name>
+										</network>
+										<wait>
+											<log>Hello World!</log>
+											<time>10000</time>
+										</wait>
+										<dependsOn>
+											<container>postgres</container>
+										</dependsOn>
+									</run>
+								</image>
+								<image>
+									<name>postgres:14.1-alpine</name>
+									<alias>postgres</alias>
+									<run>
+										<network>
+											<mode>custom</mode>
+											<name>my-network</name>
+											<alias>postgresdb</alias>
+										</network>
+										<ports>
+											<port>5432:5432</port>
+										</ports>
+										<env>
+											<POSTGRES_USER>${--postgres-user}</POSTGRES_USER>
+											<POSTGRES_PASSWORD>
+												${--postgres-pass}</POSTGRES_PASSWORD>
+											<POSTGRES_DB>${--postgres-database}</POSTGRES_DB>
+										</env>
+									</run>
+								</image>
+								<image>
+									<alias>app</alias>
+									<external>
+										<type>compose</type>
+										<basedir>${project.basedir}</basedir>
+									</external>
+									<run>
+										<wait>
+											<log>Hello World!</log>
+											<time>10000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>docker-start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
+
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>3.1.2</version>
+						<executions>
+							<execution>
+								<id>default-it</id>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+
+							<execution>
+								<id>e2e-tests</id>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+								<configuration>
+									<excludes>
+										<exclude>**/*IT.java</exclude>
+									</excludes>
+									<includes>
+										<include>**/*E2E.java</include>
+									</includes>
+									<includes>
+										<include>**/*BDD.java</include>
+									</includes>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

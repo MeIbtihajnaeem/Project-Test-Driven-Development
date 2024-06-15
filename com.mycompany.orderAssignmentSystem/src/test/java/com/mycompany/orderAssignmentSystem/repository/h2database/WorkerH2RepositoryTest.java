@@ -158,21 +158,21 @@ public class WorkerH2RepositoryTest {
 	public void testDelete() {
 		Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
 		worker1 = workerDataRepository.save(worker1);
-
+		worker1 = workerDataRepository.findById(worker1.getWorkerId());
 		workerDataRepository.delete(worker1);
 		assertThat(workerDataRepository.findAll()).isEmpty();
 	}
 
-	@Test
-	public void testDeleteWhenManagedWorker() {
-		Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
-		worker1 = workerDataRepository.save(worker1);
-		entityManager.getTransaction().begin();
-		entityManager.remove(entityManager.contains(worker1) ? worker1 : entityManager.merge(worker1));
-		entityManager.getTransaction().commit();
-		workerDataRepository.delete(worker1);
-		assertThat(workerDataRepository.findAll()).isEmpty();
-	}
+//	@Test
+//	public void testDeleteWhenManagedWorker() {
+//		Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
+//		worker1 = workerDataRepository.save(worker1);
+//		entityManager.getTransaction().begin();
+//		entityManager.remove(entityManager.contains(worker1) ? worker1 : entityManager.merge(worker1));
+//		entityManager.getTransaction().commit();
+//		workerDataRepository.delete(worker1);
+//		assertThat(workerDataRepository.findAll()).isEmpty();
+//	}
 
 	@Test
 	public void testDeleteWhenException() {

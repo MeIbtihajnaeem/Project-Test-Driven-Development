@@ -40,19 +40,13 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
-//	private EntityManager entityManager;
 	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
 
 	@Override
 	protected void onSetUp() throws Exception {
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-//		entityManager = entityManagerFactory.createEntityManager();
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validatedConfig = new ExtendedValidationConfigurations();
-//		for (Worker worker : workerRepository.findAll()) {
-//			workerRepository.delete(worker);
-//		}
-
 		GuiActionRunner.execute(() -> {
 			workerSwingView = new WorkerSwingView();
 			workerController = new WorkerController(workerRepository, workerSwingView, validatedConfig);
@@ -68,7 +62,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onTearDown() {
 		entityManagerFactory.close();
-//		entityManager.close();
 	}
 
 	@Test
@@ -142,7 +135,37 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testFetchAndUpdateButtonSuccess() {
+	public void testUpdateButtonSuccess() {
+		int categoryIndex = 0;
+		String name = "Naeem";
+		String phoneNumber = "3401372678";
+		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
+		Worker worker = new Worker();
+		worker.setWorkerName(name);
+		worker.setWorkerPhoneNumber(phoneNumber);
+		worker.setWorkerCategory(category);
+		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
+		window.textBox("txtWorkerId").enterText("1");
+		window.textBox("txtWorkerPhone").enterText(phoneNumber);
+
+		window.comboBox("cmbWorkerCategory").selectItem(categoryIndex);
+//		window.button(JButtonMatcher.withName("btnFetch")).click();
+
+		String updatedName = "Ibtihaj";
+		window.textBox("txtWorkerName").enterText(updatedName);
+
+		window.button(JButtonMatcher.withName("btnUpdate")).click();
+
+		Worker createdWorker = workerRepository.findAll().get(0);
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+			assertThat(window.list("listWorkers").contents()).containsExactly(createdWorker.toString());
+		});
+	}
+
+	// TODO: fetch Button Success
+	@Test
+	@GUITest
+	public void testFetchButtonSuccess() {
 		int categoryIndex = 0;
 		String name = "Naeem";
 		String phoneNumber = "3401372678";
@@ -154,15 +177,31 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
 		window.textBox("txtWorkerId").enterText("1");
 		window.button(JButtonMatcher.withName("btnFetch")).click();
+		window.textBox("txtWorkerPhone").requireText(phoneNumber);
+		window.comboBox("cmbWorkerCategory").selectItem(category.name());
+	}
 
-		String updatedName = "Ibtihaj";
-		window.textBox("txtWorkerName").enterText(updatedName);
-		window.button(JButtonMatcher.withName("btnUpdate")).click();
+	// TODO: fetch Button Error
+	@Test
+	@GUITest
+	public void testFetchButtonError() {
+		int categoryIndex = 0;
+		String name = "Naeem";
+		String phoneNumber = "3401372678";
+		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
+		Worker worker = new Worker();
+		worker.setWorkerName(name);
+		worker.setWorkerPhoneNumber(phoneNumber);
+		worker.setWorkerCategory(category);
+		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
+		Long workerId = 2l;
 
-		Worker createdWorker = workerRepository.findAll().get(0);
-		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-			assertThat(window.list("listWorkers").contents()).containsExactly(createdWorker.toString());
-		});
+		Worker newWorker = new Worker();
+		newWorker.setWorkerId(workerId);
+		window.textBox("txtWorkerId").enterText(workerId.toString());
+		window.button(JButtonMatcher.withName("btnFetch")).click();
+		window.label("showErrorNotFoundLbl").requireText("Worker with id " + workerId + " Not Found.: "+newWorker.toString());
+
 	}
 
 	@Test
@@ -192,8 +231,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl")
 				.requireText("The phone number must start with 3. Please provide a valid phone number.: " + worker);
 	}
-
-	// TODO: fetch Button Error
 
 	@Test
 	@GUITest

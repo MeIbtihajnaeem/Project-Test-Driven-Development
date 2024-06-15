@@ -101,8 +101,6 @@ Feature: Worker Application Frame Specification of the behavior of the Worker Ap
 	When The user clicks the worker view "Delete" button
 	Then An no entry found error is shown in worker view containing the following values
 		|	Leo |
-	Then An error is shown in worker view containing the following values
-		|	Leo |
 	@SearchWorker
 	Scenario: Search order by worker name
 	Given The database contains worker with the following values

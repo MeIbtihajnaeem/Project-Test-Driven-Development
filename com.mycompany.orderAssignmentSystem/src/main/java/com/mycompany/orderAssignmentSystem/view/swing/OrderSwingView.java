@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -441,7 +442,10 @@ public class OrderSwingView extends JFrame implements OrderView {
 		contentPane.add(lblWorkerCategory, gbc_lblWorkerCategory);
 
 		cmbWorker.setName("cmbWorker");
-		cmbWorker.addActionListener(e -> handleButtonAndComboBoxStates());
+		cmbWorker.addActionListener(e -> {
+			handleButtonAndComboBoxStates();
+		});
+
 		GridBagConstraints gbc_cmbWorker = new GridBagConstraints();
 		gbc_cmbWorker.ipady = 10;
 		gbc_cmbWorker.ipadx = 20;
@@ -757,8 +761,11 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	@Override
 	public void orderAdded(CustomerOrder order) {
-		orderListModel.addElement(order);
-		resetErrorLabelAndClearComboBoxSelection();
+		SwingUtilities.invokeLater(() -> {
+			orderListModel.addElement(order);
+			resetErrorLabelAndClearComboBoxSelection();
+		});
+
 	}
 
 	@Override
@@ -802,14 +809,12 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	@Override
 	public void showError(String message, CustomerOrder order) {
-		// TODO Auto-generated method stub
 		showError.setText(message + ": " + order);
 
 	}
 
 	@Override
 	public void showErrorNotFound(String message, CustomerOrder order) {
-		// TODO Auto-generated method stub
 		showErrorNotFoundLbl.setText(message + ": " + order);
 
 	}
@@ -874,16 +879,19 @@ public class OrderSwingView extends JFrame implements OrderView {
 	}
 
 	private void addOrderMethod() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName(txtCustomerName.getText());
-		order.setCustomerAddress(txtCustomerAddress.getText());
-		order.setCustomerPhoneNumber(txtCustomerPhone.getText());
-		order.setOrderDescription(txtOrderDescription.getText());
-		order.setAppointmentDate(txtSelectedDate.getText());
-		order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
-		order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
-		order.setWorker((Worker) cmbWorker.getSelectedItem());
-		orderController.createOrUpdateOrder(order, OperationType.ADD);
+		new Thread(() -> {
+			CustomerOrder order = new CustomerOrder();
+			order.setCustomerName(txtCustomerName.getText());
+			order.setCustomerAddress(txtCustomerAddress.getText());
+			order.setCustomerPhoneNumber(txtCustomerPhone.getText());
+			order.setOrderDescription(txtOrderDescription.getText());
+			order.setAppointmentDate(txtSelectedDate.getText());
+			order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
+			order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
+			order.setWorker((Worker) cmbWorker.getSelectedItem());
+			orderController.createOrUpdateOrder(order, OperationType.ADD);
+		}).start();
+
 	}
 
 	@Override

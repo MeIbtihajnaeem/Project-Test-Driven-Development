@@ -100,7 +100,7 @@ Feature: Order Application Frame Specification of the behavior of the Order Appl
 	And The database deletes the order with the following values
 		| 2 | Alic | 3401372679 | PLUMBER | PENDING | Piazza Luigi | 12-12-2024 | Bring Tape Please | Bob | 3401372672 | PLUMBER |
 	When The user clicks the order view "Delete" button
-	Then An error is shown in order view containing the following values
+	Then An no entry found error is shown in order view containing the following values
 		|	3401372679 |
 	@SearchOrder
 	Scenario: Search order by customer name

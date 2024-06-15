@@ -33,13 +33,12 @@ public class OrderDatabaseRepository implements OrderRepository {
 	@Override
 	public synchronized CustomerOrder save(CustomerOrder order) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-
+		entityManager.clear();
 		EntityTransaction transaction = entityManager.getTransaction();
 		try {
+			
 			transaction.begin();
-//	        Worker managedWorker = entityManager.contains(worker) ? worker : entityManager.merge(worker);
-
-			order = entityManager.contains(order) ? order : entityManager.merge(order);
+			order = entityManager.merge(order);
 			transaction.commit();
 			entityManager.close();
 			return order;
@@ -58,8 +57,11 @@ public class OrderDatabaseRepository implements OrderRepository {
 
 		try {
 			transaction.begin();
-			entityManager.remove(entityManager.contains(order) ? order : entityManager.merge(order));
+			entityManager.remove(entityManager.getReference(CustomerOrder.class, order.getOrderId()));
+//			entityManager.remove(entityManager.contains(order) ? order : entityManager.merge(order));
+			entityManager.flush();
 			transaction.commit();
+			
 			entityManager.close();
 		} catch (Exception e) {
 			transaction.rollback();
@@ -72,7 +74,7 @@ public class OrderDatabaseRepository implements OrderRepository {
 
 	public synchronized CustomerOrder findById(Long orderId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-
+//		entityManager.clear();
 //		try {
 		CustomerOrder customerOrder = entityManager.find(CustomerOrder.class, orderId);
 		entityManager.close();

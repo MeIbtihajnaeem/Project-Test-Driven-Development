@@ -104,10 +104,10 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		EntityTransaction transaction = entityManager.getTransaction();
 		try {
 			transaction.begin();
-			Worker newWorker = entityManager.merge(worker);
+			worker = entityManager.merge(worker);
 			transaction.commit();
 			entityManager.close();
-			return newWorker;
+			return worker;
 
 		} catch (Exception e) {
 			transaction.rollback();
@@ -121,10 +121,15 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 		EntityTransaction transaction = entityManager.getTransaction();
+//		entityManager.flush();
 //		entityManager.clear();
+
 		try {
 			transaction.begin();
-			entityManager.remove(entityManager.contains(worker) ? worker : entityManager.merge(worker));
+//			Worker entityToRemove = entityManager.getReference(Worker.class, worker.getWorkerId());
+
+			entityManager.remove(entityManager.getReference(Worker.class, worker.getWorkerId()));
+			entityManager.flush();
 
 			transaction.commit();
 			entityManager.close();

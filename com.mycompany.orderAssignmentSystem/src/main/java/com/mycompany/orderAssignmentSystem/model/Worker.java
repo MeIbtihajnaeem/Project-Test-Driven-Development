@@ -36,7 +36,7 @@ public class Worker {
 	private String workerName;
 
 	/** The worker phone number. */
-	@Column(name = "workerPhoneNumber")
+	@Column(name = "workerPhoneNumber", unique = true)
 	private String workerPhoneNumber;
 
 	/** The worker category. */

@@ -159,7 +159,7 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	// update button susscess
 	@Test
-	public void testFetchAndUpdateSuccess() {
+	public void testUpdateSuccess() {
 
 		String customerName = "Ibtihaj Naeem";
 		String customerAddress = "Piazza Luigi";
@@ -177,10 +177,15 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		Long orderId = 1l;
 		String updatedName = "Ibtihaj";
-
 		window.textBox("txtOrderId").enterText(orderId.toString());
-		window.button(JButtonMatcher.withName("btnFetch")).click();
 		window.textBox("txtCustomerName").enterText(updatedName);
+		window.textBox("txtCustomerAddress").enterText(customerAddress);
+		window.textBox("txtCustomerPhone").enterText(customerPhone);
+		window.textBox("txtOrderDescription").enterText(orderDescription);
+		window.textBox("txtSelectedDate").enterText(appointmentDate);
+		window.comboBox("cmbOrderCategory").selectItem(0);
+		window.comboBox("cmbOrderStatus").selectItem(0);
+		window.comboBox("cmbWorker").selectItem(0);
 
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 
@@ -189,6 +194,40 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
 			assertThat(window.list().contents()).containsExactly(order1.toString());
 		});
+	}
+
+	@Test
+	public void testFetchSuccess() {
+
+		String customerName = "Ibtihaj Naeem";
+		String customerAddress = "Piazza Luigi";
+		String customerPhone = "3401372678";
+		String orderDescription = "Plumber Required";
+		String appointmentDate = "12-12-2024";
+		OrderCategory category = OrderCategory.PLUMBER;
+		Worker worker = new Worker("Jhon", "123456789", category);
+		worker = workerRepository.save(worker);
+
+		OrderStatus status = OrderStatus.PENDING;
+		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
+				orderDescription, category, status, worker);
+		GuiActionRunner.execute(() -> {
+			orderController.createOrUpdateOrder(order1, OperationType.ADD);
+			orderController.allWorkers();
+		});
+		Long orderId = 1l;
+
+		window.textBox("txtOrderId").enterText(orderId.toString());
+		window.button(JButtonMatcher.withName("btnFetch")).click();
+
+		window.textBox("txtCustomerName").requireText(customerName);
+		window.textBox("txtCustomerPhone").requireText(customerPhone);
+		window.textBox("txtCustomerAddress").requireText(customerAddress);
+		window.textBox("txtOrderDescription").requireText(orderDescription);
+		window.textBox("txtSelectedDate").requireText(appointmentDate);
+		window.comboBox("cmbOrderCategory").requireSelection(category.name());
+		window.comboBox("cmbOrderStatus").requireSelection(status.name());
+		window.comboBox("cmbWorker").requireSelection(worker.toString());
 	}
 
 	// update button failure
