@@ -67,7 +67,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testAllWorkers() {
 		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker(2l, "Bob", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker(2l, "Bob", "3401372679", OrderCategory.PLUMBER);
 		worker1 = workerRepository.save(worker1);
 		worker2 = workerRepository.save(worker2);
 		GuiActionRunner.execute(() -> workerController.getAllWorkers());
@@ -258,7 +258,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testSearchWorkerSuccess() {
 		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker(2l, "Ibtihaj", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker(2l, "Ibtihaj", "3401372679", OrderCategory.PLUMBER);
 		worker1 = workerRepository.save(worker1);
 		worker2 = workerRepository.save(worker2);
 		GuiActionRunner.execute(() -> workerController.getAllWorkers());
@@ -278,7 +278,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testSearchWorkerError() {
 		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker(2l, "Ibtihaj", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker(2l, "Ibtihaj", "3401372679", OrderCategory.PLUMBER);
 		worker1 = workerRepository.save(worker1);
 		worker2 = workerRepository.save(worker2);
 		GuiActionRunner.execute(() -> workerController.getAllWorkers());
@@ -297,7 +297,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testClearSearch() {
 		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker(2l, "Ibtihaj", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker(2l, "Ibtihaj", "3401372679", OrderCategory.PLUMBER);
 		worker1 = workerRepository.save(worker1);
 		worker2 = workerRepository.save(worker2);
 		GuiActionRunner.execute(() -> workerController.getAllWorkers());

@@ -114,73 +114,51 @@
 			<version>${picocli-version}</version>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/it/java</source>
+								<source>src/e2e/java</source>
+								<source>src/bdd/java</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-test-resource</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>add-test-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/bdd/resources</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.1</version>
 			</plugin>
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-maven</artifactId>
-				<version>1.15.8</version>
-				<configuration>
-					<targetClasses>
-						<param>
-							com.mycompany.orderAssignmentSystem.controller.*</param>
-					</targetClasses>
-					<targetTests>
-						<param>
-							com.mycompany.orderAssignmentSystem.controller.*</param>
-					</targetTests>
-					<excludedClasses>
-						<param>
-							com.mycompany.orderAssignmentSystem.repository.postgresql.**</param>
-						<param>
-							com.mycompany.orderAssignmentSystem.repository.view.swing.**</param>
-					</excludedClasses>
-					<excludedTestClasses>
-						<param>
-							com.mycompany.orderAssignmentSystem.controller.**IT</param>
-					</excludedTestClasses>
-					<mutators>
-						<mutator>STRONGER</mutator>
-					</mutators>
-					<outputFormats>
-						<outputFormat>HTML</outputFormat>
-					</outputFormats>
-					<mutationThreshold>90</mutationThreshold>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>mutationCoverage</goal>
-						</goals>
-						<phase>verify</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.11</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<excludes>
-						<exclude>
-							com/mycompany/orderAssignmentSystem/model/**</exclude>
-						<exclude>
-							com/mycompany/orderAssignmentSystem/app/**</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
@@ -222,42 +200,6 @@
 				<version>4.0.0-M13</version>
 			</plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<id>add-test-source</id>
-						<phase>generate-test-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/it/java</source>
-								<source>src/e2e/java</source>
-								<source>src/bdd/java</source>
-							</sources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>add-test-resource</id>
-						<phase>generate-test-resources</phase>
-						<goals>
-							<goal>add-test-resource</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<directory>src/bdd/resources</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 		</plugins>
 	</build>
 
@@ -267,12 +209,36 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-					</plugin>
-					<plugin>
 						<groupId>org.pitest</groupId>
 						<artifactId>pitest-maven</artifactId>
+						<version>1.15.8</version>
+						<configuration>
+							<targetClasses>
+								<param>
+									com.mycompany.orderAssignmentSystem.controller.*</param>
+							</targetClasses>
+							<targetTests>
+								<param>
+									com.mycompany.orderAssignmentSystem.controller.*</param>
+							</targetTests>
+							<excludedClasses>
+								<param>
+									com.mycompany.orderAssignmentSystem.repository.postgresql.**</param>
+								<param>
+									com.mycompany.orderAssignmentSystem.repository.view.swing.**</param>
+							</excludedClasses>
+							<excludedTestClasses>
+								<param>
+									com.mycompany.orderAssignmentSystem.controller.**IT</param>
+							</excludedTestClasses>
+							<mutators>
+								<mutator>STRONGER</mutator>
+							</mutators>
+							<outputFormats>
+								<outputFormat>HTML</outputFormat>
+							</outputFormats>
+							<mutationThreshold>90</mutationThreshold>
+						</configuration>
 						<executions>
 							<execution>
 								<goals>
@@ -282,69 +248,63 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.11</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<excludes>
+								<exclude>
+									com/mycompany/orderAssignmentSystem/model/**</exclude>
+								<exclude>
+									com/mycompany/orderAssignmentSystem/app/**</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 		<profile>
-			<id>integration-testing</id>
+			<id>integration-test-profile</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.22.1</version>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
 						<version>0.34.1</version>
 						<configuration>
 							<images>
-								<image>
-									<name>orderworkerassignment</name>
-									<build>
-										<contextDir>${project.basedir}</contextDir>
-									</build>
-									<run>
-										<network>
-											<mode>custom</mode>
-											<name>my-network</name>
-										</network>
-										<wait>
-											<log>Hello World!</log>
-											<time>10000</time>
-										</wait>
-										<dependsOn>
-											<container>postgres</container>
-										</dependsOn>
-									</run>
-								</image>
+
 								<image>
 									<name>postgres:14.1-alpine</name>
 									<alias>postgres</alias>
 									<run>
-										<network>
-											<mode>custom</mode>
-											<name>my-network</name>
-											<alias>postgresdb</alias>
-										</network>
 										<ports>
 											<port>5432:5432</port>
 										</ports>
 										<env>
-											<POSTGRES_USER>${--postgres-user}</POSTGRES_USER>
+											<POSTGRES_USER>${postgres.user}</POSTGRES_USER>
 											<POSTGRES_PASSWORD>
-												${--postgres-pass}</POSTGRES_PASSWORD>
-											<POSTGRES_DB>${--postgres-database}</POSTGRES_DB>
+												${postgres.password}</POSTGRES_PASSWORD>
+											<POSTGRES_DB>${postgres.dbName}</POSTGRES_DB>
+
 										</env>
-									</run>
-								</image>
-								<image>
-									<alias>app</alias>
-									<external>
-										<type>compose</type>
-										<basedir>${project.basedir}</basedir>
-									</external>
-									<run>
-										<wait>
-											<log>Hello World!</log>
-											<time>10000</time>
-										</wait>
 									</run>
 								</image>
 							</images>
@@ -366,8 +326,6 @@
 							</execution>
 						</executions>
 					</plugin>
-
-
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -380,7 +338,6 @@
 									<goal>verify</goal>
 								</goals>
 							</execution>
-
 							<execution>
 								<id>e2e-tests</id>
 								<goals>
@@ -394,6 +351,18 @@
 									<includes>
 										<include>**/*E2E.java</include>
 									</includes>
+								</configuration>
+							</execution>
+							<execution>
+								<id>bdd-tests</id>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+								<configuration>
+									<excludes>
+										<exclude>**/*IT.java</exclude>
+									</excludes>
 									<includes>
 										<include>**/*BDD.java</include>
 									</includes>

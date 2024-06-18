@@ -2,7 +2,7 @@
 # Java Versions: Java 8
 # Tests: Only run Unit Tests
 # Reports: No Report
-name: JAVA CI Uni tests with Maven in Windows & MacOS
+name: JAVA CI Unit tests with Maven in Windows & MacOS
 on:
  push:
 jobs:
