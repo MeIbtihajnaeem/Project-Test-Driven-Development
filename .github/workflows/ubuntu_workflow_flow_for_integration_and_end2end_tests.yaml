@@ -32,6 +32,6 @@ jobs:
           echo "${{ secrets.PERSISTENCE_VARIABLE }}" > src/main/resources/META-INF/persistence.xml
           ls
           cd src/main/resources/META-INF
-          echo src/main/resources/META-INF/persistence.xml
+          cat src/main/resources/META-INF/persistence.xml
           
           
