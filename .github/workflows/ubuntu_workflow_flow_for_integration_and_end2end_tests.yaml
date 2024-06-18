@@ -29,6 +29,7 @@ jobs:
       - name: Generate persistence.xml
         run: |
           mkdir -p src/main/resources/META-INF/
+          touch src/main/resources/META-INF/persistence.xml
           echo "${{ secrets.PERSISTENCE_VARIABLE }}" > src/main/resources/META-INF/persistence.xml
           ls
           cd src/main/resources/META-INF
