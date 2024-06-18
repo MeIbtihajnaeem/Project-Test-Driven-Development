@@ -28,22 +28,22 @@ jobs:
           restore-keys: ${{ runner.os }}-m2-
       - name: Generate persistence.xml
         run: |
-          mkdir -p src/main/resources/META-INF/
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > src/main/resources/META-INF/persistence.xml
-          echo '<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">' >> src/main/resources/META-INF/persistence.xml
-          echo '  <persistence-unit name="OriginalPersistenceUnit" transaction-type="RESOURCE_LOCAL">' >> src/main/resources/META-INF/persistence.xml
-          echo '    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>' >> src/main/resources/META-INF/persistence.xml
-          echo '    <class>com.mycompany.orderAssignmentSystem.model.CustomerOrder</class>' >> src/main/resources/META-INF/persistence.xml
-          echo '    <class>com.mycompany.orderAssignmentSystem.model.Worker</class>' >> src/main/resources/META-INF/persistence.xml
-          echo '    <properties>' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/orderWorkerTestDb" />' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="javax.persistence.jdbc.user" value="testUser"/>' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="javax.persistence.jdbc.password" value="test123" />' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="hibernate.hbm2ddl.auto" value="create-drop" />' >> src/main/resources/META-INF/persistence.xml
-          echo '    </properties>' >> src/main/resources/META-INF/persistence.xml
-          echo '  </persistence-unit>' >> src/main/resources/META-INF/persistence.xml
-          echo '</persistence>' >> src/main/resources/META-INF/persistence.xml
+          mkdir -p src/test/resources/META-INF/
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > src/test/resources/META-INF/persistence.xml
+          echo '<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">' >> src/test/resources/META-INF/persistence.xml
+          echo '  <persistence-unit name="OriginalPersistenceUnit" transaction-type="RESOURCE_LOCAL">' >> src/test/resources/META-INF/persistence.xml
+          echo '    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>' >> src/test/resources/META-INF/persistence.xml
+          echo '    <class>com.mycompany.orderAssignmentSystem.model.CustomerOrder</class>' >> src/test/resources/META-INF/persistence.xml
+          echo '    <class>com.mycompany.orderAssignmentSystem.model.Worker</class>' >> src/test/resources/META-INF/persistence.xml
+          echo '    <properties>' >> src/test/resources/META-INF/persistence.xml
+          echo '      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/orderWorkerTestDb" />' >> src/test/resources/META-INF/persistence.xml
+          echo '      <property name="javax.persistence.jdbc.user" value="testUser"/>' >> src/test/resources/META-INF/persistence.xml
+          echo '      <property name="javax.persistence.jdbc.password" value="test123" />' >> src/test/resources/META-INF/persistence.xml
+          echo '      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />' >> src/test/resources/META-INF/persistence.xml
+          echo '      <property name="hibernate.hbm2ddl.auto" value="create-drop" />' >> src/test/resources/META-INF/persistence.xml
+          echo '    </properties>' >> src/test/resources/META-INF/persistence.xml
+          echo '  </persistence-unit>' >> src/test/resources/META-INF/persistence.xml
+          echo '</persistence>' >> src/test/resources/META-INF/persistence.xml
       - name: Build with Maven
         run: xvfb-run mvn verify ${{ matrix.additional-maven-args }}
         working-directory: ${{ env.workdir }}
