@@ -26,7 +26,7 @@ public class DatabaseSteps extends ConfigSteps {
 
 	@Before
 	public void setUp() {
-		String persistenceUnitName = "test_myPersistenceUnit";
+		String persistenceUnitName = "OriginalPersistenceUnit";
 		String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
 		System.out.println(jdbcUrl);
 

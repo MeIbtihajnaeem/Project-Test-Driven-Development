@@ -39,7 +39,7 @@ public class WorkerControllerRaceConditionDeleteWorkerIT {
 
 	private EntityManagerFactory entityManagerFactory;
 //	private EntityManager entityManager;
-	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
 
 	@Before
 	public void setUp() {

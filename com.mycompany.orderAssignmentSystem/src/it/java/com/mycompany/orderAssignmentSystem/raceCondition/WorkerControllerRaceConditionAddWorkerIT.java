@@ -40,7 +40,7 @@ public class WorkerControllerRaceConditionAddWorkerIT {
 
 	private EntityManagerFactory entityManagerFactory;
 //	private EntityManager entityManager;
-	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
 	private Worker worker = new Worker();
 
 	@Before

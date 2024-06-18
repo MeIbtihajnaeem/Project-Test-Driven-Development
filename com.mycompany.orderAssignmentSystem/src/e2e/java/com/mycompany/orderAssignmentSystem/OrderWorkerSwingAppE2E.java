@@ -100,7 +100,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onSetUp() throws Exception {
 		// TODO Auto-generated method stub
-		String persistenceUnitName = "test_myPersistenceUnit";
+		String persistenceUnitName = "OriginalPersistenceUnit";
 		String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
 		System.out.println(jdbcUrl);
 

@@ -53,7 +53,7 @@ public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 				System.out.println(database);
 				System.out.println(user);
 				System.out.println(password);
-				String persistenceUnitName = "test_myPersistenceUnit";
+				String persistenceUnitName = "OriginalPersistenceUnit";
 				String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
 				System.out.println(jdbcUrl);
 

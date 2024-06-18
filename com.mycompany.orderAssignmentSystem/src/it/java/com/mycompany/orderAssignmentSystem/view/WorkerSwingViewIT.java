@@ -40,7 +40,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
-	private static final String PERSISTENCE_UNIT_NAME = "test_myPersistenceUnit";
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
 
 	@Override
 	protected void onSetUp() throws Exception {
