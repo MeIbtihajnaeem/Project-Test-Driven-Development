@@ -28,8 +28,9 @@ jobs:
           restore-keys: ${{ runner.os }}-m2-
       - name: Generate persistence.xml
         run: |
-          mkdir -p src/test/resources/META-INF/
+          mkdir -p src/main/resources/META-INF/
           echo "${{ secrets.PERSISTENCE_VARIABLE }}" > src/test/resources/META-INF/persistence.xml
+          echo src/main/resources/META-INF/persistence.xml
       - name: Build with Maven
         run: xvfb-run mvn verify ${{ matrix.additional-maven-args }}
         working-directory: ${{ env.workdir }}
