@@ -44,3 +44,11 @@ jobs:
           echo '    </properties>' >> src/main/resources/META-INF/persistence.xml
           echo '  </persistence-unit>' >> src/main/resources/META-INF/persistence.xml
           echo '</persistence>' >> src/main/resources/META-INF/persistence.xml
+      - name: Build with Maven
+        run: xvfb-run mvn verify ${{ matrix.additional-maven-args }}
+        working-directory: ${{ env.workdir }}
+      - name: ArchiveFailSafeReport
+        uses: actions/upload-artifact@v2
+        with:
+          name: failsafe-report-jdk-${{ matrix.java }}
+          path: '**/target/failsafe-reports'
