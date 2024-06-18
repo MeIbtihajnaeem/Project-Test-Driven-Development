@@ -4,7 +4,7 @@
 # Reports: No Report
 name: JAVA CI Unit tests with Maven in Windows & MacOS
 on:
- push:
+ pull_request:
 jobs:
   build:
     runs-on: ${{ matrix.os }}

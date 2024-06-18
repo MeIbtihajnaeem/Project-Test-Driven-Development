@@ -5,7 +5,6 @@
 # Reports: Coverage coversall and Mutation Testing
 name: JAVA CI with Maven in Linux
 on:
- push:
  pull_request:
 jobs:
   build:

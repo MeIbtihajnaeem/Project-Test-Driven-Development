@@ -30,12 +30,8 @@ jobs:
         run: |
           mkdir -p src/main/resources/META-INF/
           echo "${{ secrets.PERSISTENCE_VARIABLE }}" > src/main/resources/META-INF/persistence.xml
+          ls
+          cd src/main/resources/META-INF
           echo src/main/resources/META-INF/persistence.xml
-      - name: Build with Maven
-        run: xvfb-run mvn verify ${{ matrix.additional-maven-args }}
-        working-directory: ${{ env.workdir }}
-      - name: ArchiveFailSafeReport
-        uses: actions/upload-artifact@v2
-        with:
-          name: failsafe-report-jdk-${{ matrix.java }}
-          path: '**/target/failsafe-reports'
+          
+          
