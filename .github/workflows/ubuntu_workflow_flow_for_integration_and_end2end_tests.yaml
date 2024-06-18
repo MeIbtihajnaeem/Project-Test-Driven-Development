@@ -36,9 +36,9 @@ jobs:
           echo '    <class>com.mycompany.orderAssignmentSystem.model.CustomerOrder</class>' >> src/main/resources/META-INF/persistence.xml
           echo '    <class>com.mycompany.orderAssignmentSystem.model.Worker</class>' >> src/main/resources/META-INF/persistence.xml
           echo '    <properties>' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="javax.persistence.jdbc.url" value=${{secrets.JDBC_URL}} />' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="javax.persistence.jdbc.user" value=${{secrets.USER}}/>' >> src/main/resources/META-INF/persistence.xml
-          echo '      <property name="javax.persistence.jdbc.password" value=${{secrets.PASSWORD}} />' >> src/main/resources/META-INF/persistence.xml
+          echo '      <property name="javax.persistence.jdbc.url" value="${{secrets.JDBC_URL}}" />' >> src/main/resources/META-INF/persistence.xml
+          echo '      <property name="javax.persistence.jdbc.user" value="${{secrets.USER}}"/>' >> src/main/resources/META-INF/persistence.xml
+          echo '      <property name="javax.persistence.jdbc.password" value="${{secrets.PASSWORD}}" />' >> src/main/resources/META-INF/persistence.xml
           echo '      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />' >> src/main/resources/META-INF/persistence.xml
           echo '      <property name="hibernate.hbm2ddl.auto" value="create-drop" />' >> src/main/resources/META-INF/persistence.xml
           echo '    </properties>' >> src/main/resources/META-INF/persistence.xml
