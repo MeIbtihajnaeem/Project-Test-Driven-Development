@@ -1,11 +1,12 @@
 # Operating System: Ubuntu
 # Java Versions: Java 8 and Java 11
 # Coverage and Mutation is tested only on java 8 
-# Tests: All tests (Unit, Integration, End-to-End)
-# Reports: Coverage coversall and Mutation Testing
+# Tests: All tests (Unit)
+# Reports: Unit test report , Coverage coversall and Mutation Testing
 name: JAVA CI with Maven in Linux
 on:
  pull_request:
+ push:
 jobs:
   build:
     runs-on: ubuntu-latest

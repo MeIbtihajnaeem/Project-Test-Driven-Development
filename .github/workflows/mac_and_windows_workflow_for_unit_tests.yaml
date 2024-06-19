@@ -1,10 +1,11 @@
 # Operating System: Windows, macOS
 # Java Versions: Java 8
 # Tests: Only run Unit Tests
-# Reports: No Report
+# Reports: Unit test report
 name: JAVA CI Unit tests with Maven in Windows & MacOS
 on:
  pull_request:
+ push:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -32,3 +33,16 @@ jobs:
       run: >
         mvn verify 
       working-directory: ${{ env.workdir }}
+      if: ${{ always () }}
+    - name: ArchiveJUnitReport
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+       name: surefire-report-jdk-${{ matrix.java }}
+       path: '**/target/site'
+    - name: ArchiveLogs
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+         name: log-files
+         path: './*.log'

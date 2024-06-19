@@ -1,3 +1,7 @@
+# Operating System: Ubuntu
+# Java Versions: Java 8 
+# Tests: All tests (Integration, End-to-End and End-to-End with cucumber)
+# Reports: FailSafeReport
 name: JAVA IT with Maven in Linux
 
 on:
