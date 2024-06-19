@@ -200,7 +200,8 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		newWorker.setWorkerId(workerId);
 		window.textBox("txtWorkerId").enterText(workerId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
-		window.label("showErrorNotFoundLbl").requireText("Worker with id " + workerId + " Not Found.: "+newWorker.toString());
+		window.label("showErrorNotFoundLbl")
+				.requireText("Worker with id " + workerId + " Not Found.: " + newWorker.toString());
 
 	}
 
@@ -219,14 +220,15 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
 		worker.setWorkerId(1l);
 		window.textBox("txtWorkerId").enterText("1");
-		window.button(JButtonMatcher.withName("btnFetch")).click();
+		window.textBox("txtWorkerName").enterText(name);
+
+		window.comboBox("cmbWorkerCategory").selectItem(categoryIndex);
 
 		String updatedPhoneNumber = "4401372678";
 
 		window.textBox("txtWorkerPhone").enterText(updatedPhoneNumber);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 		worker.setWorkerPhoneNumber(updatedPhoneNumber);
-//		assertThat(window.list("listWorkers").contents()).isEqualTo(worker.toString());
 
 		window.label("showErrorLbl")
 				.requireText("The phone number must start with 3. Please provide a valid phone number.: " + worker);
@@ -284,7 +286,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> workerController.getAllWorkers());
 		String searchText = "Ibtihaj";
 		int searchOptionIndex = 1;
-
+		window.textBox("txtSearchWorker").deleteText();
 		window.textBox("txtSearchWorker").enterText(searchText);
 		window.comboBox("cmbSearchByOptions").selectItem(searchOptionIndex);
 		window.button(JButtonMatcher.withName("btnSearchWorker")).click();

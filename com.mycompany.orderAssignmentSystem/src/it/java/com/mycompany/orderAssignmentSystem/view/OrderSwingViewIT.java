@@ -250,7 +250,13 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		Long orderId = 1l;
 		order1.setOrderId(orderId);
 		window.textBox("txtOrderId").enterText(orderId.toString());
-		window.button(JButtonMatcher.withName("btnFetch")).click();
+		window.textBox("txtCustomerName").enterText(customerName);
+		window.textBox("txtCustomerAddress").enterText(customerAddress);
+		window.textBox("txtOrderDescription").enterText(orderDescription);
+		window.textBox("txtSelectedDate").enterText(appointmentDate);
+		window.comboBox("cmbOrderCategory").selectItem(0);
+		window.comboBox("cmbOrderStatus").selectItem(0);
+		window.comboBox("cmbWorker").selectItem(0);
 
 		String updatedPhone = "4401372678";
 		window.textBox("txtCustomerPhone").enterText(updatedPhone);
@@ -304,6 +310,7 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 			orderController.allOrders();
 		});
 		String searchText = "Bob";
+		window.textBox("txtSearchOrder").deleteText();
 		window.textBox("txtSearchOrder").enterText(searchText);
 		int searchOptionIndex = 2;
 		window.comboBox("cmbSearchBy").selectItem(searchOptionIndex);
