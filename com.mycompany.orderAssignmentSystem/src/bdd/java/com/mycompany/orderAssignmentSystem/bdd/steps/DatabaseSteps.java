@@ -3,11 +3,14 @@ package com.mycompany.orderAssignmentSystem.bdd.steps;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+
+import org.junit.BeforeClass;
 
 import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
 import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
@@ -23,6 +26,38 @@ public class DatabaseSteps extends ConfigSteps {
 	private static EntityManagerFactory entityManagerFactory;
 	private static EntityManager entityManager;
 	private static Map<String, String> properties = new HashMap<>();
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_SECONDS = 10;
+
+	@BeforeClass
+	public static void setup() {
+
+		int attempt = 0;
+		while (attempt < MAX_RETRIES) {
+			try {
+				EntityManagerFactory entityManagerFactory = Persistence
+						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+
+				EntityManager entityManager = entityManagerFactory.createEntityManager();
+				if (entityManager != null && entityManager.isOpen()) {
+					entityManager.close();
+					break;
+				}
+			} catch (Exception i) {
+				attempt++;
+				if (attempt < MAX_RETRIES) {
+					try {
+						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+	}
 
 	@Before
 	public void setUp() {

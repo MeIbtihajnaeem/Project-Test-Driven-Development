@@ -122,5 +122,7 @@ public interface ValidationConfigurations {
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validateSearchString(String searchString);
+	
+	
 
 }

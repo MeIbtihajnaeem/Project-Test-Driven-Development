@@ -3,11 +3,15 @@ package com.mycompany.orderAssignmentSystem.controller;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
 
+import java.util.concurrent.TimeUnit;
+
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,6 +32,37 @@ import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRep
 import com.mycompany.orderAssignmentSystem.view.OrderView;
 
 public class OrderControllerIT {
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_SECONDS = 10;
+
+	@BeforeClass
+	public static void setup() {
+
+		int attempt = 0;
+		while (attempt < MAX_RETRIES) {
+			try {
+				EntityManagerFactory entityManagerFactory = Persistence
+						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+
+				EntityManager entityManager = entityManagerFactory.createEntityManager();
+				if (entityManager != null && entityManager.isOpen()) {
+					entityManager.close();
+					break;
+				}
+			} catch (Exception i) {
+				attempt++;
+				if (attempt < MAX_RETRIES) {
+					try {
+						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+	}
 
 	@Mock
 	private OrderRepository orderRepository;
@@ -45,10 +80,9 @@ public class OrderControllerIT {
 	private OrderController orderController;
 
 	private AutoCloseable closeable;
-
 	private EntityManagerFactory entityManagerFactory;
+
 //	private EntityManager entityManager;
-	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
 
 	@Before
 	public void setUp() {

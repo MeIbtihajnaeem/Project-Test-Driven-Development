@@ -36,6 +36,7 @@
 
 	<dependencies>
 
+
 		<!-- H2 database just to micic postgresql for unit test -->
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -302,7 +303,6 @@
 						<version>0.34.1</version>
 						<configuration>
 							<images>
-
 								<image>
 									<name>postgres:14.1-alpine</name>
 									<alias>postgres</alias>

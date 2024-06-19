@@ -5,6 +5,7 @@ import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,6 +20,7 @@ import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,6 +32,9 @@ import com.mycompany.orderAssignmentSystem.model.Worker;
 @RunWith(GUITestRunner.class)
 public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 //	private static final String persistenceUnitName = "myPersistenceUnit";
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_SECONDS = 10;
 	private static final String host = "localhost";
 	private static final String port = "5432";
 	private static final String database = "orderWorkerTestDb";
@@ -97,6 +102,34 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 			ORDER_CUSTOMER_FIXTURE_2_ORDER_APPOINTMENT_DATE, ORDER_CUSTOMER_FIXTURE_2_ORDER_APPOINTMENT_DESCRIPTION,
 			ORDER_WORKER_FIXTURE_2_CATEGORY, ORDER_FIXTURE_2_STATUS, worker2);
 
+	@BeforeClass
+	public static void setupServer() {
+
+		int attempt = 0;
+		while (attempt < MAX_RETRIES) {
+			try {
+				EntityManagerFactory entityManagerFactory = Persistence
+						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+
+				EntityManager entityManager = entityManagerFactory.createEntityManager();
+				if (entityManager != null && entityManager.isOpen()) {
+					entityManager.close();
+					break;
+				}
+			} catch (Exception i) {
+				attempt++;
+				if (attempt < MAX_RETRIES) {
+					try {
+						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+	}
+
 	@Override
 	protected void onSetUp() throws Exception {
 		// TODO Auto-generated method stub
@@ -116,7 +149,6 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		addTestOrderAndWorkerToDatabase(worker1, order1);
 		addTestOrderAndWorkerToDatabase(worker2, order2);
 		addTestWorkerToDatabase(worker3);
-
 
 		application("com.mycompany.orderAssignmentSystem.app.OrderWorkerAssignmentSwingApp")
 				.withArgs("--postgres-host=" + host, "--postgres-database=" + database, "--postgres-user=" + user,

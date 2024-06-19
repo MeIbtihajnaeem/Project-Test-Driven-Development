@@ -5,6 +5,7 @@ import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -13,6 +14,7 @@ import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,6 +35,37 @@ import com.mycompany.orderAssignmentSystem.view.swing.OrderSwingView;
 @RunWith(GUITestRunner.class)
 
 public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_SECONDS = 10;
+
+	@BeforeClass
+	public static void setupServer() {
+
+		int attempt = 0;
+		while (attempt < MAX_RETRIES) {
+			try {
+				EntityManagerFactory entityManagerFactory = Persistence
+						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+
+				EntityManager entityManager = entityManagerFactory.createEntityManager();
+				if (entityManager != null && entityManager.isOpen()) {
+					entityManager.close();
+					break;
+				}
+			} catch (Exception i) {
+				attempt++;
+				if (attempt < MAX_RETRIES) {
+					try {
+						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+	}
 
 	private OrderRepository orderRepository;
 
@@ -46,7 +79,6 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
 //	private EntityManager entityManager;
-	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
 
 	@Override
 	protected void onSetUp() throws Exception {
