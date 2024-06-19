@@ -16,7 +16,7 @@ jobs:
       matrix:
         include:
         - java: 1.8
-          additional-maven-args: "-Pmutation-testing-with-coverage"
+          additional-maven-args: "-Pmutation-testing-with-coverage -DrepoToken=$COVERALLS_REPO_TOKEN coveralls:report"
         - java: 11
     name: Build with Java ${{ matrix.java }}
     steps:
@@ -39,6 +39,8 @@ jobs:
       run: >
         mvn surefire-report:report-only site:site -DgenerateReport=false
       working-directory: ${{env.workdir}}
+      env:
+        COVERALLS_REPO_TOKEN: ${{secrets.COVERALLS_TOKEN}}      
       if: ${{ always () }}
     - name: ArchiveJUnitReport
       uses: actions/upload-artifact@v2
