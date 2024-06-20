@@ -1,7 +1,7 @@
 /*
  * Worker: Represents an entity of a worker in the system.
  */
-package com.mycompany.orderAssignmentSystem.model;
+package com.mycompany.orderassignmentsystem.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
 
 /**
  * Represents a worker in the system.
@@ -54,7 +54,7 @@ public class Worker {
 	 * Default constructor.
 	 */
 	public Worker() {
-	};
+	}
 
 	/**
 	 * Parameterised constructor.
@@ -175,30 +175,6 @@ public class Worker {
 	 *
 	 * @return the hash code value
 	 */
-//	@Override
-//	public int hashCode() {
-//		return Objects.hash(orders, workerCategory, workerId, workerName, workerPhoneNumber);
-//	}
-//
-//	/**
-//	 * Compares this Worker object to another object for equality.
-//	 *
-//	 * @param obj the object to compare
-//	 * @return true if the objects are equal, false otherwise
-//	 */
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		Worker other = (Worker) obj;
-//		return Objects.equals(orders, other.orders) && workerCategory == other.workerCategory
-//				&& Objects.equals(workerId, other.workerId) && Objects.equals(workerName, other.workerName)
-//				&& Objects.equals(workerPhoneNumber, other.workerPhoneNumber);
-//	}
 
 	@Override
 	public boolean equals(Object obj) {

@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.bdd.steps;
+package com.mycompany.orderassignmentsystem.bdd.steps;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +12,10 @@ import javax.persistence.Persistence;
 
 import org.junit.BeforeClass;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;

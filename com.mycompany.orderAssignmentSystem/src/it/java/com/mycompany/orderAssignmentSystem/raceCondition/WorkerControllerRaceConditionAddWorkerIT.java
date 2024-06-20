@@ -1,4 +1,4 @@
-//package com.mycompany.orderAssignmentSystem.raceCondition;
+//package com.mycompany.orderassignmentsystem.raceCondition;
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //import static org.awaitility.Awaitility.await;

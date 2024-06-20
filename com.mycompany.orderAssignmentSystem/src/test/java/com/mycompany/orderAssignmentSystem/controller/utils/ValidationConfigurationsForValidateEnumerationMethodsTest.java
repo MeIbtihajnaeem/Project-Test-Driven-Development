@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.controller.utils;
+package com.mycompany.orderassignmentsystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
@@ -8,9 +8,9 @@ import java.util.NoSuchElementException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 
 public class ValidationConfigurationsForValidateEnumerationMethodsTest {
 

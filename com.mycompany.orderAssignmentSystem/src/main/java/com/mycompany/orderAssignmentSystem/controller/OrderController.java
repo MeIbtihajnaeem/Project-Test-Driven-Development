@@ -1,11 +1,10 @@
 /*
  * This class represents the controller responsible for managing orders within the system.
  */
-package com.mycompany.orderAssignmentSystem.controller;
+package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -13,21 +12,23 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.view.OrderView;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderSearchOptions;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.OrderRepository;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.view.OrderView;
 
 /**
  * The Class OrderController.
  */
 public class OrderController {
+
+	private static final String ERROR_FINDING = "Error Finding: ";
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
@@ -130,11 +131,9 @@ public class OrderController {
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while creating or updating Order: " + e.getMessage());
 			orderView.showError(e.getMessage(), order);
-			return;
 		} catch (NoSuchElementException e) {
-			LOGGER.error("Error Finding: " + e.getMessage());
+			LOGGER.error(ERROR_FINDING + e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
-			return;
 		}
 	}
 
@@ -160,11 +159,9 @@ public class OrderController {
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while updating Order: " + e.getMessage());
 			orderView.showError(e.getMessage(), order);
-			return;
 		} catch (NoSuchElementException e) {
-			LOGGER.error("Error Finding: " + e.getMessage());
+			LOGGER.error(ERROR_FINDING + e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
-			return;
 		}
 	}
 
@@ -187,11 +184,9 @@ public class OrderController {
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while updating Order: " + e.getMessage());
 			orderView.showError(e.getMessage(), order);
-			return;
 		} catch (NoSuchElementException e) {
-			LOGGER.error("Error Finding: " + e.getMessage());
+			LOGGER.error(ERROR_FINDING + e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
-			return;
 		}
 
 	}
@@ -212,7 +207,7 @@ public class OrderController {
 				throw new NullPointerException("Search option cannot be empty.");
 			}
 
-			List<CustomerOrder> orders = Collections.emptyList();
+			List<CustomerOrder> orders;
 
 			switch (searchOption) {
 			case ORDER_ID:
@@ -245,7 +240,6 @@ public class OrderController {
 		} catch (Exception e) {
 			LOGGER.error("Error validating search text: " + e.getMessage());
 			orderView.showSearchError(e.getMessage(), searchText);
-			return;
 		}
 
 	}
@@ -372,8 +366,7 @@ public class OrderController {
 	 * @return the ID as a Long
 	 */
 	private Long validateId(String searchText) {
-		Long id = validationConfigurations.validateStringNumber(searchText);
-		return id;
+		return validationConfigurations.validateStringNumber(searchText);
 	}
 
 	/**

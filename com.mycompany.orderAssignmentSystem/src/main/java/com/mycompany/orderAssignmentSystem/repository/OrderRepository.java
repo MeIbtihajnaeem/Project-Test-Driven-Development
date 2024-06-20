@@ -1,13 +1,13 @@
 /*
  * OrderRepository: Interface for accessing and managing customer orders in the system.
  */
-package com.mycompany.orderAssignmentSystem.repository;
+package com.mycompany.orderassignmentsystem.repository;
 
 import java.util.List;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
 
 /**
  * Interface for accessing and managing customer orders in the system.

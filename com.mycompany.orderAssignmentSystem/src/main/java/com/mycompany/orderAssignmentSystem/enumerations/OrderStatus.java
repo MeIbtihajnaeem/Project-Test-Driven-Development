@@ -1,7 +1,7 @@
 /*
  * OrderStatus: Enumeration representing different statuses of customer orders.
  */
-package com.mycompany.orderAssignmentSystem.enumerations;
+package com.mycompany.orderassignmentsystem.enumerations;
 
 /**
  * Enumeration representing different statuses of customer orders.

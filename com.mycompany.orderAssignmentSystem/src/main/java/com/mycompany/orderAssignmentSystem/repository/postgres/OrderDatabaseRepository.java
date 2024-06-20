@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.repository.postgres;
+package com.mycompany.orderassignmentsystem.repository.postgres;
 
 import java.util.List;
 
@@ -7,13 +7,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.repository.OrderRepository;
 
 public class OrderDatabaseRepository implements OrderRepository {
-	private EntityManagerFactory entityManagerFactory;;
+	private EntityManagerFactory entityManagerFactory;
 
 	public OrderDatabaseRepository(EntityManagerFactory entityManagerFactory) {
 		super();
@@ -36,7 +36,7 @@ public class OrderDatabaseRepository implements OrderRepository {
 		entityManager.clear();
 		EntityTransaction transaction = entityManager.getTransaction();
 		try {
-			
+
 			transaction.begin();
 			order = entityManager.merge(order);
 			transaction.commit();
@@ -58,10 +58,9 @@ public class OrderDatabaseRepository implements OrderRepository {
 		try {
 			transaction.begin();
 			entityManager.remove(entityManager.getReference(CustomerOrder.class, order.getOrderId()));
-//			entityManager.remove(entityManager.contains(order) ? order : entityManager.merge(order));
 			entityManager.flush();
 			transaction.commit();
-			
+
 			entityManager.close();
 		} catch (Exception e) {
 			transaction.rollback();
@@ -74,14 +73,9 @@ public class OrderDatabaseRepository implements OrderRepository {
 
 	public synchronized CustomerOrder findById(Long orderId) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-//		entityManager.clear();
-//		try {
 		CustomerOrder customerOrder = entityManager.find(CustomerOrder.class, orderId);
 		entityManager.close();
 		return customerOrder;
-//		} catch (NoResultException e) {
-//			return null;
-//		}
 
 	}
 

@@ -1,12 +1,12 @@
 /*
  * OrderView: Interface for displaying and interacting with customer orders in the system.
  */
-package com.mycompany.orderAssignmentSystem.view;
+package com.mycompany.orderassignmentsystem.view;
 
 import java.util.List;
 
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
 
 /**
  * Interface for displaying and interacting with customer orders in the system.
@@ -19,7 +19,7 @@ public interface OrderView {
 	 * @param order the list of customer orders to be displayed
 	 */
 	void showAllOrder(List<CustomerOrder> order);
-	
+
 	void showAllWorkers(List<Worker> worker);
 
 	/**
@@ -56,7 +56,7 @@ public interface OrderView {
 	 * @param order the removed customer order
 	 */
 	void orderRemoved(CustomerOrder order);
-	
+
 	void resetAllFields();
 
 	/**

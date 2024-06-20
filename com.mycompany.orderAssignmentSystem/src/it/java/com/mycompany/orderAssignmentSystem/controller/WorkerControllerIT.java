@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.controller;
+package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
@@ -17,15 +17,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.view.WorkerView;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.WorkerSearchOption;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
+import com.mycompany.orderassignmentsystem.view.WorkerView;
 
 public class WorkerControllerIT {
 	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
@@ -184,7 +184,9 @@ public class WorkerControllerIT {
 		Worker savedWorker = workerRepository.save(worker);
 		Long workerId = savedWorker.getWorkerId();
 		workerController.searchWorker(workerId.toString(), WorkerSearchOption.WORKER_ID);
-		workerView.showSearchResultForWorker(asList(savedWorker));
+//		workerView.showSearchResultForWorker(asList(savedWorker));
+		verify(workerView).showSearchResultForWorker(asList(savedWorker));
+
 	}
 
 	@Test
@@ -198,7 +200,9 @@ public class WorkerControllerIT {
 		worker.setWorkerCategory(plumber);
 		Worker savedWorker = workerRepository.save(worker);
 		workerController.searchWorker(workerPhoneNumber, WorkerSearchOption.WORKER_PHONE);
-		workerView.showSearchResultForWorker(asList(savedWorker));
+//		workerView.showSearchResultForWorker(asList(savedWorker));
+		verify(workerView).showSearchResultForWorker(asList(savedWorker));
+
 	}
 
 	@Test
@@ -212,7 +216,9 @@ public class WorkerControllerIT {
 		worker.setWorkerCategory(plumber);
 		Worker savedWorker = workerRepository.save(worker);
 		workerController.searchWorker(workerName, WorkerSearchOption.WORKER_NAME);
-		workerView.showSearchResultForWorker(asList(savedWorker));
+//		workerView.showSearchResultForWorker(asList(savedWorker));
+		verify(workerView).showSearchResultForWorker(asList(savedWorker));
+
 	}
 
 	@Test
@@ -226,7 +232,9 @@ public class WorkerControllerIT {
 		worker.setWorkerCategory(plumber);
 		Worker savedWorker = workerRepository.save(worker);
 		workerController.searchWorker(plumber.toString(), WorkerSearchOption.WORKER_CATEGORY);
-		workerView.showSearchResultForWorker(asList(savedWorker));
+//		workerView.showSearchResultForWorker(asList(savedWorker));
+		verify(workerView).showSearchResultForWorker(asList(savedWorker));
+
 	}
 
 }

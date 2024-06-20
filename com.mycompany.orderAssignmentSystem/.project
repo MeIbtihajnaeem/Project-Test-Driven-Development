@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>com.mycompany.orderAssignmentSystem</name>
+	<name>com.mycompany.orderassignmentsystem</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -35,7 +35,13 @@
 		<link>
 			<name>.github</name>
 			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/.github</locationURI>
+			<locationURI>copy_PARENT/.github</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>copy_PARENT</name>
+			<value>$%7BPARENT-5-PROJECT_LOC%7D/Documents/version_control/uni_project/project</value>
+		</variable>
+	</variableList>
 </projectDescription>

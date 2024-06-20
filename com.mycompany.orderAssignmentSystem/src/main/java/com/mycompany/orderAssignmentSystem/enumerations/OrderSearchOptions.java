@@ -1,7 +1,7 @@
 /*
  * OrderSearchOptions: Enumeration representing different search options for customer orders.
  */
-package com.mycompany.orderAssignmentSystem.enumerations;
+package com.mycompany.orderassignmentsystem.enumerations;
 
 /**
  * Enumeration representing different search options for customer orders.
@@ -11,7 +11,7 @@ public enum OrderSearchOptions {
 	/**
 	 * Search by None.
 	 */
-	None,
+	NONE,
 	/**
 	 * Search by order ID.
 	 */

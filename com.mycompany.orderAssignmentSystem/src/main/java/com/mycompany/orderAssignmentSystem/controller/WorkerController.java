@@ -1,11 +1,10 @@
 /*
  * WorkerController: Controller class responsible for handling worker-related operations.
  */
-package com.mycompany.orderAssignmentSystem.controller;
+package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -13,18 +12,20 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.view.WorkerView;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.WorkerSearchOption;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.view.WorkerView;
 
 /**
  * Controller class responsible for handling worker-related operations.
  */
 public class WorkerController {
+
+	private static final String ERROR_FINDING_WORKER = "Error finding worker: {}";
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LogManager.getLogger(WorkerController.class);
@@ -125,9 +126,9 @@ public class WorkerController {
 		} catch (NullPointerException | IllegalArgumentException e) {
 			LOGGER.error("Error validating while " + operation.toString() + " worker: " + e.getMessage());
 			workerView.showError(e.getMessage(), worker);
-			return;
+
 		} catch (NoSuchElementException e) {
-			LOGGER.error("Error finding worker: {}", e.getMessage());
+			LOGGER.error(ERROR_FINDING_WORKER, e.getMessage());
 			workerView.showErrorNotFound(e.getMessage(), worker);
 		}
 	}
@@ -141,7 +142,6 @@ public class WorkerController {
 		LOGGER.info("Fetch a worker");
 
 		try {
-//			validateWorkerForFetch(worker);
 			validateWorkerAndWorkerId(worker);
 
 			Worker savedWorker = workerRepository.findById(worker.getWorkerId());
@@ -155,7 +155,7 @@ public class WorkerController {
 			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
 			workerView.showError(e.getMessage(), worker);
 		} catch (NoSuchElementException e) {
-			LOGGER.error("Error finding worker: {}", e.getMessage());
+			LOGGER.error(ERROR_FINDING_WORKER, e.getMessage());
 			workerView.showErrorNotFound(e.getMessage(), worker);
 		}
 	}
@@ -170,7 +170,7 @@ public class WorkerController {
 
 		try {
 			validateWorkerAndWorkerId(worker);
-			 worker = validateWorkerExistence(worker);
+			worker = validateWorkerExistence(worker);
 			if (worker.getOrders() != null && !worker.getOrders().isEmpty()) {
 				throw new IllegalArgumentException(
 						"Cannot delete worker with orders this worker has " + worker.getOrders().size() + " Orders");
@@ -182,37 +182,10 @@ public class WorkerController {
 			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
 			workerView.showError(e.getMessage(), worker);
 		} catch (NoSuchElementException e) {
-			LOGGER.error("Error finding worker: {}", e.getMessage());
+			LOGGER.error(ERROR_FINDING_WORKER, e.getMessage());
 			workerView.showErrorNotFound(e.getMessage(), worker);
-		} 
+		}
 	}
-
-	/**
-	 * Fetches orders associated with a worker by their ID.
-	 *
-	 * @param worker the worker whose orders are to be fetched
-	 */
-//	public void fetchOrdersByWorkerId(Worker worker) {
-//		LOGGER.info("Fetch a orders by worker Id");
-//
-//		try {
-//			validateWorkerAndWorkerId(worker);
-//			LOGGER.info("Orders Fetched: 1");
-//			Worker existingWorker = validateWorkerExistence(worker);
-//			if (existingWorker.getOrders().isEmpty()) {
-//				throw new NullPointerException("No Orders found for this worker: " + worker.getWorkerId());
-//			}
-//			LOGGER.info("Orders Fetched: 2");
-//			workerView.showOrderByWorkerId(existingWorker.getOrders());
-//		} catch (NullPointerException | IllegalArgumentException e) {
-//			LOGGER.error("Error validating while updating worker: {}", e.getMessage());
-//			workerView.showSearchOrderByWorkerIdError(e.getMessage(), worker);
-//		} catch (NoSuchElementException e) {
-//			LOGGER.error("Error finding worker: {}", e.getMessage());
-//			workerView.showErrorNotFound(e.getMessage(), worker);
-//		}
-//
-//	}
 
 	/**
 	 * Searches for workers based on the specified search option and text.
@@ -226,7 +199,7 @@ public class WorkerController {
 		LOGGER.info("Search workers by search Options");
 
 		try {
-			List<Worker> workers = Collections.emptyList();
+			List<Worker> workers;
 			searchText = validationConfigurations.validateSearchString(searchText);
 
 			if (searchOption == null) {
@@ -255,7 +228,7 @@ public class WorkerController {
 		} catch (Exception e) {
 			LOGGER.error("Error validating Search Text: " + e.getMessage());
 			workerView.showSearchError(e.getMessage(), searchText);
-			return;
+
 		}
 	}
 

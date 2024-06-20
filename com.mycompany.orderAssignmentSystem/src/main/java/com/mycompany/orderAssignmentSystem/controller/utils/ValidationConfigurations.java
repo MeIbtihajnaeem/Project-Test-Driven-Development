@@ -1,12 +1,12 @@
 /*
  * ValidationConfigurations: Utility class for input validation.
  */
-package com.mycompany.orderAssignmentSystem.controller.utils;
+package com.mycompany.orderassignmentsystem.controller.utils;
 
 import java.time.LocalDate;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 
 /**
  * Utility class for validating input fields.
@@ -57,15 +57,6 @@ public interface ValidationConfigurations {
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validatePhoneNumber(String phoneNumber);
-
-	/**
-	 * Validates an ID.
-	 *
-	 * @param id the ID to validate
-	 * @return the validated ID
-	 * @throws IllegalArgumentException if validation fails
-	 */
-//	public long validateId(Long id);
 
 	/**
 	 * Validates a date.
@@ -122,7 +113,5 @@ public interface ValidationConfigurations {
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validateSearchString(String searchString);
-	
-	
 
 }

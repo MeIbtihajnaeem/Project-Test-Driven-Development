@@ -3,7 +3,7 @@
  * This class holds information about an order, including customer details, appointment date, order description, category, status, and the assigned worker.
  */
 
-package com.mycompany.orderAssignmentSystem.model;
+package com.mycompany.orderassignmentsystem.model;
 
 import java.util.Objects;
 
@@ -16,8 +16,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 
 /**
  * Represents an order placed by a customer in the system.

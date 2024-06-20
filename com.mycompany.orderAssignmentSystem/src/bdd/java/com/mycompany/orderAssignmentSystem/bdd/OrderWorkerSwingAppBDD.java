@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.bdd;
+package com.mycompany.orderassignmentsystem.bdd;
 
 import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
 import org.junit.BeforeClass;

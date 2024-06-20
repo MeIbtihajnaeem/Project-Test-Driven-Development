@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.view.swing;
+package com.mycompany.orderassignmentsystem.view.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,17 +27,18 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import com.mycompany.orderAssignmentSystem.controller.OrderController;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.view.OrderView;
+import com.mycompany.orderassignmentsystem.controller.OrderController;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderSearchOptions;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.view.OrderView;
 
 public class OrderSwingView extends JFrame implements OrderView {
 
+	private static final String ARIAL = "Arial";
 	private static final long serialVersionUID = 2L;
 	private JPanel contentPane;
 	private JTextField txtOrderId;
@@ -58,7 +59,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 	private JTextField txtSelectedDate;
 	private JLabel showError;
 	private JLabel showSearchErrorLbl;
-	private OrderController orderController;
+	private transient OrderController orderController;
 	private WorkerSwingView workerSwingView;
 
 	// List of combo box
@@ -72,7 +73,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 	private DefaultListModel<CustomerOrder> orderListModel;
 	private JList<CustomerOrder> listOrders;
 	private JComboBox<Worker> cmbWorker;
-//	private ValidationConfigurations validationConfig;
 
 	public void setOrderController(OrderController orderController) {
 		this.orderController = orderController;
@@ -86,22 +86,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 		return orderListModel;
 	}
 
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					OrderSwingView frame = new OrderSwingView();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
 	public void setWorkerSwingView(WorkerSwingView workerSwingView) {
 		this.workerSwingView = workerSwingView;
 	}
@@ -110,12 +94,11 @@ public class OrderSwingView extends JFrame implements OrderView {
 	 * Create the frame.
 	 */
 	public OrderSwingView() {
-//		validationConfig = new ExtendedValidationConfigurations();
-		cmbOrderCategory = new JComboBox<OrderCategory>();
-		cmbSearchBy = new JComboBox<OrderSearchOptions>();
-		cmbOrderStatus = new JComboBox<OrderStatus>();
+		cmbOrderCategory = new JComboBox<>();
+		cmbSearchBy = new JComboBox<>();
+		cmbOrderStatus = new JComboBox<>();
 		workerListModel = new DefaultComboBoxModel<>();
-		cmbWorker = new JComboBox<Worker>(workerListModel);
+		cmbWorker = new JComboBox<>(workerListModel);
 		txtOrderId = new JTextField();
 		txtSelectedDate = new JTextField();
 		txtCustomerName = new JTextField();
@@ -126,7 +109,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 		btnUpdate = new JButton("Update");
 		btnFetch = new JButton("Fetch");
 		txtSearchOrder = new JTextField();
-//		getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
 
 		for (OrderCategory category : OrderCategory.values()) {
 			cmbOrderCategory.addItem(category);
@@ -143,66 +125,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbOrderStatus.setSelectedItem(null);
 		cmbWorker.setSelectedItem(null);
 
-//		KeyListener changeTextBoxValueListener = new KeyAdapter() {
-//			@Override
-//			public void keyReleased(KeyEvent e) {
-//
-//				if ( e.getSource() == txtCustomerName
-//						|| e.getSource() == txtCustomerAddress || e.getSource() == txtCustomerPhone
-//						|| e.getSource() == txtOrderDescription || e.getSource() == txtSelectedDate) {
-//					handleButtonAndComboBoxStates();
-//
-//				} else if (e.getSource() == txtSearchOrder) {
-//
-//					handleSearchAndClearButtonStates();
-//
-//				}
-//			}
-//
-//		};
-
-//		ActionListener changeComboBoxValueListener = new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				if (e.getSource() == cmbOrderCategory || e.getSource() == cmbOrderStatus
-//						|| e.getSource() == cmbWorker) {
-//					handleButtonAndComboBoxStates();
-//
-//				} else if (e.getSource() == cmbSearchBy) {
-//					handleSearchAndClearButtonStates();
-//
-//				}
-//			}
-//		};
-
-//		ActionListener crudActionListener = new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				if (e.getSource() == btnAdd) {
-//					addOrderMethod();
-//				} else if (e.getSource() == btnUpdate) {
-//					updateOrderMethod();
-//				} else if (e.getSource() == btnFetch) {
-//					fetchOrderMethod();
-//				} else if (e.getSource() == btnSearchOrder) {
-//					searchOrderByTextMethod();
-//				} else if (e.getSource() == btnClearSearch) {
-//					clearSearchAndFetchOrders();
-//				} else if (e.getSource() == btnDelete) {
-//					deleteOrderMethod();
-//				}
-//
-////				else {
-////					worker.setWorkerId(Long.parseLong(txtOrdersByWorkerId.getText()));
-////					workerController.fetchOrdersByWorkerId(worker);
-////				}
-//
-//			}
-//
-//		
-//		};
-
 		setTitle("Order Form");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 742, 629);
@@ -211,457 +133,462 @@ public class OrderSwingView extends JFrame implements OrderView {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 1.0, 1.0, 0.0, 1.0, 0.0 };
-		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-				0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
-		contentPane.setLayout(gbl_contentPane);
+		GridBagLayout gblContentPane = new GridBagLayout();
+		gblContentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
+		gblContentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gblContentPane.columnWeights = new double[] { 1.0, 1.0, 0.0, 1.0, 0.0 };
+		gblContentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+				1.0, 0.0, 0.0, Double.MIN_VALUE };
+		contentPane.setLayout(gblContentPane);
 
 		JButton btnManageWorker = new JButton("Manage Worker");
 		btnManageWorker.setName("btnManageWorker");
 		btnManageWorker.setForeground(Color.WHITE);
 		btnManageWorker.setOpaque(true);
-		btnManageWorker.setFont(new Font("Arial", Font.BOLD, 16));
+		btnManageWorker.setFont(new Font(ARIAL, Font.BOLD, 16));
 		btnManageWorker.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnManageWorker.setBackground(Color.RED);
 		btnManageWorker.setFocusPainted(false);
 		btnManageWorker.setPreferredSize(new Dimension(150, 40));
 		btnManageWorker.addActionListener(e -> openWorkerForm());
 
-		GridBagConstraints gbc_btnManageWorker = new GridBagConstraints();
-		gbc_btnManageWorker.ipady = 10;
-		gbc_btnManageWorker.ipadx = 20;
-		gbc_btnManageWorker.insets = new Insets(0, 0, 5, 0);
-		gbc_btnManageWorker.gridx = 5;
-		gbc_btnManageWorker.gridy = 0;
-		contentPane.add(btnManageWorker, gbc_btnManageWorker);
+		GridBagConstraints gbcBtnManageWorker = new GridBagConstraints();
+		gbcBtnManageWorker.ipady = 10;
+		gbcBtnManageWorker.ipadx = 20;
+		gbcBtnManageWorker.insets = new Insets(0, 0, 5, 0);
+		gbcBtnManageWorker.gridx = 5;
+		gbcBtnManageWorker.gridy = 0;
+		contentPane.add(btnManageWorker, gbcBtnManageWorker);
 
 		JLabel lblWorkerId = new JLabel("Order ID");
 		lblWorkerId.setIconTextGap(8);
-		lblWorkerId.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblWorkerId = new GridBagConstraints();
-		gbc_lblWorkerId.anchor = GridBagConstraints.EAST;
-		gbc_lblWorkerId.insets = new Insets(0, 0, 5, 5);
-		gbc_lblWorkerId.gridx = 0;
-		gbc_lblWorkerId.gridy = 1;
-		contentPane.add(lblWorkerId, gbc_lblWorkerId);
+		lblWorkerId.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblWorkerId = new GridBagConstraints();
+		gbcLblWorkerId.anchor = GridBagConstraints.EAST;
+		gbcLblWorkerId.insets = new Insets(0, 0, 5, 5);
+		gbcLblWorkerId.gridx = 0;
+		gbcLblWorkerId.gridy = 1;
+		contentPane.add(lblWorkerId, gbcLblWorkerId);
 
 		txtOrderId.setName("txtOrderId");
-		txtOrderId.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtOrderId.setFont(new Font(ARIAL, Font.PLAIN, 12));
 		txtOrderId.setColumns(10);
-//		txtOrderId.addKeyListener(new KeyAdapter()->handleButtonAndComboBoxStates());;
 		txtOrderId.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				handleButtonAndComboBoxStates();
 			}
 
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE))) {
+			@Override
+			public void keyTyped(KeyEvent event) {
+				char character = event.getKeyChar();
+				if (!((character >= '0') && (character <= '9') || (character == KeyEvent.VK_BACK_SPACE))) {
 					getToolkit().beep();
-					e.consume();
+					event.consume();
 				}
 			}
 		});
 
-		GridBagConstraints gbc_txtOrderId = new GridBagConstraints();
-		gbc_txtOrderId.ipady = 10;
-		gbc_txtOrderId.ipadx = 10;
-		gbc_txtOrderId.insets = new Insets(0, 0, 5, 5);
-		gbc_txtOrderId.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtOrderId.gridx = 1;
-		gbc_txtOrderId.gridy = 1;
-		contentPane.add(txtOrderId, gbc_txtOrderId);
+		GridBagConstraints gbcTxtOrderId = new GridBagConstraints();
+		gbcTxtOrderId.ipady = 10;
+		gbcTxtOrderId.ipadx = 10;
+		gbcTxtOrderId.insets = new Insets(0, 0, 5, 5);
+		gbcTxtOrderId.fill = GridBagConstraints.HORIZONTAL;
+		gbcTxtOrderId.gridx = 1;
+		gbcTxtOrderId.gridy = 1;
+		contentPane.add(txtOrderId, gbcTxtOrderId);
 
 		JLabel lblAppointmentDate = new JLabel("Appointment Date");
 		lblAppointmentDate.setIconTextGap(8);
-		lblAppointmentDate.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblAppointmentDate = new GridBagConstraints();
-		gbc_lblAppointmentDate.anchor = GridBagConstraints.EAST;
-		gbc_lblAppointmentDate.insets = new Insets(0, 0, 5, 5);
-		gbc_lblAppointmentDate.gridx = 2;
-		gbc_lblAppointmentDate.gridy = 1;
-		contentPane.add(lblAppointmentDate, gbc_lblAppointmentDate);
+		lblAppointmentDate.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblAppointmentDate = new GridBagConstraints();
+		gbcLblAppointmentDate.anchor = GridBagConstraints.EAST;
+		gbcLblAppointmentDate.insets = new Insets(0, 0, 5, 5);
+		gbcLblAppointmentDate.gridx = 2;
+		gbcLblAppointmentDate.gridy = 1;
+		contentPane.add(lblAppointmentDate, gbcLblAppointmentDate);
 
 		txtSelectedDate.setName("txtSelectedDate");
 		txtSelectedDate.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				handleButtonAndComboBoxStates();
 			}
 		});
 
-		txtSelectedDate.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtSelectedDate.setFont(new Font(ARIAL, Font.PLAIN, 12));
 		txtSelectedDate.setColumns(10);
-		GridBagConstraints gbc_lblSelectedDate = new GridBagConstraints();
-		gbc_lblSelectedDate.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblSelectedDate.ipady = 10;
-		gbc_lblSelectedDate.ipadx = 10;
-		gbc_lblSelectedDate.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSelectedDate.gridx = 3;
-		gbc_lblSelectedDate.gridy = 1;
-		contentPane.add(txtSelectedDate, gbc_lblSelectedDate);
+		GridBagConstraints gbcLblSelectedDate = new GridBagConstraints();
+		gbcLblSelectedDate.fill = GridBagConstraints.HORIZONTAL;
+		gbcLblSelectedDate.ipady = 10;
+		gbcLblSelectedDate.ipadx = 10;
+		gbcLblSelectedDate.insets = new Insets(0, 0, 5, 5);
+		gbcLblSelectedDate.gridx = 3;
+		gbcLblSelectedDate.gridy = 1;
+		contentPane.add(txtSelectedDate, gbcLblSelectedDate);
 
 		JLabel lblCustomerName = new JLabel("Customer Name");
 		lblCustomerName.setIconTextGap(8);
-		lblCustomerName.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblCustomerName = new GridBagConstraints();
-		gbc_lblCustomerName.anchor = GridBagConstraints.EAST;
-		gbc_lblCustomerName.insets = new Insets(0, 0, 5, 5);
-		gbc_lblCustomerName.gridx = 0;
-		gbc_lblCustomerName.gridy = 2;
-		contentPane.add(lblCustomerName, gbc_lblCustomerName);
+		lblCustomerName.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblCustomerName = new GridBagConstraints();
+		gbcLblCustomerName.anchor = GridBagConstraints.EAST;
+		gbcLblCustomerName.insets = new Insets(0, 0, 5, 5);
+		gbcLblCustomerName.gridx = 0;
+		gbcLblCustomerName.gridy = 2;
+		contentPane.add(lblCustomerName, gbcLblCustomerName);
 
 		txtCustomerName.setName("txtCustomerName");
 		txtCustomerName.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				handleButtonAndComboBoxStates();
 			}
 		});
 
-		txtCustomerName.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtCustomerName.setFont(new Font(ARIAL, Font.PLAIN, 12));
 		txtCustomerName.setColumns(10);
-		GridBagConstraints gbc_txtCustomerName = new GridBagConstraints();
-		gbc_txtCustomerName.ipady = 10;
-		gbc_txtCustomerName.ipadx = 10;
-		gbc_txtCustomerName.insets = new Insets(0, 0, 5, 5);
-		gbc_txtCustomerName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtCustomerName.gridx = 1;
-		gbc_txtCustomerName.gridy = 2;
-		contentPane.add(txtCustomerName, gbc_txtCustomerName);
+		GridBagConstraints gbcTxtCustomerName = new GridBagConstraints();
+		gbcTxtCustomerName.ipady = 10;
+		gbcTxtCustomerName.ipadx = 10;
+		gbcTxtCustomerName.insets = new Insets(0, 0, 5, 5);
+		gbcTxtCustomerName.fill = GridBagConstraints.HORIZONTAL;
+		gbcTxtCustomerName.gridx = 1;
+		gbcTxtCustomerName.gridy = 2;
+		contentPane.add(txtCustomerName, gbcTxtCustomerName);
 
 		JLabel lblOrderCategory = new JLabel("Order Category");
 		lblOrderCategory.setIconTextGap(8);
-		lblOrderCategory.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblOrderCategory = new GridBagConstraints();
-		gbc_lblOrderCategory.anchor = GridBagConstraints.EAST;
-		gbc_lblOrderCategory.insets = new Insets(0, 0, 5, 5);
-		gbc_lblOrderCategory.gridx = 2;
-		gbc_lblOrderCategory.gridy = 2;
-		contentPane.add(lblOrderCategory, gbc_lblOrderCategory);
+		lblOrderCategory.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblOrderCategory = new GridBagConstraints();
+		gbcLblOrderCategory.anchor = GridBagConstraints.EAST;
+		gbcLblOrderCategory.insets = new Insets(0, 0, 5, 5);
+		gbcLblOrderCategory.gridx = 2;
+		gbcLblOrderCategory.gridy = 2;
+		contentPane.add(lblOrderCategory, gbcLblOrderCategory);
 
 		cmbOrderCategory.setName("cmbOrderCategory");
 		cmbOrderCategory.addActionListener(e -> handleButtonAndComboBoxStates());
 
-		GridBagConstraints gbc_cmbOrderCategory = new GridBagConstraints();
-		gbc_cmbOrderCategory.ipady = 10;
-		gbc_cmbOrderCategory.ipadx = 20;
-		gbc_cmbOrderCategory.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbOrderCategory.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbOrderCategory.gridx = 3;
-		gbc_cmbOrderCategory.gridy = 2;
-		contentPane.add(cmbOrderCategory, gbc_cmbOrderCategory);
+		GridBagConstraints gbcCmbOrderCategory = new GridBagConstraints();
+		gbcCmbOrderCategory.ipady = 10;
+		gbcCmbOrderCategory.ipadx = 20;
+		gbcCmbOrderCategory.insets = new Insets(0, 0, 5, 5);
+		gbcCmbOrderCategory.fill = GridBagConstraints.HORIZONTAL;
+		gbcCmbOrderCategory.gridx = 3;
+		gbcCmbOrderCategory.gridy = 2;
+		contentPane.add(cmbOrderCategory, gbcCmbOrderCategory);
 
 		JLabel lblWorkerPhoneNumber = new JLabel("Customer Address");
 		lblWorkerPhoneNumber.setIconTextGap(8);
-		lblWorkerPhoneNumber.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblWorkerPhoneNumber = new GridBagConstraints();
-		gbc_lblWorkerPhoneNumber.anchor = GridBagConstraints.EAST;
-		gbc_lblWorkerPhoneNumber.insets = new Insets(0, 0, 5, 5);
-		gbc_lblWorkerPhoneNumber.gridx = 0;
-		gbc_lblWorkerPhoneNumber.gridy = 3;
-		contentPane.add(lblWorkerPhoneNumber, gbc_lblWorkerPhoneNumber);
+		lblWorkerPhoneNumber.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblWorkerPhoneNumber = new GridBagConstraints();
+		gbcLblWorkerPhoneNumber.anchor = GridBagConstraints.EAST;
+		gbcLblWorkerPhoneNumber.insets = new Insets(0, 0, 5, 5);
+		gbcLblWorkerPhoneNumber.gridx = 0;
+		gbcLblWorkerPhoneNumber.gridy = 3;
+		contentPane.add(lblWorkerPhoneNumber, gbcLblWorkerPhoneNumber);
 
 		txtCustomerAddress.setName("txtCustomerAddress");
 		txtCustomerAddress.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				handleButtonAndComboBoxStates();
 			}
 		});
 
-		txtCustomerAddress.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtCustomerAddress.setFont(new Font(ARIAL, Font.PLAIN, 12));
 		txtCustomerAddress.setColumns(10);
-		GridBagConstraints gbc_txtCustomerAddress = new GridBagConstraints();
-		gbc_txtCustomerAddress.ipady = 10;
-		gbc_txtCustomerAddress.ipadx = 10;
-		gbc_txtCustomerAddress.insets = new Insets(0, 0, 5, 5);
-		gbc_txtCustomerAddress.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtCustomerAddress.gridx = 1;
-		gbc_txtCustomerAddress.gridy = 3;
-		contentPane.add(txtCustomerAddress, gbc_txtCustomerAddress);
+		GridBagConstraints gbcTxtCustomerAddress = new GridBagConstraints();
+		gbcTxtCustomerAddress.ipady = 10;
+		gbcTxtCustomerAddress.ipadx = 10;
+		gbcTxtCustomerAddress.insets = new Insets(0, 0, 5, 5);
+		gbcTxtCustomerAddress.fill = GridBagConstraints.HORIZONTAL;
+		gbcTxtCustomerAddress.gridx = 1;
+		gbcTxtCustomerAddress.gridy = 3;
+		contentPane.add(txtCustomerAddress, gbcTxtCustomerAddress);
 
 		JLabel lblOrderStatus = new JLabel("Order Status");
 		lblOrderStatus.setIconTextGap(8);
-		lblOrderStatus.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblOrderStatus = new GridBagConstraints();
-		gbc_lblOrderStatus.anchor = GridBagConstraints.EAST;
-		gbc_lblOrderStatus.insets = new Insets(0, 0, 5, 5);
-		gbc_lblOrderStatus.gridx = 2;
-		gbc_lblOrderStatus.gridy = 3;
-		contentPane.add(lblOrderStatus, gbc_lblOrderStatus);
+		lblOrderStatus.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblOrderStatus = new GridBagConstraints();
+		gbcLblOrderStatus.anchor = GridBagConstraints.EAST;
+		gbcLblOrderStatus.insets = new Insets(0, 0, 5, 5);
+		gbcLblOrderStatus.gridx = 2;
+		gbcLblOrderStatus.gridy = 3;
+		contentPane.add(lblOrderStatus, gbcLblOrderStatus);
 
 		cmbOrderStatus.setName("cmbOrderStatus");
 		cmbOrderStatus.addActionListener(e -> handleButtonAndComboBoxStates());
 
-		GridBagConstraints gbc_cmbOrderStatus = new GridBagConstraints();
-		gbc_cmbOrderStatus.ipady = 10;
-		gbc_cmbOrderStatus.ipadx = 20;
-		gbc_cmbOrderStatus.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbOrderStatus.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbOrderStatus.gridx = 3;
-		gbc_cmbOrderStatus.gridy = 3;
-		contentPane.add(cmbOrderStatus, gbc_cmbOrderStatus);
+		GridBagConstraints gbcCmbOrderStatus = new GridBagConstraints();
+		gbcCmbOrderStatus.ipady = 10;
+		gbcCmbOrderStatus.ipadx = 20;
+		gbcCmbOrderStatus.insets = new Insets(0, 0, 5, 5);
+		gbcCmbOrderStatus.fill = GridBagConstraints.HORIZONTAL;
+		gbcCmbOrderStatus.gridx = 3;
+		gbcCmbOrderStatus.gridy = 3;
+		contentPane.add(cmbOrderStatus, gbcCmbOrderStatus);
 
 		JLabel lblCustomerPhone = new JLabel("Customer Phone #");
 		lblCustomerPhone.setIconTextGap(8);
-		lblCustomerPhone.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblCustomerPhone = new GridBagConstraints();
-		gbc_lblCustomerPhone.anchor = GridBagConstraints.EAST;
-		gbc_lblCustomerPhone.insets = new Insets(0, 0, 5, 5);
-		gbc_lblCustomerPhone.gridx = 0;
-		gbc_lblCustomerPhone.gridy = 4;
-		contentPane.add(lblCustomerPhone, gbc_lblCustomerPhone);
+		lblCustomerPhone.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblCustomerPhone = new GridBagConstraints();
+		gbcLblCustomerPhone.anchor = GridBagConstraints.EAST;
+		gbcLblCustomerPhone.insets = new Insets(0, 0, 5, 5);
+		gbcLblCustomerPhone.gridx = 0;
+		gbcLblCustomerPhone.gridy = 4;
+		contentPane.add(lblCustomerPhone, gbcLblCustomerPhone);
 
 		txtCustomerPhone.setName("txtCustomerPhone");
 		txtCustomerPhone.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				handleButtonAndComboBoxStates();
 			}
 		});
 
-		txtCustomerPhone.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtCustomerPhone.setFont(new Font(ARIAL, Font.PLAIN, 12));
 		txtCustomerPhone.setColumns(10);
-		GridBagConstraints gbc_txtCustomerPhone = new GridBagConstraints();
-		gbc_txtCustomerPhone.ipady = 10;
-		gbc_txtCustomerPhone.ipadx = 10;
-		gbc_txtCustomerPhone.insets = new Insets(0, 0, 5, 5);
-		gbc_txtCustomerPhone.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtCustomerPhone.gridx = 1;
-		gbc_txtCustomerPhone.gridy = 4;
-		contentPane.add(txtCustomerPhone, gbc_txtCustomerPhone);
+		GridBagConstraints gbcTxtCustomerPhone = new GridBagConstraints();
+		gbcTxtCustomerPhone.ipady = 10;
+		gbcTxtCustomerPhone.ipadx = 10;
+		gbcTxtCustomerPhone.insets = new Insets(0, 0, 5, 5);
+		gbcTxtCustomerPhone.fill = GridBagConstraints.HORIZONTAL;
+		gbcTxtCustomerPhone.gridx = 1;
+		gbcTxtCustomerPhone.gridy = 4;
+		contentPane.add(txtCustomerPhone, gbcTxtCustomerPhone);
 
 		JLabel lblWorkerCategory = new JLabel("Worker");
 		lblWorkerCategory.setIconTextGap(8);
-		lblWorkerCategory.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblWorkerCategory = new GridBagConstraints();
-		gbc_lblWorkerCategory.anchor = GridBagConstraints.EAST;
-		gbc_lblWorkerCategory.insets = new Insets(0, 0, 5, 5);
-		gbc_lblWorkerCategory.gridx = 2;
-		gbc_lblWorkerCategory.gridy = 4;
-		contentPane.add(lblWorkerCategory, gbc_lblWorkerCategory);
+		lblWorkerCategory.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblWorkerCategory = new GridBagConstraints();
+		gbcLblWorkerCategory.anchor = GridBagConstraints.EAST;
+		gbcLblWorkerCategory.insets = new Insets(0, 0, 5, 5);
+		gbcLblWorkerCategory.gridx = 2;
+		gbcLblWorkerCategory.gridy = 4;
+		contentPane.add(lblWorkerCategory, gbcLblWorkerCategory);
 
 		cmbWorker.setName("cmbWorker");
-		cmbWorker.addActionListener(e -> {
-			handleButtonAndComboBoxStates();
-		});
+		cmbWorker.addActionListener(e -> handleButtonAndComboBoxStates());
 
-		GridBagConstraints gbc_cmbWorker = new GridBagConstraints();
-		gbc_cmbWorker.ipady = 10;
-		gbc_cmbWorker.ipadx = 20;
-		gbc_cmbWorker.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbWorker.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbWorker.gridx = 3;
-		gbc_cmbWorker.gridy = 4;
-		contentPane.add(cmbWorker, gbc_cmbWorker);
+		GridBagConstraints gbcCmbWorker = new GridBagConstraints();
+		gbcCmbWorker.ipady = 10;
+		gbcCmbWorker.ipadx = 20;
+		gbcCmbWorker.insets = new Insets(0, 0, 5, 5);
+		gbcCmbWorker.fill = GridBagConstraints.HORIZONTAL;
+		gbcCmbWorker.gridx = 3;
+		gbcCmbWorker.gridy = 4;
+		contentPane.add(cmbWorker, gbcCmbWorker);
 
 		JLabel lblOrderDescription = new JLabel("Order Description");
 		lblOrderDescription.setIconTextGap(8);
-		lblOrderDescription.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblOrderDescription = new GridBagConstraints();
-		gbc_lblOrderDescription.anchor = GridBagConstraints.EAST;
-		gbc_lblOrderDescription.insets = new Insets(0, 0, 5, 5);
-		gbc_lblOrderDescription.gridx = 0;
-		gbc_lblOrderDescription.gridy = 5;
-		contentPane.add(lblOrderDescription, gbc_lblOrderDescription);
+		lblOrderDescription.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblOrderDescription = new GridBagConstraints();
+		gbcLblOrderDescription.anchor = GridBagConstraints.EAST;
+		gbcLblOrderDescription.insets = new Insets(0, 0, 5, 5);
+		gbcLblOrderDescription.gridx = 0;
+		gbcLblOrderDescription.gridy = 5;
+		contentPane.add(lblOrderDescription, gbcLblOrderDescription);
 
 		txtOrderDescription.setName("txtOrderDescription");
 		txtOrderDescription.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				handleButtonAndComboBoxStates();
 			}
 		});
-		txtOrderDescription.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtOrderDescription.setFont(new Font(ARIAL, Font.PLAIN, 12));
 		txtOrderDescription.setColumns(10);
-		GridBagConstraints gbc_txtOrderDescription = new GridBagConstraints();
-		gbc_txtOrderDescription.ipady = 10;
-		gbc_txtOrderDescription.ipadx = 10;
-		gbc_txtOrderDescription.insets = new Insets(0, 0, 5, 5);
-		gbc_txtOrderDescription.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtOrderDescription.gridx = 1;
-		gbc_txtOrderDescription.gridy = 5;
-		contentPane.add(txtOrderDescription, gbc_txtOrderDescription);
+		GridBagConstraints gbcTxtOrderDescription = new GridBagConstraints();
+		gbcTxtOrderDescription.ipady = 10;
+		gbcTxtOrderDescription.ipadx = 10;
+		gbcTxtOrderDescription.insets = new Insets(0, 0, 5, 5);
+		gbcTxtOrderDescription.fill = GridBagConstraints.HORIZONTAL;
+		gbcTxtOrderDescription.gridx = 1;
+		gbcTxtOrderDescription.gridy = 5;
+		contentPane.add(txtOrderDescription, gbcTxtOrderDescription);
 
 		showError = new JLabel("");
 		showError.setName("showError");
 		showError.setForeground(new Color(139, 0, 0));
-		showError.setFont(new Font("Verdana", Font.PLAIN, 16));
+		showError.setFont(new Font(ARIAL, Font.PLAIN, 16));
 		showError.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 1),
 				BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-		GridBagConstraints gbc_showError = new GridBagConstraints();
-		gbc_showError.gridwidth = 6;
-		gbc_showError.insets = new Insets(0, 0, 5, 0);
-		gbc_showError.gridx = 0;
-		gbc_showError.gridy = 6;
-		contentPane.add(showError, gbc_showError);
+		GridBagConstraints gbcShowError = new GridBagConstraints();
+		gbcShowError.gridwidth = 6;
+		gbcShowError.insets = new Insets(0, 0, 5, 0);
+		gbcShowError.gridx = 0;
+		gbcShowError.gridy = 6;
+		contentPane.add(showError, gbcShowError);
 
 		btnFetch.setEnabled(false);
 		btnFetch.setName("btnFetch");
 		btnFetch.setForeground(Color.WHITE);
 		btnFetch.setOpaque(true);
-		btnFetch.setFont(new Font("Arial", Font.BOLD, 16));
+		btnFetch.setFont(new Font(ARIAL, Font.BOLD, 16));
 		btnFetch.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnFetch.setBackground(new Color(59, 89, 182));
 		btnFetch.setFocusPainted(false);
 		btnFetch.setPreferredSize(new Dimension(150, 40));
 		btnFetch.addActionListener(e -> fetchOrderMethod());
 
-		GridBagConstraints gbc_btnFetch = new GridBagConstraints();
-		gbc_btnFetch.ipady = 10;
-		gbc_btnFetch.ipadx = 20;
-		gbc_btnFetch.gridy = 7;
-		gbc_btnFetch.insets = new Insets(0, 0, 5, 5);
-		gbc_btnFetch.gridx = 0;
-		contentPane.add(btnFetch, gbc_btnFetch);
+		GridBagConstraints gbcBtnFetch = new GridBagConstraints();
+		gbcBtnFetch.ipady = 10;
+		gbcBtnFetch.ipadx = 20;
+		gbcBtnFetch.gridy = 7;
+		gbcBtnFetch.insets = new Insets(0, 0, 5, 5);
+		gbcBtnFetch.gridx = 0;
+		contentPane.add(btnFetch, gbcBtnFetch);
 
 		btnAdd.setEnabled(false);
 		btnAdd.setName("btnAdd");
 		btnAdd.setForeground(Color.WHITE);
 		btnAdd.setOpaque(true);
-		btnAdd.setFont(new Font("Arial", Font.BOLD, 16));
+		btnAdd.setFont(new Font(ARIAL, Font.BOLD, 16));
 		btnAdd.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnAdd.setBackground(new Color(59, 89, 182));
 		btnAdd.setFocusPainted(false);
 		btnAdd.setPreferredSize(new Dimension(150, 40));
 		btnAdd.addActionListener(e -> addOrderMethod());
 
-		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
-		gbc_btnAdd.ipady = 10;
-		gbc_btnAdd.ipadx = 20;
-		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAdd.gridx = 1;
-		gbc_btnAdd.gridy = 7;
-		contentPane.add(btnAdd, gbc_btnAdd);
+		GridBagConstraints gbcBtnAdd = new GridBagConstraints();
+		gbcBtnAdd.ipady = 10;
+		gbcBtnAdd.ipadx = 20;
+		gbcBtnAdd.insets = new Insets(0, 0, 5, 5);
+		gbcBtnAdd.gridx = 1;
+		gbcBtnAdd.gridy = 7;
+		contentPane.add(btnAdd, gbcBtnAdd);
 
 		btnUpdate.setEnabled(false);
 		btnUpdate.setName("btnUpdate");
 		btnUpdate.setForeground(Color.WHITE);
 		btnUpdate.setOpaque(true);
-		btnUpdate.setFont(new Font("Arial", Font.BOLD, 16));
+		btnUpdate.setFont(new Font(ARIAL, Font.BOLD, 16));
 		btnUpdate.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnUpdate.setBackground(new Color(59, 89, 182));
 		btnUpdate.setFocusPainted(false);
 		btnUpdate.setPreferredSize(new Dimension(150, 40));
 		btnUpdate.addActionListener(e -> updateOrderMethod());
 
-		GridBagConstraints gbc_btnUpdate = new GridBagConstraints();
-		gbc_btnUpdate.ipady = 10;
-		gbc_btnUpdate.ipadx = 20;
-		gbc_btnUpdate.insets = new Insets(0, 0, 5, 5);
-		gbc_btnUpdate.gridx = 2;
-		gbc_btnUpdate.gridy = 7;
-		contentPane.add(btnUpdate, gbc_btnUpdate);
+		GridBagConstraints gbcBtnUpdate = new GridBagConstraints();
+		gbcBtnUpdate.ipady = 10;
+		gbcBtnUpdate.ipadx = 20;
+		gbcBtnUpdate.insets = new Insets(0, 0, 5, 5);
+		gbcBtnUpdate.gridx = 2;
+		gbcBtnUpdate.gridy = 7;
+		contentPane.add(btnUpdate, gbcBtnUpdate);
 
 		btnClearSearch = new JButton("Clear");
 		btnClearSearch.setEnabled(false);
 		btnClearSearch.setName("btnClearSearch");
 		btnClearSearch.setForeground(Color.WHITE);
 		btnClearSearch.setOpaque(true);
-		btnClearSearch.setFont(new Font("Arial", Font.BOLD, 16));
+		btnClearSearch.setFont(new Font(ARIAL, Font.BOLD, 16));
 		btnClearSearch.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnClearSearch.setBackground(new Color(59, 89, 182));
 		btnClearSearch.setFocusPainted(false);
 		btnClearSearch.setPreferredSize(new Dimension(150, 40));
 		btnClearSearch.addActionListener(e -> resetAllFields());
-		GridBagConstraints gbc_btnClearSearch = new GridBagConstraints();
-		gbc_btnClearSearch.ipady = 10;
-		gbc_btnClearSearch.ipadx = 20;
-		gbc_btnClearSearch.insets = new Insets(0, 0, 5, 5);
-		gbc_btnClearSearch.gridx = 3;
-		gbc_btnClearSearch.gridy = 7;
-		contentPane.add(btnClearSearch, gbc_btnClearSearch);
+		GridBagConstraints gbcBtnClearSearch = new GridBagConstraints();
+		gbcBtnClearSearch.ipady = 10;
+		gbcBtnClearSearch.ipadx = 20;
+		gbcBtnClearSearch.insets = new Insets(0, 0, 5, 5);
+		gbcBtnClearSearch.gridx = 3;
+		gbcBtnClearSearch.gridy = 7;
+		contentPane.add(btnClearSearch, gbcBtnClearSearch);
 
 		JLabel lblSearchWorker = new JLabel("Search Order");
 		lblSearchWorker.setIconTextGap(8);
-		lblSearchWorker.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblSearchWorker = new GridBagConstraints();
-		gbc_lblSearchWorker.anchor = GridBagConstraints.EAST;
-		gbc_lblSearchWorker.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSearchWorker.gridx = 0;
-		gbc_lblSearchWorker.gridy = 8;
-		contentPane.add(lblSearchWorker, gbc_lblSearchWorker);
+		lblSearchWorker.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblSearchWorker = new GridBagConstraints();
+		gbcLblSearchWorker.anchor = GridBagConstraints.EAST;
+		gbcLblSearchWorker.insets = new Insets(0, 0, 5, 5);
+		gbcLblSearchWorker.gridx = 0;
+		gbcLblSearchWorker.gridy = 8;
+		contentPane.add(lblSearchWorker, gbcLblSearchWorker);
 
 		txtSearchOrder.setName("txtSearchOrder");
 		txtSearchOrder.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				handleSearchAndClearButtonStates();
 			}
 		});
-		txtSearchOrder.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtSearchOrder.setFont(new Font(ARIAL, Font.PLAIN, 12));
 		txtSearchOrder.setColumns(10);
-		GridBagConstraints gbc_txtSearchOrder = new GridBagConstraints();
-		gbc_txtSearchOrder.ipady = 10;
-		gbc_txtSearchOrder.ipadx = 20;
-		gbc_txtSearchOrder.insets = new Insets(0, 0, 5, 5);
-		gbc_txtSearchOrder.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtSearchOrder.gridx = 1;
-		gbc_txtSearchOrder.gridy = 8;
-		contentPane.add(txtSearchOrder, gbc_txtSearchOrder);
+		GridBagConstraints gbcTxtSearchOrder = new GridBagConstraints();
+		gbcTxtSearchOrder.ipady = 10;
+		gbcTxtSearchOrder.ipadx = 20;
+		gbcTxtSearchOrder.insets = new Insets(0, 0, 5, 5);
+		gbcTxtSearchOrder.fill = GridBagConstraints.HORIZONTAL;
+		gbcTxtSearchOrder.gridx = 1;
+		gbcTxtSearchOrder.gridy = 8;
+		contentPane.add(txtSearchOrder, gbcTxtSearchOrder);
 
 		JLabel lblSearchBy = new JLabel("Search By");
 		lblSearchBy.setIconTextGap(8);
-		lblSearchBy.setFont(new Font("Arial", Font.BOLD, 14));
-		GridBagConstraints gbc_lblSearchBy = new GridBagConstraints();
-		gbc_lblSearchBy.anchor = GridBagConstraints.EAST;
-		gbc_lblSearchBy.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSearchBy.gridx = 2;
-		gbc_lblSearchBy.gridy = 8;
-		contentPane.add(lblSearchBy, gbc_lblSearchBy);
+		lblSearchBy.setFont(new Font(ARIAL, Font.BOLD, 14));
+		GridBagConstraints gbcLblSearchBy = new GridBagConstraints();
+		gbcLblSearchBy.anchor = GridBagConstraints.EAST;
+		gbcLblSearchBy.insets = new Insets(0, 0, 5, 5);
+		gbcLblSearchBy.gridx = 2;
+		gbcLblSearchBy.gridy = 8;
+		contentPane.add(lblSearchBy, gbcLblSearchBy);
 
 		cmbSearchBy.setName("cmbSearchBy");
 		cmbSearchBy.addActionListener(e -> handleSearchAndClearButtonStates());
-		GridBagConstraints gbc_cmbSearchBy = new GridBagConstraints();
-		gbc_cmbSearchBy.ipady = 10;
-		gbc_cmbSearchBy.ipadx = 20;
-		gbc_cmbSearchBy.insets = new Insets(0, 0, 5, 5);
-		gbc_cmbSearchBy.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbSearchBy.gridx = 3;
-		gbc_cmbSearchBy.gridy = 8;
-		contentPane.add(cmbSearchBy, gbc_cmbSearchBy);
+		GridBagConstraints gbcCmbSearchBy = new GridBagConstraints();
+		gbcCmbSearchBy.ipady = 10;
+		gbcCmbSearchBy.ipadx = 20;
+		gbcCmbSearchBy.insets = new Insets(0, 0, 5, 5);
+		gbcCmbSearchBy.fill = GridBagConstraints.HORIZONTAL;
+		gbcCmbSearchBy.gridx = 3;
+		gbcCmbSearchBy.gridy = 8;
+		contentPane.add(cmbSearchBy, gbcCmbSearchBy);
 
 		btnSearchOrder = new JButton("Search");
 		btnSearchOrder.setEnabled(false);
 		btnSearchOrder.setName("btnSearchOrder");
 		btnSearchOrder.setForeground(Color.WHITE);
 		btnSearchOrder.setOpaque(true);
-		btnSearchOrder.setFont(new Font("Arial", Font.BOLD, 16));
+		btnSearchOrder.setFont(new Font(ARIAL, Font.BOLD, 16));
 		btnSearchOrder.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnSearchOrder.setBackground(new Color(59, 89, 182));
 		btnSearchOrder.setFocusPainted(false);
 		btnSearchOrder.setPreferredSize(new Dimension(150, 40));
 		btnSearchOrder.addActionListener(e -> searchOrderByTextMethod());
-		GridBagConstraints gbc_btnSearchOrder = new GridBagConstraints();
-		gbc_btnSearchOrder.ipady = 10;
-		gbc_btnSearchOrder.ipadx = 20;
-		gbc_btnSearchOrder.insets = new Insets(0, 0, 5, 0);
-		gbc_btnSearchOrder.gridx = 5;
-		gbc_btnSearchOrder.gridy = 8;
-		contentPane.add(btnSearchOrder, gbc_btnSearchOrder);
+		GridBagConstraints gbcBtnSearchOrder = new GridBagConstraints();
+		gbcBtnSearchOrder.ipady = 10;
+		gbcBtnSearchOrder.ipadx = 20;
+		gbcBtnSearchOrder.insets = new Insets(0, 0, 5, 0);
+		gbcBtnSearchOrder.gridx = 5;
+		gbcBtnSearchOrder.gridy = 8;
+		contentPane.add(btnSearchOrder, gbcBtnSearchOrder);
 
 		showSearchErrorLbl = new JLabel("");
 		showSearchErrorLbl.setName("showSearchErrorLbl");
 		showSearchErrorLbl.setForeground(new Color(139, 0, 0));
-		showSearchErrorLbl.setFont(new Font("Verdana", Font.PLAIN, 16));
+		showSearchErrorLbl.setFont(new Font(ARIAL, Font.PLAIN, 16));
 		showSearchErrorLbl.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 1),
 				BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-		GridBagConstraints gbc_showSearchErrorLbl = new GridBagConstraints();
-		gbc_showSearchErrorLbl.gridwidth = 4;
-		gbc_showSearchErrorLbl.insets = new Insets(0, 0, 5, 5);
-		gbc_showSearchErrorLbl.gridx = 0;
-		gbc_showSearchErrorLbl.gridy = 9;
-		contentPane.add(showSearchErrorLbl, gbc_showSearchErrorLbl);
+		GridBagConstraints gbcShowSearchErrorLbl = new GridBagConstraints();
+		gbcShowSearchErrorLbl.gridwidth = 4;
+		gbcShowSearchErrorLbl.insets = new Insets(0, 0, 5, 5);
+		gbcShowSearchErrorLbl.gridx = 0;
+		gbcShowSearchErrorLbl.gridy = 9;
+		contentPane.add(showSearchErrorLbl, gbcShowSearchErrorLbl);
 
 		JScrollPane scrollPane = new JScrollPane();
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.ipady = 10;
-		gbc_scrollPane.ipadx = 10;
-		gbc_scrollPane.gridwidth = 6;
-		gbc_scrollPane.gridheight = 5;
-		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridx = 0;
-		gbc_scrollPane.gridy = 10;
-		contentPane.add(scrollPane, gbc_scrollPane);
+		GridBagConstraints gbcScrollPane = new GridBagConstraints();
+		gbcScrollPane.ipady = 10;
+		gbcScrollPane.ipadx = 10;
+		gbcScrollPane.gridwidth = 6;
+		gbcScrollPane.gridheight = 5;
+		gbcScrollPane.insets = new Insets(0, 0, 5, 0);
+		gbcScrollPane.fill = GridBagConstraints.BOTH;
+		gbcScrollPane.gridx = 0;
+		gbcScrollPane.gridy = 10;
+		contentPane.add(scrollPane, gbcScrollPane);
 
 		orderListModel = new DefaultListModel<>();
 		listOrders = new JList<>(orderListModel);
@@ -678,30 +605,30 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 		btnDelete.setForeground(Color.WHITE);
 		btnDelete.setOpaque(true);
-		btnDelete.setFont(new Font("Arial", Font.BOLD, 16));
+		btnDelete.setFont(new Font(ARIAL, Font.BOLD, 16));
 		btnDelete.setBorder(new LineBorder(new Color(0, 0, 0)));
 		btnDelete.setBackground(new Color(59, 89, 182));
 		btnDelete.setFocusPainted(false);
 		btnDelete.setPreferredSize(new Dimension(150, 40));
-		GridBagConstraints gbc_btnDelete = new GridBagConstraints();
-		gbc_btnDelete.ipady = 10;
-		gbc_btnDelete.ipadx = 20;
-		gbc_btnDelete.insets = new Insets(0, 0, 5, 5);
-		gbc_btnDelete.gridx = 1;
-		gbc_btnDelete.gridy = 15;
-		contentPane.add(btnDelete, gbc_btnDelete);
+		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
+		gbcBtnDelete.ipady = 10;
+		gbcBtnDelete.ipadx = 20;
+		gbcBtnDelete.insets = new Insets(0, 0, 5, 5);
+		gbcBtnDelete.gridx = 1;
+		gbcBtnDelete.gridy = 15;
+		contentPane.add(btnDelete, gbcBtnDelete);
 
 		showErrorNotFoundLbl = new JLabel("");
 		showErrorNotFoundLbl.setName("showErrorNotFoundLbl");
 		showErrorNotFoundLbl.setForeground(new Color(139, 0, 0));
-		showErrorNotFoundLbl.setFont(new Font("Verdana", Font.PLAIN, 16));
+		showErrorNotFoundLbl.setFont(new Font(ARIAL, Font.PLAIN, 16));
 		showErrorNotFoundLbl.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED, 1),
 				BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-		GridBagConstraints gbc_showErrorNotFoundLbl = new GridBagConstraints();
-		gbc_showErrorNotFoundLbl.insets = new Insets(0, 0, 0, 5);
-		gbc_showErrorNotFoundLbl.gridx = 0;
-		gbc_showErrorNotFoundLbl.gridy = 16;
-		contentPane.add(showErrorNotFoundLbl, gbc_showErrorNotFoundLbl);
+		GridBagConstraints gbcShowErrorNotFoundLbl = new GridBagConstraints();
+		gbcShowErrorNotFoundLbl.insets = new Insets(0, 0, 0, 5);
+		gbcShowErrorNotFoundLbl.gridx = 0;
+		gbcShowErrorNotFoundLbl.gridy = 16;
+		contentPane.add(showErrorNotFoundLbl, gbcShowErrorNotFoundLbl);
 
 	}
 
@@ -730,11 +657,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 		btnFetch.setEnabled(!isOrderIdEmpty && isCustomerNameEmpty && isCustomerAddressEmpty
 				&& isCustomerPhoneNumberEmpty && isOrderDescriptionEmpty && isAppointmentDateEmpty
 				&& isOrderCategoryEmpty && isOrderStatusEmpty && isAssignedWorkerEmpty);
-//		if (btnFetch.isEnabled()) {
-//			cmbWorker.setSelectedItem(null);
-//			cmbOrderStatus.setSelectedItem(null);
-//			cmbOrderCategory.setSelectedItem(null);
-//		}
 
 	}
 
@@ -787,7 +709,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		txtCustomerAddress.setText(order.getCustomerAddress());
 		txtCustomerPhone.setText(order.getCustomerPhoneNumber());
 		txtOrderDescription.setText(order.getOrderDescription());
-		txtSelectedDate.setText(order.getAppointmentDate().toString());
+		txtSelectedDate.setText(order.getAppointmentDate());
 		cmbOrderCategory.setSelectedItem(order.getOrderCategory());
 		cmbOrderStatus.setSelectedItem(order.getOrderStatus());
 		cmbWorker.setSelectedItem(order.getWorker());
@@ -821,7 +743,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	@Override
 	public void showSearchError(String message, String searchText) {
-		// TODO Auto-generated method stub
 		showSearchErrorLbl.setText(message + ": " + searchText);
 
 	}

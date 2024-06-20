@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.controller;
+package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
@@ -17,19 +17,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.OrderDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.view.OrderView;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderSearchOptions;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.OrderRepository;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.OrderDatabaseRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
+import com.mycompany.orderassignmentsystem.view.OrderView;
 
 public class OrderControllerIT {
 	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
@@ -230,7 +230,7 @@ public class OrderControllerIT {
 		order.setOrderStatus(OrderStatus.PENDING);
 		CustomerOrder savedOrder = orderRepository.save(order);
 		orderController.fetchOrderById(savedOrder);
-		orderView.showFetchedOrder(savedOrder);
+		verify(orderView).showFetchedOrder(savedOrder);
 
 	}
 
@@ -266,7 +266,8 @@ public class OrderControllerIT {
 		order.setWorker(savedWorker);
 		CustomerOrder savedOrder = orderRepository.save(order);
 		orderController.searchOrder(savedOrder.getOrderId().toString(), OrderSearchOptions.ORDER_ID);
-		orderView.showSearchResultForOrder(asList(savedOrder));
+		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
 	}
 
 	@Test
@@ -286,7 +287,8 @@ public class OrderControllerIT {
 		order.setWorker(savedWorker);
 		CustomerOrder savedOrder = orderRepository.save(order);
 		orderController.searchOrder(savedWorker.getWorkerId().toString(), OrderSearchOptions.WORKER_ID);
-		orderView.showSearchResultForOrder(asList(savedOrder));
+		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
 	}
 
 	@Test
@@ -307,7 +309,8 @@ public class OrderControllerIT {
 		CustomerOrder savedOrder = orderRepository.save(order);
 		String searchText = "3401372678";
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
-		orderView.showSearchResultForOrder(asList(savedOrder));
+		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
 	}
 
 	@Test
@@ -328,7 +331,8 @@ public class OrderControllerIT {
 		CustomerOrder savedOrder = orderRepository.save(order);
 		String searchText = "12-12-2024";
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
-		orderView.showSearchResultForOrder(asList(savedOrder));
+		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
 	}
 
 	@Test
@@ -349,7 +353,8 @@ public class OrderControllerIT {
 		CustomerOrder savedOrder = orderRepository.save(order);
 		String searchText = "PENDING";
 		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
-		orderView.showSearchResultForOrder(asList(savedOrder));
+		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
 	}
 
 	@Test
@@ -370,7 +375,8 @@ public class OrderControllerIT {
 		CustomerOrder savedOrder = orderRepository.save(order);
 		String searchText = "PLUMBER";
 		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
-		orderView.showSearchResultForOrder(asList(savedOrder));
+		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
 	}
 
 	@Test
@@ -391,6 +397,7 @@ public class OrderControllerIT {
 		CustomerOrder savedOrder = orderRepository.save(order);
 		String searchText = "Jhon";
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
-		orderView.showSearchResultForOrder(asList(savedOrder));
+		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
 	}
 }

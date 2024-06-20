@@ -1,7 +1,7 @@
 /*
  * WorkerSearchOption: Enumeration representing different search options for workers.
  */
-package com.mycompany.orderAssignmentSystem.enumerations;
+package com.mycompany.orderassignmentsystem.enumerations;
 
 /**
  * Enumeration representing different search options for workers.

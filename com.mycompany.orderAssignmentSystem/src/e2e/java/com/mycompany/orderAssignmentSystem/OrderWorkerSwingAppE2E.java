@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem;
+package com.mycompany.orderassignmentsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
@@ -24,10 +24,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
 
 @RunWith(GUITestRunner.class)
 public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {

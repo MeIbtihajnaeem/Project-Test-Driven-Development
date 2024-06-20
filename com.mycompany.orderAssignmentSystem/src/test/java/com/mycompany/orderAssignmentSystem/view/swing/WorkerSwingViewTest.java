@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.view.swing;
+package com.mycompany.orderassignmentsystem.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -24,11 +24,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderAssignmentSystem.controller.WorkerController;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
-import com.mycompany.orderAssignmentSystem.model.Worker;
+import com.mycompany.orderassignmentsystem.controller.WorkerController;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.WorkerSearchOption;
+import com.mycompany.orderassignmentsystem.model.Worker;
 
 /**
  * The Class WorkerSwingViewTest.

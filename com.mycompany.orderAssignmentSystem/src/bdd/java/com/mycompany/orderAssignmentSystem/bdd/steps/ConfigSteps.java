@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.bdd.steps;
+package com.mycompany.orderassignmentsystem.bdd.steps;
 
 public class ConfigSteps {
 	protected static final String host = "localhost";

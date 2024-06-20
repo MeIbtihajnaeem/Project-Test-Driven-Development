@@ -1,7 +1,7 @@
 /*
  * OrderCategory: Enumeration representing different categories of customer orders.
  */
-package com.mycompany.orderAssignmentSystem.enumerations;
+package com.mycompany.orderassignmentsystem.enumerations;
 
 /**
  * Enumeration representing different categories of customer orders.

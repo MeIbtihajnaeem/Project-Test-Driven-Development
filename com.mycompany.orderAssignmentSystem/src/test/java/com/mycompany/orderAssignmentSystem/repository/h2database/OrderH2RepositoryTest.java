@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.repository.h2database;
+package com.mycompany.orderassignmentsystem.repository.h2database;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -14,12 +14,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.postgres.OrderDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.postgres.OrderDatabaseRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
 
 public class OrderH2RepositoryTest {
 	private EntityManagerFactory entityManagerFactory;

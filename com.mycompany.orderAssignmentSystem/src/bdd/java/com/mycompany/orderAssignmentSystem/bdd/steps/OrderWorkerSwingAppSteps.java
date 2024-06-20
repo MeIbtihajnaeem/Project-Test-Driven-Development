@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.bdd.steps;
+package com.mycompany.orderassignmentsystem.bdd.steps;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;

@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.controller;
+package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,14 +24,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.WorkerSearchOption;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.view.WorkerView;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.WorkerSearchOption;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.view.WorkerView;
 
 public class WorkerControllerTest {
 
@@ -359,7 +359,7 @@ public class WorkerControllerTest {
 //		inOrder.verify(workerView).showError("Worker with phone number " + phoneNumber + " Already Exists", worker);
 //		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 //	}
-	
+
 	@Test
 	public void testUpdateWorkerMethodWithExistingPhoneNumberSameWorkerId() {
 		String phoneNumber = "3401372678";
@@ -369,7 +369,7 @@ public class WorkerControllerTest {
 		Long workerId = 1l;
 //		 Long existingWorkerId = 2L;
 //		  Worker existingWorker = new Worker(existingWorkerId,"Muhammad Ibtihaj", phoneNumber, OrderCategory.PLUMBER);
-		   
+
 		Worker worker = new Worker(workerId, workerName, phoneNumber, category);
 		when(validationConfigurations.validateStringNumber(anyString())).thenReturn(workerId);
 		when(validationConfigurations.validatePhoneNumber(anyString())).thenReturn(phoneNumber);
@@ -382,8 +382,6 @@ public class WorkerControllerTest {
 				"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
-
-
 
 	@Test
 	public void testUpdateWorkerMethodWhenWorkerFoundButWithExistingOrders() {
@@ -405,8 +403,6 @@ public class WorkerControllerTest {
 				"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders", worker);
 		verifyNoMoreInteractions(ignoreStubs(workerRepository));
 	}
-	
-
 
 	@Test
 	public void testUpdateWorkerMethodWhenWorkerFoundButWithExistingOrdersNull() {

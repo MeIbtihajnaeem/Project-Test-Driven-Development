@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.controller;
+package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,16 +24,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.view.OrderView;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderSearchOptions;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.OrderRepository;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.view.OrderView;
 
 public class OrderControllerTest {
 
@@ -2135,7 +2135,7 @@ public class OrderControllerTest {
 	public void searchOrder_WhenSearchOptionIsNone() {
 		String searchText = "30-12-2024";
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		orderController.searchOrder(searchText, OrderSearchOptions.None);
+		orderController.searchOrder(searchText, OrderSearchOptions.NONE);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("This operation is not allowed", searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));

@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.repository.postgres;
+package com.mycompany.orderassignmentsystem.repository.postgres;
 
 import java.util.List;
 
@@ -8,10 +8,10 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
 
 public class WorkerDatabaseRepository implements WorkerRepository {
 	private EntityManagerFactory entityManagerFactory;
@@ -44,7 +44,6 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 						"SELECT o FROM CustomerOrder o where o.worker.workerId=:worker_id", CustomerOrder.class);
 				query.setParameter("worker_id", workerId);
 				worker.setOrders(query.getResultList());
-				System.out.println(worker.getOrders());
 			}
 			entityManager.close();
 			return worker;
@@ -121,13 +120,8 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 		EntityTransaction transaction = entityManager.getTransaction();
-//		entityManager.flush();
-//		entityManager.clear();
-
 		try {
 			transaction.begin();
-//			Worker entityToRemove = entityManager.getReference(Worker.class, worker.getWorkerId());
-
 			entityManager.remove(entityManager.getReference(Worker.class, worker.getWorkerId()));
 			entityManager.flush();
 

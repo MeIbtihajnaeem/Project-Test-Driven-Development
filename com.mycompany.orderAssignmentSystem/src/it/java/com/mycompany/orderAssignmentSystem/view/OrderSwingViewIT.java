@@ -1,7 +1,9 @@
-package com.mycompany.orderAssignmentSystem.view;
+package com.mycompany.orderassignmentsystem.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,19 +20,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.mycompany.orderAssignmentSystem.controller.OrderController;
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.OrderRepository;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.OrderDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.view.swing.OrderSwingView;
+import com.mycompany.orderassignmentsystem.controller.OrderController;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.OrderRepository;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.OrderDatabaseRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
+import com.mycompany.orderassignmentsystem.view.swing.OrderSwingView;
 
 @RunWith(GUITestRunner.class)
 
@@ -252,14 +254,16 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtOrderId").enterText(orderId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 
-		window.textBox("txtCustomerName").requireText(customerName);
-		window.textBox("txtCustomerPhone").requireText(customerPhone);
-		window.textBox("txtCustomerAddress").requireText(customerAddress);
-		window.textBox("txtOrderDescription").requireText(orderDescription);
-		window.textBox("txtSelectedDate").requireText(appointmentDate);
-		window.comboBox("cmbOrderCategory").requireSelection(category.name());
-		window.comboBox("cmbOrderStatus").requireSelection(status.name());
-		window.comboBox("cmbWorker").requireSelection(worker.toString());
+		assertEquals(customerName, window.textBox("txtCustomerName").text());
+		assertEquals(customerPhone, window.textBox("txtCustomerPhone").text());
+		assertEquals(customerAddress, window.textBox("txtCustomerAddress").text());
+		assertEquals(orderDescription, window.textBox("txtOrderDescription").text());
+		assertEquals(appointmentDate, window.textBox("txtSelectedDate").text());
+
+		assertEquals(category.name(), window.comboBox("cmbOrderCategory").selectedItem());
+		assertEquals(status.name(), window.comboBox("cmbOrderStatus").selectedItem());
+		assertEquals(worker.toString(), window.comboBox("cmbWorker").selectedItem());
+
 	}
 
 	// update button failure
@@ -275,6 +279,7 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
 		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
 				orderDescription, OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
+
 		GuiActionRunner.execute(() -> {
 			orderController.allWorkers();
 			orderController.createOrUpdateOrder(order1, OperationType.ADD);
@@ -293,10 +298,13 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		String updatedPhone = "4401372678";
 		window.textBox("txtCustomerPhone").enterText(updatedPhone);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+			assertThat(window.list().contents()).containsExactly(order1.toString());
+		});
 		order1.setCustomerPhoneNumber(updatedPhone);
-//		assertThat(window.list().contents()).isEqualTo(Arrays.asList(order1.toString()));
 		window.label("showError")
 				.requireText("The phone number must start with 3. Please provide a valid phone number.: " + order1);
+
 	}
 	// search button success
 
@@ -347,6 +355,7 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		int searchOptionIndex = 2;
 		window.comboBox("cmbSearchBy").selectItem(searchOptionIndex);
 		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
+		assertThat(window.list().contents()).containsExactly(order1.toString(), order2.toString());
 
 		window.label("showSearchErrorLbl")
 				.requireText("No orders found with customer name: " + searchText + ": " + searchText);
@@ -434,11 +443,13 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		String customerPhone = "3401372678";
 		String orderDescription = "Plumber Required";
 		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER);
+		OrderCategory category = OrderCategory.PLUMBER;
+		Worker worker = new Worker(1l, "Jhon", "123456789", category);
 		worker = workerRepository.save(worker);
 
+		OrderStatus status = OrderStatus.PENDING;
 		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
+				orderDescription, category, status, worker);
 		GuiActionRunner.execute(() -> {
 			orderController.createOrUpdateOrder(order1, OperationType.ADD);
 			orderController.allOrders();
@@ -448,6 +459,15 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtOrderId").enterText(orderId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 		order1.setOrderId(orderId);
+		assertEquals("", window.textBox("txtCustomerName").text());
+		assertEquals("", window.textBox("txtCustomerPhone").text());
+		assertEquals("", window.textBox("txtCustomerAddress").text());
+		assertEquals("", window.textBox("txtOrderDescription").text());
+		assertEquals("", window.textBox("txtSelectedDate").text());
+
+		assertNull(window.comboBox("cmbOrderCategory").selectedItem());
+		assertNull(window.comboBox("cmbOrderStatus").selectedItem());
+		assertNull(window.comboBox("cmbWorker").selectedItem());
 		window.label("showErrorNotFoundLbl")
 				.requireText("Order with ID " + order1.getOrderId() + " not found.: " + null);
 	}

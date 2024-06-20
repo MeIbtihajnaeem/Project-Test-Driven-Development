@@ -1,7 +1,9 @@
-package com.mycompany.orderAssignmentSystem.view;
+package com.mycompany.orderassignmentsystem.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,15 +21,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.mycompany.orderAssignmentSystem.controller.WorkerController;
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.view.swing.WorkerSwingView;
+import com.mycompany.orderassignmentsystem.controller.WorkerController;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
+import com.mycompany.orderassignmentsystem.view.swing.WorkerSwingView;
 
 @RunWith(GUITestRunner.class)
 
@@ -209,8 +211,11 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
 		window.textBox("txtWorkerId").enterText("1");
 		window.button(JButtonMatcher.withName("btnFetch")).click();
-		window.textBox("txtWorkerPhone").requireText(phoneNumber);
 		window.comboBox("cmbWorkerCategory").selectItem(category.name());
+
+		assertEquals(phoneNumber, window.textBox("txtWorkerPhone").text());
+		assertEquals(name, window.textBox("txtWorkerName").text());
+		assertEquals(category.name(), window.comboBox("cmbWorkerCategory").selectedItem());
 	}
 
 	// TODO: fetch Button Error
@@ -232,6 +237,11 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		newWorker.setWorkerId(workerId);
 		window.textBox("txtWorkerId").enterText(workerId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
+
+		assertEquals("", window.textBox("txtWorkerPhone").text());
+		assertEquals("", window.textBox("txtWorkerName").text());
+
+		assertNull(window.comboBox("cmbWorkerCategory").selectedItem());
 		window.label("showErrorNotFoundLbl")
 				.requireText("Worker with id " + workerId + " Not Found.: " + newWorker.toString());
 
@@ -260,6 +270,9 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 
 		window.textBox("txtWorkerPhone").enterText(updatedPhoneNumber);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
+		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+			assertThat(window.list().contents()).containsExactly(worker.toString());
+		});
 		worker.setWorkerPhoneNumber(updatedPhoneNumber);
 
 		window.label("showErrorLbl")
@@ -322,6 +335,8 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtSearchWorker").enterText(searchText);
 		window.comboBox("cmbSearchByOptions").selectItem(searchOptionIndex);
 		window.button(JButtonMatcher.withName("btnSearchWorker")).click();
+		assertThat(window.list().contents()).containsExactly(worker1.toString(), worker2.toString());
+
 		window.label("showErrorLblSearchWorker").requireText("Please enter a valid number.: " + searchText);
 
 	}

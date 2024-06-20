@@ -1,12 +1,12 @@
 /*
  * WorkerRepository: Interface for accessing and managing workers in the system.
  */
-package com.mycompany.orderAssignmentSystem.repository;
+package com.mycompany.orderassignmentsystem.repository;
 
 import java.util.List;
 
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.model.Worker;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.model.Worker;
 
 /**
  * Interface for accessing and managing workers in the system.
@@ -26,7 +26,7 @@ public interface WorkerRepository {
 	 * @param workerId the ID of the worker
 	 * @return the found worker, or null if not found
 	 */
-	public  Worker findById(Long workerId);
+	public Worker findById(Long workerId);
 
 	/**
 	 * Finds workers by their name.

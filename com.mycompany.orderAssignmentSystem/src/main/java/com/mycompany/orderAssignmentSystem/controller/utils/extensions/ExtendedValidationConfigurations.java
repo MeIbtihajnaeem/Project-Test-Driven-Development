@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.controller.utils.extensions;
+package com.mycompany.orderassignmentsystem.controller.utils.extensions;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -12,14 +12,13 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mycompany.orderAssignmentSystem.controller.WorkerController;
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 
 public class ExtendedValidationConfigurations implements ValidationConfigurations {
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = LogManager.getLogger(WorkerController.class);
+	private static final Logger LOGGER = LogManager.getLogger(ExtendedValidationConfigurations.class);
 
 	/**
 	 * Validate name.
@@ -45,7 +44,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException("The name cannot exceed 20 characters. Please provide a shorter name.");
 		}
 
-		if (_containsSpecialCharacters(name)) {
+		if (containsSpecialCharacters(name)) {
 			LOGGER.info(
 					"The name cannot contain special characters. Please remove any special characters from the name.");
 
@@ -53,13 +52,13 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 					"The name cannot contain special characters. Please remove any special characters from the name.");
 		}
 
-		if (_containsNumbers(name)) {
+		if (containsNumbers(name)) {
 			LOGGER.info("The name cannot contain numbers. Please remove any number from the name.");
 
 			throw new IllegalArgumentException(
 					"The name cannot contain numbers. Please remove any number from the name.");
 		}
-		if (_containsTabs(name)) {
+		if (containsTabs(name)) {
 			LOGGER.info("The name cannot contain tabs. Please remove any tabs from the name.");
 
 			throw new IllegalArgumentException("The name cannot contain tabs. Please remove any tabs from the name.");
@@ -86,7 +85,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException(
 					"The number cannot exceed 20 characters. Please provide a shorter number.");
 		}
-		if (_containsWhitespace(str)) {
+		if (containsWhitespace(str)) {
 			LOGGER.info("The number cannot contains whitespace. Please provide a valid number.");
 
 			throw new IllegalArgumentException("The number cannot contains whitespace. Please provide a valid number.");
@@ -98,12 +97,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException("Please enter a valid number.");
 		}
 
-		try {
-			Long orderId = Long.parseLong(str);
-			return orderId;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Please enter a valid number.");
-		}
+		return Long.parseLong(str);
 
 	}
 
@@ -132,7 +126,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException(
 					"The Address cannot exceed 50 characters. Please provide a shorter Address.");
 		}
-		if (_containsTabs(address)) {
+		if (containsTabs(address)) {
 			LOGGER.info("The address cannot contain tabs. Please remove any tabs from the address.");
 
 			throw new IllegalArgumentException(
@@ -167,7 +161,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException(
 					"The description cannot exceed 50 characters. Please provide a shorter description.");
 		}
-		if (_containsTabs(description)) {
+		if (containsTabs(description)) {
 			LOGGER.info("The description cannot contain tabs. Please remove any tabs from the description.");
 
 			throw new IllegalArgumentException(
@@ -196,14 +190,14 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException(
 					"The phone number must be 10 characters long. Please provide a valid phone number.");
 		}
-		if (phoneNumber.matches("[0-9]+") == false) {
+		if (!phoneNumber.matches("[0-9]+")) {
 			LOGGER.info(
 					"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
 
 			throw new IllegalArgumentException(
 					"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
 		}
-		if (phoneNumber.matches("^3[0-9]*$") == false) {
+		if (!phoneNumber.matches("^3[0-9]*$")) {
 			LOGGER.info("The phone number must start with 3. Please provide a valid phone number.");
 
 			throw new IllegalArgumentException(
@@ -211,28 +205,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		}
 		return phoneNumber;
 	}
-
-//	/**
-//	 * Validates an ID.
-//	 *
-//	 * @param id the ID to validate
-//	 * @return the validated ID
-//	 * @throws IllegalArgumentException if validation fails
-//	 */
-//	public long validateId(Long id) {
-//		if (id == null) {
-//			LOGGER.info("The id field cannot be empty.");
-//
-//			throw new NullPointerException("The id field cannot be empty.");
-//		}
-//
-//		if (id <= 0) {
-//			LOGGER.info("The id field cannot be less than 1. Please provide a valid id.");
-//
-//			throw new IllegalArgumentException("The id field cannot be less than 1. Please provide a valid id.");
-//		}
-//		return id;
-//	}
 
 	/**
 	 * Validates a date.
@@ -340,27 +312,27 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			message = "category";
 		}
 		if (value == null || value.isEmpty()) {
-			LOGGER.info("The " + message + " field cannot be empty.");
+			LOGGER.info("The {} field cannot be empty.", message);
 
 			throw new NullPointerException("The " + message + " field cannot be empty.");
 		}
 		value = value.toUpperCase();
 
-		if (_containsTabs(value)) {
-			LOGGER.info("The " + message + " cannot contain tabs. Please remove any tabs from the " + message + ".");
+		if (containsTabs(value)) {
+			LOGGER.info("The {} cannot contain tabs. Please remove any tabs from the {}.", message, message);
 
 			throw new IllegalArgumentException(
-					"The " + message + " cannot contain tabs. Please remove any tabs from the " + message + ".");
+					String.format("The %s cannot contain tabs. Please remove any tabs from the %s.", message, message));
 		}
-		if (_containsWhitespace(value)) {
-			LOGGER.info("The " + message + " cannot contain whitespaces. Please remove any whitespaces from the "
-					+ message + ".");
+		if (containsWhitespace(value)) {
+			LOGGER.info("The {} cannot contain whitespaces. Please remove any whitespaces from the {}.", message,
+					message);
 
 			throw new IllegalArgumentException("The " + message
 					+ " cannot contain whitespaces. Please remove any whitespaces from the " + message + ".");
 		}
 		if (!EnumUtils.isValidEnum(enumType, value)) {
-			LOGGER.info("The specified " + message + " was not found. Please provide a valid " + message + ".");
+			LOGGER.info("The specified {} was not found. Please provide a valid {}.", message, message);
 
 			throw new NoSuchElementException(
 					"The specified " + message + " was not found. Please provide a valid " + message + ".");
@@ -387,7 +359,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 					"The search Text cannot exceed 20 characters. Please provide a shorter search Text.");
 		}
 
-		if (_containsTabs(searchString)) {
+		if (containsTabs(searchString)) {
 			LOGGER.info("The search Text cannot contain tabs. Please remove any tabs from the search Text.");
 
 			throw new IllegalArgumentException(
@@ -402,7 +374,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @param str the string to check
 	 * @return true, if the string contains special characters, false otherwise
 	 */
-	private boolean _containsSpecialCharacters(String str) {
+	private boolean containsSpecialCharacters(String str) {
 		Pattern pattern = Pattern.compile("[^a-zA-Z0-9\\s]");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
@@ -414,7 +386,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @param str the string to check
 	 * @return true, if the string contains numbers, false otherwise
 	 */
-	private boolean _containsNumbers(String str) {
+	private boolean containsNumbers(String str) {
 		Pattern pattern = Pattern.compile("[0-9]");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
@@ -426,7 +398,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @param str the string to check
 	 * @return true, if the string contains tabs, false otherwise
 	 */
-	private boolean _containsTabs(String str) {
+	private boolean containsTabs(String str) {
 		Pattern pattern = Pattern.compile("\t");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
@@ -438,7 +410,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @param str the string to check
 	 * @return true, if the string contains whitespace, false otherwise
 	 */
-	private boolean _containsWhitespace(String str) {
+	private boolean containsWhitespace(String str) {
 		Pattern pattern = Pattern.compile("\\s");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();

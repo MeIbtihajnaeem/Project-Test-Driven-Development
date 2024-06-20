@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.view.swing;
+package com.mycompany.orderassignmentsystem.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -21,13 +21,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderAssignmentSystem.controller.OrderController;
-import com.mycompany.orderAssignmentSystem.enumerations.OperationType;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderSearchOptions;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderStatus;
-import com.mycompany.orderAssignmentSystem.model.CustomerOrder;
-import com.mycompany.orderAssignmentSystem.model.Worker;
+import com.mycompany.orderassignmentsystem.controller.OrderController;
+import com.mycompany.orderassignmentsystem.enumerations.OperationType;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.enumerations.OrderSearchOptions;
+import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
+import com.mycompany.orderassignmentsystem.model.CustomerOrder;
+import com.mycompany.orderassignmentsystem.model.Worker;
 
 @RunWith(GUITestRunner.class)
 
@@ -405,7 +405,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testWhenEitherOrderIdCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerAreBlankAndUpdateButtonShouldBeDisable() {
-		//sadf
+		// sadf
 		GuiActionRunner.execute(() -> {
 			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
 			orderSwingView.getWorkerListModel()

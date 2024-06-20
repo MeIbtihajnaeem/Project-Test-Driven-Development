@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.mvc;
+package com.mycompany.orderassignmentsystem.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,14 +17,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.mycompany.orderAssignmentSystem.controller.WorkerController;
-import com.mycompany.orderAssignmentSystem.controller.utils.ValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
-import com.mycompany.orderAssignmentSystem.enumerations.OrderCategory;
-import com.mycompany.orderAssignmentSystem.model.Worker;
-import com.mycompany.orderAssignmentSystem.repository.WorkerRepository;
-import com.mycompany.orderAssignmentSystem.repository.postgres.WorkerDatabaseRepository;
-import com.mycompany.orderAssignmentSystem.view.swing.WorkerSwingView;
+import com.mycompany.orderassignmentsystem.controller.WorkerController;
+import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
+import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
+import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
+import com.mycompany.orderassignmentsystem.model.Worker;
+import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
+import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
+import com.mycompany.orderassignmentsystem.view.swing.WorkerSwingView;
 
 @RunWith(GUITestRunner.class)
 public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {

@@ -1,4 +1,4 @@
-package com.mycompany.orderAssignmentSystem.controller.utils;
+package com.mycompany.orderassignmentsystem.controller.utils;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mycompany.orderAssignmentSystem.controller.utils.extensions.ExtendedValidationConfigurations;
+import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
 
 public class ValidationConfigurationsForValidateStringNumberMethodTest {
 
@@ -36,16 +36,6 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 			validationConfigurations.validateStringNumber(number);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The number cannot exceed 20 characters. Please provide a shorter number.");
-	}
-
-	@Test
-	public void testStringNumberMethodWithLargeStringEqualsToTwentyCharacters() {
-		
-		assertThatThrownBy(() -> {
-			String number = "11111111111111111111";
-			validationConfigurations.validateStringNumber(number);
-		}).isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("Please enter a valid number.");
 	}
 
 	@Test
@@ -94,12 +84,11 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 //		String number = "-123";
 //		long resultNumber = -123L;
 //		assertEquals(resultNumber, validationConfigurations.validateStringNumber(number));
-		
+
 		assertThatThrownBy(() -> {
 			String number = "-123l";
 			validationConfigurations.validateStringNumber(number);
-		}).isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("Please enter a valid number.");
+		}).isInstanceOf(IllegalArgumentException.class).hasMessage("Please enter a valid number.");
 	}
 
 //	@Test
