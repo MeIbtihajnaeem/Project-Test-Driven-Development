@@ -30,7 +30,7 @@
 		<postgres.dbName>orderWorkerTestDb</postgres.dbName>
 		<cucumber.version>5.5.0</cucumber.version>
 		<sonar.issue.ignore.multicriteria>
-			e11,e12,e13,e14,e15,e16,e17,e18,e19,e20,e21</sonar.issue.ignore.multicriteria>
+			e11,e12,e13,e14,e15,e16,e17,e18,e19,e20,e21,e22</sonar.issue.ignore.multicriteria>
 		<!-- Ignoring atleast 1 assertion for view tests-->
 		<sonar.issue.ignore.multicriteria.e11.ruleKey>
 			squid:S2699
@@ -91,7 +91,7 @@
 
 		<!-- Removing Constructor paramter issue for models-->
 		<sonar.issue.ignore.multicriteria.e13.ruleKey>
-			squid:S00107
+			java:S107
 		</sonar.issue.ignore.multicriteria.e13.ruleKey>
 		<sonar.issue.ignore.multicriteria.e13.resourceKey>
 			**/CustomerOrder.java
@@ -99,7 +99,7 @@
 
 		<!-- Removing Constructor paramter issue for View-->
 		<sonar.issue.ignore.multicriteria.e14.ruleKey>
-			squid:S00107
+			java:S107
 		</sonar.issue.ignore.multicriteria.e14.ruleKey>
 		<sonar.issue.ignore.multicriteria.e14.resourceKey>
 			**/*View.java
@@ -126,6 +126,13 @@
 		<sonar.issue.ignore.multicriteria.e17.resourceKey>
 			**/*.java
 		</sonar.issue.ignore.multicriteria.e17.resourceKey>
+
+		<sonar.issue.ignore.multicriteria.e22.ruleKey>
+			java:S3577
+		</sonar.issue.ignore.multicriteria.e22.ruleKey>
+		<sonar.issue.ignore.multicriteria.e22.resourceKey>
+			**/OrderWorkerSwingAppE2E.*
+		</sonar.issue.ignore.multicriteria.e22.resourceKey>
 
 
 		<sonar.coverage.exclusions>

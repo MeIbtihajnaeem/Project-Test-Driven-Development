@@ -35,7 +35,7 @@ jobs:
           -Dsonar.projectKey=MeIbtihajnaeem_Project-Test-Driven-Development \
           -Dsonar.organization=meibtihajnaeem \
           -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
       working-directory: ./com.mycompany.orderassignmentsystem
       env:
         GITHUB_TOKEN: ${{ secrets.GB_TOKEN }}
