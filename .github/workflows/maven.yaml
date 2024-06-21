@@ -18,6 +18,8 @@ jobs:
         - java: 1.8
           additional-maven-args: "-Pmutation-testing-with-coverage -DrepoToken=$COVERALLS_REPO_TOKEN coveralls:report"
         - java: 11
+        - java: 17
+          additional-maven-args: "Pjacoco"
     name: Build with Java ${{ matrix.java }}
     steps:
     - uses: actions/checkout@v2
