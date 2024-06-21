@@ -63,13 +63,6 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	@Test
-	public void testAddressMethodWithLargeStringEqualsToFiftyCharachters() {
-		String address = "1234 Main Street , Apt 101, Springfield, USA 12345";
-
-		assertEquals(address, validationConfigurations.validateAddress(address));
-	}
-
-	@Test
 	public void testAddressMethodWithTabs() {
 		assertThatThrownBy(() -> {
 			String address = "1234 Main Street\t Apt 101, Springfield, USA 12345";
@@ -96,8 +89,9 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	@Test
-	public void testAddressMethodWithOneMiddleWhiteSpace() {
+	public void testAddressMethodWithLargeStringEqualsToFiftyCharachters() {
 		String address = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
 		assertEquals(address, validationConfigurations.validateAddress(address));
 	}
 

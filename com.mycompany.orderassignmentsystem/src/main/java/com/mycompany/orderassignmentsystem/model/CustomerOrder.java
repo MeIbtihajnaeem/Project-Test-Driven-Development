@@ -292,10 +292,6 @@ public class CustomerOrder {
 
 	@Override
 	public String toString() {
-		if (customerName == null || customerAddress == null || customerPhoneNumber == null || appointmentDate == null
-				|| orderDescription == null || orderCategory == null || orderStatus == null || worker == null) {
-			return null;
-		}
 		return "Order ID: " + orderId + ", Name: " + customerName + ", Address: " + customerAddress + ", " + "Phone: "
 				+ customerPhoneNumber + ", Date: " + appointmentDate + ", Description: " + orderDescription
 				+ ", Category: " + orderCategory + ", Status: " + orderStatus + ", " + "Worker: " + worker;

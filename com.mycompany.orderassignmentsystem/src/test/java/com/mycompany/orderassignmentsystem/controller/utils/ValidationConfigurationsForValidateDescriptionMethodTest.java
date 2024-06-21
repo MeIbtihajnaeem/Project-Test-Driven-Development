@@ -97,12 +97,6 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	@Test
-	public void testDescriptionMethodWithOneMiddleWhiteSpace() {
-		String description = "Please ensure all connection are leak-proof.";
-		assertEquals(description, validationConfigurations.validateDescription(description));
-	}
-
-	@Test
 	public void testDescriptionMethodWithOneEndingWhiteSpace() {
 
 		String description = "Please ensure all connection are leak-proof. ";

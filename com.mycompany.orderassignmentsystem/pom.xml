@@ -29,7 +29,8 @@
 		<postgres.password>test123</postgres.password>
 		<postgres.dbName>orderWorkerTestDb</postgres.dbName>
 		<cucumber.version>5.5.0</cucumber.version>
-		<sonar.issue.ignore.multicriteria>e11,e12,e13,e14,e15,e16,e17</sonar.issue.ignore.multicriteria>
+		<sonar.issue.ignore.multicriteria>
+			e11,e12,e13,e14,e15,e16,e17,e18,e19,e20,e21,e22</sonar.issue.ignore.multicriteria>
 		<!-- Ignoring atleast 1 assertion for view tests-->
 		<sonar.issue.ignore.multicriteria.e11.ruleKey>
 			squid:S2699
@@ -38,6 +39,47 @@
 			**/*.java
 		</sonar.issue.ignore.multicriteria.e11.resourceKey>
 
+		<sonar.issue.ignore.multicriteria.e18.ruleKey>
+			java:S2925
+		</sonar.issue.ignore.multicriteria.e18.ruleKey>
+		<sonar.issue.ignore.multicriteria.e18.resourceKey>
+			**/*.java
+		</sonar.issue.ignore.multicriteria.e18.resourceKey>
+
+		<!--  Ignoring same test logic issue for whit space test-->
+
+		<sonar.issue.ignore.multicriteria.e19.ruleKey>
+			java:S5976
+		</sonar.issue.ignore.multicriteria.e19.ruleKey>
+		<sonar.issue.ignore.multicriteria.e19.resourceKey>
+			**/ValidationConfigurationsForValidateDescriptionMethodTest.java
+		</sonar.issue.ignore.multicriteria.e19.resourceKey>
+
+		<sonar.issue.ignore.multicriteria.e20.ruleKey>
+			java:S5976
+		</sonar.issue.ignore.multicriteria.e20.ruleKey>
+		<sonar.issue.ignore.multicriteria.e20.resourceKey>
+			**/ValidationConfigurationsForValidateAddressMethodTest.java
+		</sonar.issue.ignore.multicriteria.e20.resourceKey>
+
+		<!--  Ignoring race condition commmented code-->
+
+		<sonar.issue.ignore.multicriteria.e21.ruleKey>
+			java:S125
+		</sonar.issue.ignore.multicriteria.e21.ruleKey>
+		<sonar.issue.ignore.multicriteria.e21.resourceKey>
+			**/raceCondition/*.*
+		</sonar.issue.ignore.multicriteria.e21.resourceKey>
+
+
+		<!-- Use static access with "javax.swing.WindowConstants" for
+		"EXIT_ON_CLOSE".-->
+		<sonar.issue.ignore.multicriteria.e11.ruleKey>
+			java:S3252
+		</sonar.issue.ignore.multicriteria.e11.ruleKey>
+		<sonar.issue.ignore.multicriteria.e11.resourceKey>
+			**/*.java
+		</sonar.issue.ignore.multicriteria.e11.resourceKey>
 
 		<!-- Removing regular expression issue-->
 		<sonar.issue.ignore.multicriteria.e12.ruleKey>
@@ -63,7 +105,6 @@
 			**/*View.java
 		</sonar.issue.ignore.multicriteria.e14.resourceKey>
 
-
 		<sonar.issue.ignore.multicriteria.e15.ruleKey>
 			squid:S2699
 		</sonar.issue.ignore.multicriteria.e15.ruleKey>
@@ -85,10 +126,22 @@
 		<sonar.issue.ignore.multicriteria.e17.resourceKey>
 			**/*.java
 		</sonar.issue.ignore.multicriteria.e17.resourceKey>
+
+
+		<!-- Removing rename class for tests-->
+		<sonar.issue.ignore.multicriteria.e22.ruleKey>
+			java:S3577
+		</sonar.issue.ignore.multicriteria.e22.ruleKey>
+		<sonar.issue.ignore.multicriteria.e22.resourceKey>
+			**/OrderWorkerSwingAppE2E.java,
+			**/ValidationConfigurationsForValidateStringDateMethod.java
+		</sonar.issue.ignore.multicriteria.e22.resourceKey>
+
 		<sonar.coverage.exclusions>
 			**/model/*.*,
 			**/SchoolSwingApp.*
 		</sonar.coverage.exclusions>
+
 
 		<sonar.junit.reportPaths>
 			${project.build.directory}/surefire-reports </sonar.junit.reportPaths>
