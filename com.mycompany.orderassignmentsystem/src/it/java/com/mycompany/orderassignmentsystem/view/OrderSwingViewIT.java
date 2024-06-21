@@ -455,7 +455,6 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
 		window.textBox("txtOrderId").enterText(orderId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
-		order1.setOrderId(orderId);
 		assertEquals("", window.textBox("txtCustomerName").text());
 		assertEquals("", window.textBox("txtCustomerPhone").text());
 		assertEquals("", window.textBox("txtCustomerAddress").text());
@@ -465,7 +464,9 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertNull(window.comboBox("cmbOrderCategory").selectedItem());
 		assertNull(window.comboBox("cmbOrderStatus").selectedItem());
 		assertNull(window.comboBox("cmbWorker").selectedItem());
+		CustomerOrder newOrder = new CustomerOrder();
+		newOrder.setOrderId(orderId);
 		window.label("showErrorNotFoundLbl")
-				.requireText("Order with ID " + order1.getOrderId() + " not found.: " + null);
+				.requireText("Order with ID " + orderId + " not found.: " + newOrder);
 	}
 }
