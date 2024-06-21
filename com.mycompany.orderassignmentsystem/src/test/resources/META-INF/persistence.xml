@@ -44,16 +44,3 @@
 		</properties>
 	</persistence-unit>
 </persistence>
-
-
-
-<!-- <persistence-unit name="test_myPersistenceUnit" transaction-type="RESOURCE_LOCAL"> 
-	<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider> <class>com.mycompany.orderAssignmentSystem.model.CustomerOrder</class> 
-	<class>com.mycompany.orderAssignmentSystem.model.Worker</class> <properties> 
-	<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/orderWorkerTestDb" 
-	/> <property name="javax.persistence.jdbc.user" value="testUser" /> <property 
-	name="javax.persistence.jdbc.password" value="test123" /> <property name="hibernate.dialect" 
-	value="org.hibernate.dialect.PostgreSQLDialect" /> <property name="hibernate.hbm2ddl.auto" 
-	value="create-drop" /> </properties> </persistence-unit> -->
-
-

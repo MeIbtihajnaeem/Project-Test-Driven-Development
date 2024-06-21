@@ -150,7 +150,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		addTestOrderAndWorkerToDatabase(worker2, order2);
 		addTestWorkerToDatabase(worker3);
 
-		application("com.mycompany.orderAssignmentSystem.app.OrderWorkerAssignmentSwingApp")
+		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
 				.withArgs("--postgres-host=" + host, "--postgres-database=" + database, "--postgres-user=" + user,
 						"--postgres-pass=" + password, "--postgres-port=" + port)
 				.start();
