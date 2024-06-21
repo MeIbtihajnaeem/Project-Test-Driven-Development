@@ -334,10 +334,8 @@
 					</executions>
 					<configuration>
 						<excludes>
-							<exclude>
-								com/mycompany/orderassignmentsystem/model/**</exclude>
-							<exclude>
-								com/mycompany/orderassignmentsystem/app/**</exclude>
+							<exclude>**/model/*.*</exclude>
+							<exclude>**/OrderWorkerAssignmentSwingApp.*</exclude>
 						</excludes>
 					</configuration>
 				</plugin>

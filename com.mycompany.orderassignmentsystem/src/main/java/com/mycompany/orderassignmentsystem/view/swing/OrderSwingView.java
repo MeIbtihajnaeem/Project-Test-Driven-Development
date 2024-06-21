@@ -654,9 +654,16 @@ public class OrderSwingView extends JFrame implements OrderView {
 				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
 				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
 
-		btnFetch.setEnabled(!isOrderIdEmpty && isCustomerNameEmpty && isCustomerAddressEmpty
-				&& isCustomerPhoneNumberEmpty && isOrderDescriptionEmpty && isAppointmentDateEmpty
-				&& isOrderCategoryEmpty && isOrderStatusEmpty && isAssignedWorkerEmpty);
+		btnFetch.setEnabled(
+				!isOrderIdEmpty 
+				&& isCustomerNameEmpty 
+				&& isCustomerAddressEmpty
+				&& isCustomerPhoneNumberEmpty 
+				&& isOrderDescriptionEmpty 
+				&& isAppointmentDateEmpty
+				&& isOrderCategoryEmpty 
+				&& isOrderStatusEmpty 
+				&& isAssignedWorkerEmpty);
 
 	}
 
