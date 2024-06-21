@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
 
-public class ValidationConfigurationsForValidateStringDateMethod {
+public class ValidationConfigurationsForValidateStringDateMethodTest {
 
 	private ValidationConfigurations validationConfigurations;
 

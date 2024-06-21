@@ -30,7 +30,7 @@ import com.mycompany.orderassignmentsystem.model.CustomerOrder;
 import com.mycompany.orderassignmentsystem.model.Worker;
 
 @RunWith(GUITestRunner.class)
-public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
+public class OrderWorkerSwingAppEndToEndTest extends AssertJSwingJUnitTestCase {
 	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
 	private static final int MAX_RETRIES = 3;
 	private static final long RETRY_DELAY_SECONDS = 10;
@@ -178,7 +178,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		EntityTransaction orderTransaction = entityManager.getTransaction();
 		orderTransaction.begin();
 		entityManager.merge(order);
-		
+
 		orderTransaction.commit();
 	}
 
