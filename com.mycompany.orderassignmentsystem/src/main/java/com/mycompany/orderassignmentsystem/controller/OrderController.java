@@ -28,7 +28,7 @@ import com.mycompany.orderassignmentsystem.view.OrderView;
  */
 public class OrderController {
 
-	private static final String ERROR_FINDING = "Error Finding: ";
+	private static final String ERROR_FINDING = "Error Finding: {}";
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
@@ -93,7 +93,7 @@ public class OrderController {
 		order.setOrderId(id);
 		Worker worker = getValidWorker(order);
 		CustomerOrder savedOrder = orderRepository.findById(id);
-		if (worker.getWorkerId() != savedOrder.getWorker().getWorkerId()) {
+		if (!Objects.equals(worker.getWorkerId(), savedOrder.getWorker().getWorkerId())) {
 			checkForPendingOrders(worker.getOrders());
 		}
 		order = orderRepository.save(order);
@@ -129,10 +129,10 @@ public class OrderController {
 			}
 
 		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while creating or updating Order: " + e.getMessage());
+			LOGGER.error("Error validating while creating or updating Order: {}", e.getMessage());
 			orderView.showError(e.getMessage(), order);
 		} catch (NoSuchElementException e) {
-			LOGGER.error(ERROR_FINDING + e.getMessage());
+			LOGGER.error(ERROR_FINDING , e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
 		}
 	}
@@ -157,10 +157,10 @@ public class OrderController {
 			orderView.showFetchedOrder(savedOrder);
 
 		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while updating Order: " + e.getMessage());
+			LOGGER.error("Error validating while updating Order: {}", e.getMessage());
 			orderView.showError(e.getMessage(), order);
 		} catch (NoSuchElementException e) {
-			LOGGER.error(ERROR_FINDING + e.getMessage());
+			LOGGER.error(ERROR_FINDING , e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
 		}
 	}
@@ -182,10 +182,10 @@ public class OrderController {
 			orderRepository.delete(order);
 			orderView.orderRemoved(order);
 		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while updating Order: " + e.getMessage());
+			LOGGER.error("Error validating while updating Order: {}" , e.getMessage());
 			orderView.showError(e.getMessage(), order);
 		} catch (NoSuchElementException e) {
-			LOGGER.error(ERROR_FINDING + e.getMessage());
+			LOGGER.error(ERROR_FINDING , e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
 		}
 
@@ -238,7 +238,7 @@ public class OrderController {
 			LOGGER.info("Order searched: {}", orders);
 
 		} catch (Exception e) {
-			LOGGER.error("Error validating search text: " + e.getMessage());
+			LOGGER.error("Error validating search text: {}" , e.getMessage());
 			orderView.showSearchError(e.getMessage(), searchText);
 		}
 

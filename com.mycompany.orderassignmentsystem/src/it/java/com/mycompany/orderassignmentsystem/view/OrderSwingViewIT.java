@@ -80,12 +80,10 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
-//	private EntityManager entityManager;
 
 	@Override
 	protected void onSetUp() throws Exception {
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-//		entityManager = entityManagerFactory.createEntityManager();
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		orderRepository = new OrderDatabaseRepository(entityManagerFactory);
 		validatedConfig = new ExtendedValidationConfigurations();
@@ -105,7 +103,6 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onTearDown() {
 		entityManagerFactory.close();
-//		entityManager.close();
 	}
 
 	// show all orders
@@ -127,7 +124,7 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testAddSuccess() {
 		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
+		workerRepository.save(worker);
 		GuiActionRunner.execute(() -> orderController.allWorkers());
 
 		String customerName = "Ibtihaj";
@@ -318,7 +315,7 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		CustomerOrder order2 = new CustomerOrder("Alic", "address", "phone", appointmentDate, "description",
 				OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
 		order1 = orderRepository.save(order1);
-		order2 = orderRepository.save(order2);
+		orderRepository.save(order2);
 		GuiActionRunner.execute(() -> {
 			orderController.allWorkers();
 			orderController.allOrders();

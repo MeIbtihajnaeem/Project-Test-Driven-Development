@@ -74,17 +74,13 @@ public class WorkerControllerIT {
 
 	private AutoCloseable closeable;
 
-//	private OrderRepository orderRepository;
 
 	private EntityManagerFactory entityManagerFactory;
-//	private EntityManager entityManager;
 
 	@Before
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-
-//		entityManager = entityManagerFactory.createEntityManager();
 		validationConfig = new ExtendedValidationConfigurations();
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		workerController = new WorkerController(workerRepository, workerView, validationConfig);
@@ -93,7 +89,6 @@ public class WorkerControllerIT {
 	@After
 	public void releaseMocks() throws Exception {
 		entityManagerFactory.close();
-//		entityManager.close();
 		closeable.close();
 	}
 
@@ -156,21 +151,6 @@ public class WorkerControllerIT {
 
 	}
 
-//	@Test
-//	public void testFetchOrdersByWorkerId() {
-//		Worker worker = new Worker();
-//		worker.setWorkerName("John");
-//		worker.setWorkerPhoneNumber("3401372678");
-//		worker.setWorkerCategory(OrderCategory.PLUMBER);
-//		CustomerOrder order = new CustomerOrder();
-//		order.setOrderCategory(OrderCategory.PLUMBER);
-//		order.setOrderStatus(OrderStatus.PENDING);
-//		CustomerOrder savedOrder = orderRepository.save(order);
-//		worker.setOrders(asList(savedOrder));
-//		Worker savedWorker = workerRepository.save(worker);
-//		workerController.fetchOrdersByWorkerId(savedWorker);
-//		verify(workerView).showOrderByWorkerId(savedWorker.getOrders());
-//	}
 
 	@Test
 	public void testSearchWorkerWithWorkerId() {
@@ -184,7 +164,6 @@ public class WorkerControllerIT {
 		Worker savedWorker = workerRepository.save(worker);
 		Long workerId = savedWorker.getWorkerId();
 		workerController.searchWorker(workerId.toString(), WorkerSearchOption.WORKER_ID);
-//		workerView.showSearchResultForWorker(asList(savedWorker));
 		verify(workerView).showSearchResultForWorker(asList(savedWorker));
 
 	}
@@ -200,7 +179,6 @@ public class WorkerControllerIT {
 		worker.setWorkerCategory(plumber);
 		Worker savedWorker = workerRepository.save(worker);
 		workerController.searchWorker(workerPhoneNumber, WorkerSearchOption.WORKER_PHONE);
-//		workerView.showSearchResultForWorker(asList(savedWorker));
 		verify(workerView).showSearchResultForWorker(asList(savedWorker));
 
 	}
@@ -216,7 +194,6 @@ public class WorkerControllerIT {
 		worker.setWorkerCategory(plumber);
 		Worker savedWorker = workerRepository.save(worker);
 		workerController.searchWorker(workerName, WorkerSearchOption.WORKER_NAME);
-//		workerView.showSearchResultForWorker(asList(savedWorker));
 		verify(workerView).showSearchResultForWorker(asList(savedWorker));
 
 	}
@@ -232,7 +209,6 @@ public class WorkerControllerIT {
 		worker.setWorkerCategory(plumber);
 		Worker savedWorker = workerRepository.save(worker);
 		workerController.searchWorker(plumber.toString(), WorkerSearchOption.WORKER_CATEGORY);
-//		workerView.showSearchResultForWorker(asList(savedWorker));
 		verify(workerView).showSearchResultForWorker(asList(savedWorker));
 
 	}

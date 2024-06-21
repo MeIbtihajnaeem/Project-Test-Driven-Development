@@ -28,7 +28,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validateName(String name) {
-		if (name == null || name == "") {
+		if (name == null || name.equals("")) {
 			LOGGER.info("The name field cannot be empty.");
 			throw new NullPointerException("The name field cannot be empty.");
 		}
@@ -75,7 +75,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public Long validateStringNumber(String str) {
-		if (str == null || str == "") {
+		if (str == null || str.equals("")) {
 			LOGGER.info("The text cannot be empty.");
 			throw new NullPointerException("The number cannot be empty.");
 		}
@@ -91,7 +91,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException("The number cannot contains whitespace. Please provide a valid number.");
 		}
 
-		Pattern pattern = Pattern.compile("^-?[0-9]+$");
+		Pattern pattern = Pattern.compile("^-?\\d+$");
 		Matcher matcher = pattern.matcher(str);
 		if (!matcher.matches()) {
 			throw new IllegalArgumentException("Please enter a valid number.");
@@ -109,7 +109,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validateAddress(String address) {
-		if (address == null || address == "") {
+		if (address == null || address.equals("")) {
 			LOGGER.info("The address field cannot be empty.");
 
 			throw new NullPointerException("The address field cannot be empty.");
@@ -144,7 +144,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validateDescription(String description) {
-		if (description == null || description == "") {
+		if (description == null || description.equals("")) {
 			LOGGER.info("The description field cannot be empty.");
 
 			throw new NullPointerException("The description field cannot be empty.");
@@ -179,7 +179,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validatePhoneNumber(String phoneNumber) {
-		if (phoneNumber == null || phoneNumber == "") {
+		if (phoneNumber == null || phoneNumber.equals("")) {
 			LOGGER.info("The phone number field cannot be empty.");
 
 			throw new NullPointerException("The phone number field cannot be empty.");
@@ -190,14 +190,14 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			throw new IllegalArgumentException(
 					"The phone number must be 10 characters long. Please provide a valid phone number.");
 		}
-		if (!phoneNumber.matches("[0-9]+")) {
+		if (!phoneNumber.matches("\\d+")) {
 			LOGGER.info(
 					"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
 
 			throw new IllegalArgumentException(
 					"The phone number should only consist of numbers and should not contain any whitespaces, special characters, or alphabets. Please enter a valid phone number.");
 		}
-		if (!phoneNumber.matches("^3[0-9]*$")) {
+		if (!phoneNumber.matches("^3\\d*$")) {
 			LOGGER.info("The phone number must start with 3. Please provide a valid phone number.");
 
 			throw new IllegalArgumentException(
@@ -247,7 +247,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		if (dateString == null) {
 			throw new NullPointerException("Date cannot be null.");
 		}
-		if (dateString == "") {
+		if (dateString.equals("")) {
 			throw new NullPointerException("Date cannot be empty.");
 		}
 		if (dateString.length() <= 9) {
@@ -348,7 +348,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validateSearchString(String searchString) {
-		if (searchString == null || searchString == "") {
+		if (searchString == null || searchString.equals("")) {
 			LOGGER.info("The search Text field cannot be empty.");
 			throw new NullPointerException("The search Text field cannot be empty.");
 		}
@@ -387,7 +387,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 	 * @return true, if the string contains numbers, false otherwise
 	 */
 	private boolean containsNumbers(String str) {
-		Pattern pattern = Pattern.compile("[0-9]");
+		Pattern pattern = Pattern.compile("\\d");
 		Matcher matcher = pattern.matcher(str);
 		return matcher.find();
 	}

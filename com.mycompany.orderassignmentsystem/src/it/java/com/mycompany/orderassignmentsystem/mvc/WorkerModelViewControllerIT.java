@@ -70,12 +70,10 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
-//	private EntityManager entityManager;
 
 	@Override
 	protected void onSetUp() throws Exception {
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-//		entityManager = entityManagerFactory.createEntityManager();
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
 
@@ -95,7 +93,6 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onTearDown() {
 		entityManagerFactory.close();
-//		entityManager.close();
 	}
 
 	@Test
@@ -129,8 +126,6 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		worker.setWorkerPhoneNumber(phoneNumber);
 		worker.setWorkerCategory(category);
 		Worker savedWorker = workerRepository.save(worker);
-
-//		int updatedCategoryIndex = 1;
 		window.textBox("txtWorkerId").enterText(savedWorker.getWorkerId().toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 
@@ -138,13 +133,7 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtWorkerName").enterText(updatedName);
 
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
-
-//		Worker updatedWorker = new Worker(savedWorker.getWorkerId(), updatedName, phoneNumber, category);
 		savedWorker.setWorkerName(updatedName);
-		// updatedWorker.setWorkerId(savedWorker.getWorkerId());
-//		updatedWorker.setWorkerName(updatedName);
-//		updatedWorker.setWorkerPhoneNumber(savedWorker.getWorkerPhoneNumber());
-//		updatedWorker.setWorkerCategory(savedWorker.getWorkerCategory());
 		assertThat(workerRepository.findById(savedWorker.getWorkerId())).isEqualTo(savedWorker);
 
 	}

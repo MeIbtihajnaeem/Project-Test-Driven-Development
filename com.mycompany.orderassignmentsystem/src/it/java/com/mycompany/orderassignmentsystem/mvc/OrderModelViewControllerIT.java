@@ -76,13 +76,11 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
-//	private EntityManager entityManager;
 	private ValidationConfigurations validationConfig;
 
 	@Override
 	protected void onSetUp() throws Exception {
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-//		entityManager = entityManagerFactory.createEntityManager();
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		orderRepository = new OrderDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
@@ -102,7 +100,6 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	@Override
 	protected void onTearDown() {
 		entityManagerFactory.close();
-//		entityManager.close();
 	}
 
 	@Test
@@ -119,7 +116,6 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		int categoryIndex = 0;
 		int statusIndex = 0;
 		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-//		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 		Worker worker = new Worker();
 		worker.setWorkerName(name);
 		worker.setWorkerPhoneNumber(phoneNumber);
@@ -138,8 +134,6 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 		window.button(JButtonMatcher.withName("btnAdd")).click();
 		CustomerOrder savedOrder = orderRepository.findAll().get(0);
-//		CustomerOrder order = new CustomerOrder(savedOrder.getOrderId(), customerName, customerAddress, customerPhone,
-//				appointmentDate, orderDescription, category, status, savedWorker);
 		assertThat(orderRepository.findById(savedOrder.getOrderId())).isEqualTo(savedOrder);
 	}
 

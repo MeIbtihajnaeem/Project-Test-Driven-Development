@@ -3,7 +3,6 @@ package com.mycompany.orderassignmentsystem.repository.h2database;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import javax.persistence.EntityManager;
@@ -29,7 +28,7 @@ public class OrderH2RepositoryTest {
 	private static final String PERSISTENCE_UNIT_NAME = "testUnit";
 
 	@Before
-	public void onSetUp() throws IOException {
+	public void onSetUp() {
 
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 		entityManager = entityManagerFactory.createEntityManager();
@@ -38,7 +37,7 @@ public class OrderH2RepositoryTest {
 	}
 
 	@After
-	public void onTearDown() throws IOException {
+	public void onTearDown() {
 		entityManagerFactory.close();
 		entityManager.close();
 	}
@@ -99,7 +98,7 @@ public class OrderH2RepositoryTest {
 			CustomerOrder order = new CustomerOrder("Jhon", "Piazza Luigi Dalla", "3401372678", "12-12-2024",
 					"No description", OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
 
-			order = orderDataRepository.save(order);
+			orderDataRepository.save(order);
 			fail("Expected an exception to be thrown");
 
 		} catch (Exception e) {
@@ -120,19 +119,6 @@ public class OrderH2RepositoryTest {
 
 	}
 
-//	@Test
-//	public void testDeleteWithManagedOrder() {
-//		Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
-//		worker1 = workerDataRepository.save(worker1);
-//		CustomerOrder order1 = new CustomerOrder("Jhon", "Piazza Luigi Dalla", "3401372678", "12-12-2024",
-//				"No description", OrderCategory.PLUMBER, OrderStatus.PENDING, worker1);
-//		order1 = orderDataRepository.save(order1);
-//		entityManager.getTransaction().begin();
-//		entityManager.remove(entityManager.contains(order1) ? order1 : entityManager.merge(order1));
-//		entityManager.getTransaction().commit();
-//		orderDataRepository.delete(order1);
-//		assertThat(orderDataRepository.findAll()).isEmpty();
-//	}
 
 	@Test
 	public void testDeleteWithException() {

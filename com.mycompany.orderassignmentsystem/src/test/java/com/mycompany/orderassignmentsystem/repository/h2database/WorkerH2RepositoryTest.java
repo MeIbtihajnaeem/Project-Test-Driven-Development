@@ -3,7 +3,6 @@ package com.mycompany.orderassignmentsystem.repository.h2database;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import javax.persistence.EntityManager;
@@ -25,7 +24,7 @@ public class WorkerH2RepositoryTest {
 	private static final String PERSISTENCE_UNIT_NAME = "testUnit";
 
 	@Before
-	public void onSetUp() throws IOException {
+	public void onSetUp() {
 
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
 		entityManager = entityManagerFactory.createEntityManager();
@@ -33,7 +32,7 @@ public class WorkerH2RepositoryTest {
 	}
 
 	@After
-	public void onTearDown() throws IOException {
+	public void onTearDown() {
 		entityManagerFactory.close();
 		entityManager.close();
 	}
@@ -66,7 +65,6 @@ public class WorkerH2RepositoryTest {
 		try {
 			Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
 			worker1.setWorkerId(1L);
-//			worker1 = workerDataRepository.save(worker1);
 			workerDataRepository.findById(null);
 			fail("Expected an exception to be thrown");
 
@@ -162,17 +160,6 @@ public class WorkerH2RepositoryTest {
 		workerDataRepository.delete(worker1);
 		assertThat(workerDataRepository.findAll()).isEmpty();
 	}
-
-//	@Test
-//	public void testDeleteWhenManagedWorker() {
-//		Worker worker1 = new Worker("Bob", "3401372678", OrderCategory.PLUMBER);
-//		worker1 = workerDataRepository.save(worker1);
-//		entityManager.getTransaction().begin();
-//		entityManager.remove(entityManager.contains(worker1) ? worker1 : entityManager.merge(worker1));
-//		entityManager.getTransaction().commit();
-//		workerDataRepository.delete(worker1);
-//		assertThat(workerDataRepository.findAll()).isEmpty();
-//	}
 
 	@Test
 	public void testDeleteWhenException() {

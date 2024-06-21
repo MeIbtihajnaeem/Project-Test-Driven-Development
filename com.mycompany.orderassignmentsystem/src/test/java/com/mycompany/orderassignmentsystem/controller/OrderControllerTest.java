@@ -1154,35 +1154,6 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 	}
 
-//	@Test
-//	public void testUpdateOrderMethodWhenWorkerIsNotChanged() {
-//		String customerName = "Muhammad Ibtihaj";
-//		String customerPhoneNumber = "3401372678";
-//		String address = "123 Main Street, Apt 101, Springfield, USA 12345";
-//		String appointmentDate = "12-12-2024";
-//
-//		String actualDescription = "Please ensure all connections are leak-proof.";
-//		OrderCategory orderCategory = OrderCategory.PLUMBER;
-//		OrderCategory workerCategory = OrderCategory.PLUMBER;
-//		OrderStatus status = OrderStatus.PENDING;
-//		Long workerId = 1l;
-//		Long orderId = 1l;
-//		Worker worker = new Worker(workerId, "Worker Name", "1234567890", workerCategory);
-//		CustomerOrder order = new CustomerOrder(orderId, customerName, address, customerPhoneNumber, appointmentDate,
-//				actualDescription, orderCategory, status, worker);
-//		CustomerOrder savedOrder = new CustomerOrder(orderId, customerName, address, customerPhoneNumber,
-//				appointmentDate, actualDescription, orderCategory, status, worker);
-//		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
-//		when(validationConfigurations.validateCategory(orderCategory)).thenReturn(orderCategory);
-//		when(workerRepository.findById(workerId)).thenReturn(worker);
-//		when(validationConfigurations.validateStringNumber(orderId.toString())).thenReturn(orderId);
-//		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
-//
-//		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-//		inOrder.verify(orderView).showError("Cannot update order because it is assigned to the same worker.", order);
-//		verifyNoMoreInteractions(ignoreStubs(orderRepository));
-//	}
-
 	@Test
 	public void testUpdateOrderMethodWhenWorkerOrdersAreNull() {
 		CustomerOrder order = new CustomerOrder();
@@ -1630,7 +1601,6 @@ public class OrderControllerTest {
 		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations)
 				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("1");
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be empty.", searchText);
@@ -1643,7 +1613,6 @@ public class OrderControllerTest {
 		doThrow(new IllegalArgumentException("Id Field cannot be zero.")).when(validationConfigurations)
 				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("0");
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be zero.", searchText);
@@ -1709,7 +1678,6 @@ public class OrderControllerTest {
 		doThrow(new NullPointerException("Id Field cannot be empty.")).when(validationConfigurations)
 				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("1");
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be empty.", searchText);
@@ -1722,7 +1690,6 @@ public class OrderControllerTest {
 		doThrow(new IllegalArgumentException("Id Field cannot be zero.")).when(validationConfigurations)
 				.validateStringNumber(any());
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-//		when(validationConfigurations.validateStringNumber(searchText)).thenReturn("0");
 		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
 		inOrder.verify(orderView).showSearchError("Id Field cannot be zero.", searchText);

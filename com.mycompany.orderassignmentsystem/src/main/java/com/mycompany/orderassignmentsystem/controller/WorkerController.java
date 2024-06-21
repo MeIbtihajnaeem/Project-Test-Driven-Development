@@ -80,7 +80,7 @@ public class WorkerController {
 		Long id = validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
 		worker.setWorkerId(id);
 		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
-		if (existingWorker != null && existingWorker.getWorkerId() != worker.getWorkerId()) {
+		if (existingWorker != null && !Objects.equals(existingWorker.getWorkerId(), worker.getWorkerId())) {
 			throw new IllegalArgumentException(
 					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
 		}
@@ -124,7 +124,7 @@ public class WorkerController {
 			}
 
 		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while " + operation.toString() + " worker: " + e.getMessage());
+			LOGGER.error("Error validating while {}   worker: {}", operation, e.getMessage());
 			workerView.showError(e.getMessage(), worker);
 
 		} catch (NoSuchElementException e) {
@@ -226,7 +226,7 @@ public class WorkerController {
 			LOGGER.info("Worker Searched: {}", workers);
 
 		} catch (Exception e) {
-			LOGGER.error("Error validating Search Text: " + e.getMessage());
+			LOGGER.error("Error validating Search Text: {}", e.getMessage());
 			workerView.showSearchError(e.getMessage(), searchText);
 
 		}

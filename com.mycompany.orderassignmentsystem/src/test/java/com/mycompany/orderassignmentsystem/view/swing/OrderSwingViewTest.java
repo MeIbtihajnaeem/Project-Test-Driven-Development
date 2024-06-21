@@ -44,8 +44,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	private AutoCloseable closeable;
 
-//	private List<Worker> workers;
-
 	@Override
 	protected void onSetUp() throws Exception {
 		closeable = MockitoAnnotations.openMocks(this);
@@ -59,14 +57,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		});
 		window = new FrameFixture(robot(), orderSwingView);
 		window.show();
-
-		// Creating worker list since almost all the tests will use this worker list to
-		// populate the combo box
-//		workers = new ArrayList<Worker>();
-//		workers.add(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-//		workers.add(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-//		workers.add(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
-
 	}
 
 	@Override
@@ -145,8 +135,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		int categoryIndex = 0;
 		int statusIndex = 0;
 		int workerIndex = 0;
-//		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-//		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 		window.textBox("txtOrderId").enterText(" "); // Make sure orderId is empty
 		window.textBox("txtCustomerName").enterText(customerName);
 		window.textBox("txtCustomerAddress").enterText(customerAddress);
@@ -178,8 +166,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		int categoryIndex = 0;
 		int statusIndex = 0;
 		int workerIndex = 0;
-//		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-//		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 		window.textBox("txtOrderId").enterText(orderId.toString());
 		window.textBox("txtCustomerName").enterText(customerName);
 		window.textBox("txtCustomerAddress").enterText(customerAddress);
@@ -211,8 +197,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		int categoryIndex = 0;
 		int statusIndex = 0;
 		int workerIndex = 0;
-//		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-//		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 		window.textBox("txtOrderId").enterText(orderId.toString());
 		window.textBox("txtCustomerName").enterText(customerName);
 		window.textBox("txtCustomerAddress").enterText(customerAddress);
@@ -243,8 +227,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		int categoryIndex = 0;
 		int statusIndex = 0;
 		int workerIndex = 0;
-//		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-//		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 		window.textBox("txtCustomerName").enterText(customerName);
 		window.textBox("txtCustomerAddress").enterText(customerAddress);
 		window.textBox("txtCustomerPhone").enterText(customerPhone);
@@ -308,8 +290,6 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		int categoryIndex = 0;
 		int statusIndex = 0;
 		int workerIndex = 0;
-//		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-//		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 		window.textBox("txtOrderId").enterText(orderId);
 		window.textBox("txtCustomerName").enterText(customerName);
 		window.textBox("txtCustomerAddress").enterText(customerAddress);
@@ -748,7 +728,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		GuiActionRunner.execute(() -> {
 			orderSwingView.showAllWorkers(Arrays.asList(worker));
 		});
-//		String orderId = 1l;
+
 		String customerName = "Ibtihaj";
 		String customerAddress = "Piazza Luigi";
 		String customerPhone = "3401372678";

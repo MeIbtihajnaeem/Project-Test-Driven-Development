@@ -31,7 +31,6 @@ import com.mycompany.orderassignmentsystem.model.Worker;
 
 @RunWith(GUITestRunner.class)
 public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
-//	private static final String persistenceUnitName = "myPersistenceUnit";
 	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
 	private static final int MAX_RETRIES = 3;
 	private static final long RETRY_DELAY_SECONDS = 10;
@@ -132,7 +131,6 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 
 	@Override
 	protected void onSetUp() throws Exception {
-		// TODO Auto-generated method stub
 		String persistenceUnitName = "OriginalPersistenceUnit";
 		String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
 		System.out.println(jdbcUrl);
@@ -179,8 +177,8 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		order.setWorker(savedWorker);
 		EntityTransaction orderTransaction = entityManager.getTransaction();
 		orderTransaction.begin();
-		CustomerOrder savedOrder = entityManager.merge(order);
-		order = savedOrder;
+		entityManager.merge(order);
+		
 		orderTransaction.commit();
 	}
 
@@ -445,12 +443,6 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		String updatedName = "Ibtihaj";
 		workerViewWindow.textBox("txtWorkerName").enterText(updatedName);
 		workerViewWindow.button(JButtonMatcher.withName("btnUpdate")).click();
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		assertThat(workerViewWindow.list("listWorkers").contents())
 				.anySatisfy(e -> assertThat(e).contains(WORKER_FIXTURE_3_ID.toString(), updatedName,
 						WORKER_FIXTURE_3_WORKER_PHONE_NUMBER, ORDER_WORKER_FIXTURE_3_CATEGORY.toString()));

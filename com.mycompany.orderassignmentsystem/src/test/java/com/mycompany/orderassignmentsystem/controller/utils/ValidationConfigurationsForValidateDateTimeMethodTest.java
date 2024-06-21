@@ -53,7 +53,6 @@ public class ValidationConfigurationsForValidateDateTimeMethodTest {
 	public void testDateTimeMethodWithAfterSevenMonthDate() {
 		LocalDate dateTime = LocalDate.now();
 		LocalDate sevenDaysBeforeToday = dateTime.plusMonths(7);
-//		System.out.println(sevenDaysBeforeToday);
 		assertThatThrownBy(() -> validationConfigurations.validateDate(sevenDaysBeforeToday))
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Please provide a valid date that is not 6 months after today's date.");

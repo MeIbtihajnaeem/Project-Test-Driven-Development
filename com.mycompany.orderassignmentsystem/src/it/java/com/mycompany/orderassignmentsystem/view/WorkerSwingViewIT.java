@@ -183,7 +183,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtWorkerPhone").enterText(phoneNumber);
 
 		window.comboBox("cmbWorkerCategory").selectItem(categoryIndex);
-//		window.button(JButtonMatcher.withName("btnFetch")).click();
 
 		String updatedName = "Ibtihaj";
 		window.textBox("txtWorkerName").enterText(updatedName);
@@ -196,7 +195,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 	}
 
-	// TODO: fetch Button Success
 	@Test
 	@GUITest
 	public void testFetchButtonSuccess() {
@@ -218,7 +216,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertEquals(category.name(), window.comboBox("cmbWorkerCategory").selectedItem());
 	}
 
-	// TODO: fetch Button Error
 	@Test
 	@GUITest
 	public void testFetchButtonError() {
@@ -306,7 +303,7 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	public void testSearchWorkerSuccess() {
 		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
 		Worker worker2 = new Worker(2l, "Ibtihaj", "3401372679", OrderCategory.PLUMBER);
-		worker1 = workerRepository.save(worker1);
+		workerRepository.save(worker1);
 		worker2 = workerRepository.save(worker2);
 		GuiActionRunner.execute(() -> workerController.getAllWorkers());
 		String searchText = "Ibtihaj";
@@ -362,47 +359,4 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		assertThat(window.list("listWorkers").contents()).containsExactly(worker1.toString(), worker2.toString());
 
 	}
-
-	// Search Order by worker button success
-
-//	@Test
-//	public void testSearchOrderByWorkerIdSuccess() {
-//		Worker worker1 = new Worker();
-//		worker1.setWorkerName("John");
-//		worker1.setWorkerPhoneNumber("3401372678");
-//		worker1.setWorkerCategory(OrderCategory.PLUMBER);
-//
-//		worker1 = workerRepository.save(worker1);
-//		System.out.println("Created Worker");
-//		System.out.println(worker1.toString());
-//		String customerName = "Ibtihaj";
-//		String customerAddress = "Piazza Luigi";
-//		String customerPhone = "3401372678";
-//		String orderDescription = "Plumber Required";
-//		String appointmentDate = "12-12-2024";
-//		CustomerOrder order = new CustomerOrder();
-//		order.setCustomerName(customerName);
-//		order.setCustomerAddress(customerAddress);
-//		order.setCustomerPhoneNumber(customerPhone); // Assuming the parameter name is customerPhone
-//		order.setAppointmentDate(appointmentDate);
-//		order.setOrderDescription(orderDescription);
-//		order.setOrderCategory(OrderCategory.PLUMBER);
-//		order.setOrderStatus(OrderStatus.PENDING);
-//		order.setWorker(worker1);
-//
-//		order = orderRepository.save(order);
-//		System.out.println("Created Order");
-//		System.out.println(order.toString());
-////		worker2.setOrders(Arrays.asList(order));
-////		worker2 = workerRepository.save(worker2);
-//
-//		window.textBox("txtOrdersByWorkerId").enterText(worker1.getWorkerId().toString());
-//
-//		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
-//
-//		assertThat(window.list("listOrders").contents()).containsExactly(order.toString());
-//
-//	}
-
-	// Search Order by worker button error
 }

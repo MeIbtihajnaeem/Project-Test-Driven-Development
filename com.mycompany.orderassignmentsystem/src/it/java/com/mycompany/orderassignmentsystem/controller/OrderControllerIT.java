@@ -82,13 +82,10 @@ public class OrderControllerIT {
 	private AutoCloseable closeable;
 	private EntityManagerFactory entityManagerFactory;
 
-//	private EntityManager entityManager;
-
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-//		entityManager = entityManagerFactory.createEntityManager();
 		orderRepository = new OrderDatabaseRepository(entityManagerFactory);
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
@@ -98,7 +95,6 @@ public class OrderControllerIT {
 	@After
 	public void releaseMocks() throws Exception {
 		entityManagerFactory.close();
-//		entityManager.close();
 		closeable.close();
 	}
 
