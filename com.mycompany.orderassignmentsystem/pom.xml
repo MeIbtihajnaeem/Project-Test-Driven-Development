@@ -130,7 +130,7 @@
 
 		<sonar.coverage.exclusions>
 			**/model/*.*,
-			**/SchoolSwingApp.*
+			**/OrderWorkerAssignmentSwingApp.*
 		</sonar.coverage.exclusions>
 
 
