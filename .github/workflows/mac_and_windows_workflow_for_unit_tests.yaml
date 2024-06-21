@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     env: 
-      workdir: ./com.mycompany.orderassignmentsystem
+      workdir: ./com.mycompany.orderAssignmentSystem
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
