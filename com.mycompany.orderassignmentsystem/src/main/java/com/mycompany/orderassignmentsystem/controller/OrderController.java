@@ -132,7 +132,7 @@ public class OrderController {
 			LOGGER.error("Error validating while creating or updating Order: {}", e.getMessage());
 			orderView.showError(e.getMessage(), order);
 		} catch (NoSuchElementException e) {
-			LOGGER.error(ERROR_FINDING , e.getMessage());
+			LOGGER.error(ERROR_FINDING, e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
 		}
 	}
@@ -160,7 +160,7 @@ public class OrderController {
 			LOGGER.error("Error validating while updating Order: {}", e.getMessage());
 			orderView.showError(e.getMessage(), order);
 		} catch (NoSuchElementException e) {
-			LOGGER.error(ERROR_FINDING , e.getMessage());
+			LOGGER.error(ERROR_FINDING, e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
 		}
 	}
@@ -173,8 +173,7 @@ public class OrderController {
 	public synchronized void deleteOrder(CustomerOrder order) {
 		try {
 			Objects.requireNonNull(order, "Order is null");
-			Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
-			order.setOrderId(id);
+			order.setOrderId(validationConfigurations.validateStringNumber(order.getOrderId().toString()));
 			CustomerOrder existingOrder = orderRepository.findById(order.getOrderId());
 			if (existingOrder == null) {
 				throw new NoSuchElementException("No order found with ID: " + order.getOrderId());
@@ -182,10 +181,10 @@ public class OrderController {
 			orderRepository.delete(order);
 			orderView.orderRemoved(order);
 		} catch (NullPointerException | IllegalArgumentException e) {
-			LOGGER.error("Error validating while updating Order: {}" , e.getMessage());
+			LOGGER.error("Error validating while updating Order: {}", e.getMessage());
 			orderView.showError(e.getMessage(), order);
 		} catch (NoSuchElementException e) {
-			LOGGER.error(ERROR_FINDING , e.getMessage());
+			LOGGER.error(ERROR_FINDING, e.getMessage());
 			orderView.showErrorNotFound(e.getMessage(), order);
 		}
 
@@ -238,7 +237,7 @@ public class OrderController {
 			LOGGER.info("Order searched: {}", orders);
 
 		} catch (Exception e) {
-			LOGGER.error("Error validating search text: {}" , e.getMessage());
+			LOGGER.error("Error validating search text: {}", e.getMessage());
 			orderView.showSearchError(e.getMessage(), searchText);
 		}
 
