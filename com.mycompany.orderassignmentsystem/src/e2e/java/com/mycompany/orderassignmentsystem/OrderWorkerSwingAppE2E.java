@@ -3,14 +3,9 @@ package com.mycompany.orderassignmentsystem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.swing.JFrame;
 
 import org.assertj.swing.annotation.GUITest;
@@ -24,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.mycompany.orderassignmentsystem.configurations.DBConfig;
 import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
 import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 import com.mycompany.orderassignmentsystem.model.CustomerOrder;
@@ -31,19 +27,10 @@ import com.mycompany.orderassignmentsystem.model.Worker;
 
 @RunWith(GUITestRunner.class)
 public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
-	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
-	private static final int MAX_RETRIES = 3;
-	private static final long RETRY_DELAY_SECONDS = 10;
-	private static final String host = "localhost";
-	private static final String port = "5432";
-	private static final String database = "orderWorkerTestDb";
-	private static final String user = "testUser";
-	private static final String password = "test123";
 	private FrameFixture orderViewWindow;
 	private FrameFixture workerViewWindow;
 	private static EntityManagerFactory entityManagerFactory;
 	private static EntityManager entityManager;
-	private static Map<String, String> properties = new HashMap<>();
 
 	private static final Long WORKER_FIXTURE_1_ID = 1L;
 	private static final Long WORKER_FIXTURE_2_ID = 2L;
@@ -101,47 +88,18 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 			ORDER_CUSTOMER_FIXTURE_2_ORDER_APPOINTMENT_DATE, ORDER_CUSTOMER_FIXTURE_2_ORDER_APPOINTMENT_DESCRIPTION,
 			ORDER_WORKER_FIXTURE_2_CATEGORY, ORDER_FIXTURE_2_STATUS, worker2);
 
+	private static DBConfig databaseConfig;
+
 	@BeforeClass
 	public static void setupServer() {
+		databaseConfig = Config.getDatabaseConfig();
 
-		int attempt = 0;
-		while (attempt < MAX_RETRIES) {
-			try {
-				EntityManagerFactory entityManagerFactory = Persistence
-						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-				if (entityManager != null && entityManager.isOpen()) {
-					entityManager.close();
-					break;
-				}
-			} catch (Exception i) {
-				attempt++;
-				if (attempt < MAX_RETRIES) {
-					try {
-						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-		}
+		databaseConfig.testAndStartDatabaseConnection();
 	}
 
 	@Override
 	protected void onSetUp() throws Exception {
-		String persistenceUnitName = "OriginalPersistenceUnit";
-		String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
-		System.out.println(jdbcUrl);
-
-		properties.put("javax.persistence.jdbc.url", jdbcUrl);
-		properties.put("javax.persistence.jdbc.user", user);
-		properties.put("javax.persistence.jdbc.password", password);
-		properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-		properties.put("hibernate.hbm2ddl.auto", "create-drop");
-
-		entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnitName, properties);
+		entityManagerFactory = databaseConfig.getEntityManagerFactory();
 		entityManager = entityManagerFactory.createEntityManager();
 
 		addTestOrderAndWorkerToDatabase(worker1, order1);
@@ -149,9 +107,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		addTestWorkerToDatabase(worker3);
 
 		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
-				.withArgs("--postgres-host=" + host, "--postgres-database=" + database, "--postgres-user=" + user,
-						"--postgres-pass=" + password, "--postgres-port=" + port)
-				.start();
+				.withArgs(databaseConfig.getArguments()).start();
 
 		orderViewWindow = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override

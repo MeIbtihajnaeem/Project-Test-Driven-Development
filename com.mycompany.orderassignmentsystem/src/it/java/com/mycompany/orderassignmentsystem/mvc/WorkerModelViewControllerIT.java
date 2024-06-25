@@ -2,11 +2,7 @@ package com.mycompany.orderassignmentsystem.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
@@ -17,6 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.mycompany.orderassignmentsystem.Config;
+import com.mycompany.orderassignmentsystem.configurations.DBConfig;
 import com.mycompany.orderassignmentsystem.controller.WorkerController;
 import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
 import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
@@ -28,37 +26,6 @@ import com.mycompany.orderassignmentsystem.view.swing.WorkerSwingView;
 
 @RunWith(GUITestRunner.class)
 public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
-	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
-	private static final int MAX_RETRIES = 3;
-	private static final long RETRY_DELAY_SECONDS = 10;
-
-	@BeforeClass
-	public static void setupServer() {
-
-		int attempt = 0;
-		while (attempt < MAX_RETRIES) {
-			try {
-				EntityManagerFactory entityManagerFactory = Persistence
-						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-				if (entityManager != null && entityManager.isOpen()) {
-					entityManager.close();
-					break;
-				}
-			} catch (Exception i) {
-				attempt++;
-				if (attempt < MAX_RETRIES) {
-					try {
-						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-		}
-	}
 
 	private WorkerRepository workerRepository;
 
@@ -70,10 +37,18 @@ public class WorkerModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 	private FrameFixture window;
 	private EntityManagerFactory entityManagerFactory;
+	private static DBConfig databaseConfig;
+
+	@BeforeClass
+	public static void setupServer() {
+		databaseConfig = Config.getDatabaseConfig();
+
+		databaseConfig.testAndStartDatabaseConnection();
+	}
 
 	@Override
 	protected void onSetUp() throws Exception {
-		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		entityManagerFactory = databaseConfig.getEntityManagerFactory();
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
 

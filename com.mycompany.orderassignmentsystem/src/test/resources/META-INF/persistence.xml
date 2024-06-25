@@ -10,16 +10,14 @@
 		<class>com.mycompany.orderassignmentsystem.model.Worker</class>
 		<properties>
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:postgresql://localhost:5432/orderWorkerTestDb" />
+				value="jdbc:postgresql://localhost:5432/${postgres.dbName}" />
 			<property name="javax.persistence.jdbc.user"
-				value="testUser" />
+				value="${postgres.user}" />
 			<property name="javax.persistence.jdbc.password"
-				value="test123" />
-
+				value="${postgres.password}" />
 			<property name="hibernate.dialect"
 				value="org.hibernate.dialect.PostgreSQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-			
 		</properties>
 	</persistence-unit>
 

@@ -79,7 +79,7 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 			LOGGER.info("The text cannot be empty.");
 			throw new NullPointerException("The number cannot be empty.");
 		}
-		if (str.length() > 20) {
+		if (str.length() > 10) {
 			LOGGER.info("The number cannot exceed 20 characters. Please provide a shorter number.");
 
 			throw new IllegalArgumentException(

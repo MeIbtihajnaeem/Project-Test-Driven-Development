@@ -32,10 +32,17 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 	@Test
 	public void testStringNumberMethodWithLargeStringGreaterThanTwentyCharacters() {
 		assertThatThrownBy(() -> {
-			String number = "000000000000000000000";
+			String number = "00000000000";
 			validationConfigurations.validateStringNumber(number);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The number cannot exceed 20 characters. Please provide a shorter number.");
+	}
+
+	@Test
+	public void testStringNumberMethodWithLargeStringExactlyThanTwentyCharacters() {
+
+		Long number = 1234567891l;
+		assertEquals(number, validationConfigurations.validateStringNumber(number.toString()));
 	}
 
 	@Test
@@ -49,7 +56,7 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 	@Test
 	public void testStringNumberMethodWithLeadingWhiteSpace() {
 		assertThatThrownBy(() -> {
-			String number = " 1234567890";
+			String number = " 12367890";
 			validationConfigurations.validateStringNumber(number);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The number cannot contains whitespace. Please provide a valid number.");
@@ -58,7 +65,7 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 	@Test
 	public void testStringNumberMethodWithEndingWhiteSpace() {
 		assertThatThrownBy(() -> {
-			String number = "1234567890 ";
+			String number = "12567890 ";
 			validationConfigurations.validateStringNumber(number);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The number cannot contains whitespace. Please provide a valid number.");
@@ -67,7 +74,7 @@ public class ValidationConfigurationsForValidateStringNumberMethodTest {
 	@Test
 	public void testStringNumberMethodWithMiddleWhiteSpace() {
 		assertThatThrownBy(() -> {
-			String number = "12345 67890";
+			String number = "12345 678";
 			validationConfigurations.validateStringNumber(number);
 		}).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("The number cannot contains whitespace. Please provide a valid number.");
