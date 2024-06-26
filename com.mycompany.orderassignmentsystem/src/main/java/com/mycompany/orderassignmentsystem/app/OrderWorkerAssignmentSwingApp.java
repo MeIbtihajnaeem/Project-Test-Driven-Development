@@ -29,12 +29,16 @@ public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 	private EntityManagerFactory entityManagerFactory;
 	private Map<String, String> properties = new HashMap<>();
 
+	@Option(names = { "--postgres-host" }, description = "Postgresql host ")
+	private String host = "localhost";
+	@Option(names = { "--postgres-database" }, description = "Postgresql host database")
+	private String database = "orderWorkerTestDb";
 	@Option(names = { "--postgres-user" }, description = "Postgresql user")
 	private String user = "testUser";
 	@Option(names = { "--postgres-pass" }, description = "Postgresql pass")
 	private String password;
-	@Option(names = { "--postgres-jdbcUrl" }, description = "Postgresql jdbcUrl")
-	private String jdbcUrl = "jdbc:postgresql://localhost:5432/orderWorkerTestDb";
+	@Option(names = { "--postgres-port" }, description = "Postgresql port")
+	private String port = "5432";
 	private static final Logger LOGGER = LogManager.getLogger(OrderWorkerAssignmentSwingApp.class);
 
 	public static void main(String[] args) {
@@ -49,6 +53,7 @@ public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 			try {
 
 				String persistenceUnitName = "OriginalPersistenceUnit";
+				String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
 				properties.put("javax.persistence.jdbc.url", jdbcUrl);
 				properties.put("javax.persistence.jdbc.user", user);
 				properties.put("javax.persistence.jdbc.password", password);

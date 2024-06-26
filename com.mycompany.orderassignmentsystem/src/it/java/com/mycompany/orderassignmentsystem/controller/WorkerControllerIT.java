@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderassignmentsystem.Config;
+import com.mycompany.orderassignmentsystem.DatabaseConfig;
 import com.mycompany.orderassignmentsystem.configurations.DBConfig;
 import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
 import com.mycompany.orderassignmentsystem.controller.utils.extensions.ExtendedValidationConfigurations;
@@ -47,7 +47,7 @@ public class WorkerControllerIT {
 
 	@BeforeClass
 	public static void setup() {
-		databaseConfig = Config.getDatabaseConfig();
+		databaseConfig = DatabaseConfig.getDatabaseConfig();
 
 		databaseConfig.testAndStartDatabaseConnection();
 	}

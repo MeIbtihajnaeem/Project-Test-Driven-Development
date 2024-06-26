@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.mycompany.orderassignmentsystem.Config;
+import com.mycompany.orderassignmentsystem.DatabaseConfig;
 import com.mycompany.orderassignmentsystem.configurations.DBConfig;
 import com.mycompany.orderassignmentsystem.controller.OrderController;
 import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
@@ -49,7 +49,7 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 
 	@BeforeClass
 	public static void setupServer() {
-		databaseConfig = Config.getDatabaseConfig();
+		databaseConfig = DatabaseConfig.getDatabaseConfig();
 
 		databaseConfig.testAndStartDatabaseConnection();
 	}

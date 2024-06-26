@@ -67,12 +67,4 @@ public class TestContainerConfig implements DBConfig {
 		return Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
 	}
 
-	@Override
-	public String[] getArguments() {
-		String jdbcUrl = "jdbc:postgresql://" + postgress.getHost() + ":" + postgress.getMappedPort(5432) + "/" + DB;
-		String[] argsArray = { "--postgres-jdbcUrl=" + jdbcUrl, "--postgres-user=" + USER,
-				"--postgres-pass=" + PASSWORD };
-		return argsArray;
-	}
-
 }

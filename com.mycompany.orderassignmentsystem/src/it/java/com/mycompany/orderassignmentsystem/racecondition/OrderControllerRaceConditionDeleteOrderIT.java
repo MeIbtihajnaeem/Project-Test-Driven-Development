@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.mycompany.orderassignmentsystem.Config;
+import com.mycompany.orderassignmentsystem.DatabaseConfig;
 import com.mycompany.orderassignmentsystem.configurations.DBConfig;
 import com.mycompany.orderassignmentsystem.controller.OrderController;
 import com.mycompany.orderassignmentsystem.controller.utils.ValidationConfigurations;
@@ -52,7 +52,7 @@ public class OrderControllerRaceConditionDeleteOrderIT {
 
 	@BeforeClass
 	public static void setup() {
-		databaseConfig = Config.getDatabaseConfig();
+		databaseConfig = DatabaseConfig.getDatabaseConfig();
 
 		databaseConfig.testAndStartDatabaseConnection();
 	}

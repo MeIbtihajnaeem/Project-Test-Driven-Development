@@ -17,13 +17,11 @@ import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
 
-import com.mycompany.orderassignmentsystem.Config;
-
 import io.cucumber.java.After;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class OrderWorkerSwingAppSteps extends Config {
+public class OrderWorkerSwingAppSteps extends ConfigSteps {
 	private Robot robotWithCurrentAwtHierarchy = BasicRobot.robotWithCurrentAwtHierarchy();
 
 	private FrameFixture orderViewWindow;
@@ -42,7 +40,9 @@ public class OrderWorkerSwingAppSteps extends Config {
 	@When("The Order View is shown")
 	public void the_Order_View_is_shown() {
 		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
-				.withArgs(getDatabaseConfig().getArguments()).start();
+				.withArgs("--postgres-host=" + host, "--postgres-database=" + database, "--postgres-user=" + user,
+						"--postgres-pass=" + password, "--postgres-port=" + port)
+				.start();
 
 		orderViewWindow = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override

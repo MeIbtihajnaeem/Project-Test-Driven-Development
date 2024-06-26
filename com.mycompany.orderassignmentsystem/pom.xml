@@ -256,13 +256,6 @@
 	</dependencies>
 
 	<build>
-		<!-- enable resource filtering in Maven for persistence.xml-->
-		<resources>
-			<resource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -564,6 +557,11 @@
 									<goal>integration-test</goal>
 									<goal>verify</goal>
 								</goals>
+								<configuration>
+									<excludes>
+										<exclude>**/*Config.java</exclude>
+									</excludes>
+								</configuration>
 							</execution>
 							<execution>
 								<id>e2e-tests</id>
@@ -574,6 +572,7 @@
 								<configuration>
 									<excludes>
 										<exclude>**/*IT.java</exclude>
+										<exclude>**/*Config.java</exclude>
 									</excludes>
 									<includes>
 										<include>**/*E2E.java</include>
@@ -589,6 +588,7 @@
 								<configuration>
 									<excludes>
 										<exclude>**/*IT.java</exclude>
+										<exclude>**/*Config.java</exclude>
 									</excludes>
 									<includes>
 										<include>**/*BDD.java</include>

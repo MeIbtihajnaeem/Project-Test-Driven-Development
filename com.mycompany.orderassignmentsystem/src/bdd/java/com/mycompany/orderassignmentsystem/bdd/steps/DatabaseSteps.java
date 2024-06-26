@@ -1,12 +1,17 @@
 package com.mycompany.orderassignmentsystem.bdd.steps;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 
-import com.mycompany.orderassignmentsystem.Config;
+import org.junit.BeforeClass;
+
 import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
 import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 import com.mycompany.orderassignmentsystem.model.CustomerOrder;
@@ -17,14 +22,53 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
-public class DatabaseSteps extends Config {
+public class DatabaseSteps extends ConfigSteps {
 	private static EntityManagerFactory entityManagerFactory;
 	private static EntityManager entityManager;
+	private static Map<String, String> properties = new HashMap<>();
+
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_SECONDS = 10;
+
+	@BeforeClass
+	public static void setup() {
+
+		int attempt = 0;
+		while (attempt < MAX_RETRIES) {
+			try {
+				EntityManagerFactory entityManagerFactory = Persistence
+						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+
+				EntityManager entityManager = entityManagerFactory.createEntityManager();
+				if (entityManager != null && entityManager.isOpen()) {
+					entityManager.close();
+					break;
+				}
+			} catch (Exception i) {
+				attempt++;
+				if (attempt < MAX_RETRIES) {
+					try {
+						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+	}
 
 	@Before
 	public void setUp() {
-		entityManagerFactory = getDatabaseConfig().getEntityManagerFactory();
-		;
+		String persistenceUnitName = "OriginalPersistenceUnit";
+		String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
+		properties.put("javax.persistence.jdbc.url", jdbcUrl);
+		properties.put("javax.persistence.jdbc.user", user);
+		properties.put("javax.persistence.jdbc.password", password);
+		properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+		properties.put("hibernate.hbm2ddl.auto", "create-drop");
+
+		entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnitName, properties);
 		entityManager = entityManagerFactory.createEntityManager();
 	}
 
