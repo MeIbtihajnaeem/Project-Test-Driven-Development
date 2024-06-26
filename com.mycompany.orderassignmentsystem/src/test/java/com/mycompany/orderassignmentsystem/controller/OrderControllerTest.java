@@ -23,7 +23,7 @@
  * 1. Setup: Created environment for the test.
  * 2. Mocks: Configuring the mock objects (Added separate comment just for better readability).
  * 3. Exercise: Calling an instance method.
- * 4. Verify: Verify that the outcome matches the expected behavior.
+ * 4. Verify: Verify that the outcome matches the expected behaviour.
  *
  * @see OrderController
  * @see OrderRepository
