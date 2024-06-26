@@ -77,8 +77,8 @@ public class WorkerController {
 	}
 
 	private synchronized void update(Worker worker) {
-		Long id = validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
-		worker.setWorkerId(id);
+		validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
+
 		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
 		if (existingWorker != null && !Objects.equals(existingWorker.getWorkerId(), worker.getWorkerId())) {
 			throw new IllegalArgumentException(
@@ -107,15 +107,17 @@ public class WorkerController {
 	public synchronized void createOrUpdateWorker(Worker worker, OperationType operation) {
 		try {
 			Objects.requireNonNull(worker, "Worker is null");
-			validateWorkerFields(worker);
 
 			switch (operation) {
 			case ADD:
 				LOGGER.info("Creating a new order");
+				validateWorkerFields(worker);
 				add(worker);
 				break;
 			case UPDATE:
 				LOGGER.info("Updating an existing order");
+				validateWorkerFields(worker);
+
 				update(worker);
 				break;
 			default:
@@ -317,7 +319,7 @@ public class WorkerController {
 	 */
 	private void validateWorkerAndWorkerId(Worker worker) {
 		Objects.requireNonNull(worker, "Worker is null");
-		worker.setWorkerId(validationConfigurations.validateStringNumber(worker.getWorkerId().toString()));
+		validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
 	}
 
 	/**
@@ -326,9 +328,9 @@ public class WorkerController {
 	 * @param worker the worker to validate
 	 */
 	private void validateWorkerFields(Worker worker) {
-		worker.setWorkerName(validationConfigurations.validateName(worker.getWorkerName()));
-		worker.setWorkerPhoneNumber(validationConfigurations.validatePhoneNumber(worker.getWorkerPhoneNumber()));
-		worker.setWorkerCategory(validationConfigurations.validateCategory(worker.getWorkerCategory()));
+		validationConfigurations.validateName(worker.getWorkerName());
+		validationConfigurations.validatePhoneNumber(worker.getWorkerPhoneNumber());
+		validationConfigurations.validateCategory(worker.getWorkerCategory());
 	}
 
 }

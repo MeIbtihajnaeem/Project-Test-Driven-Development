@@ -4,7 +4,7 @@
  * These tests verify the functionality of the OrderController, including
  * fetching all orders and workers, creating or updating orders under 
  * various conditions, and searching for orders using different criteria.
- * The tests utilize Mockito for mocking dependencies and follow Test Driven 
+ * The tests utilise Mockito for mocking dependencies and follow Test Driven 
  * Development (TDD) principles to ensure correctness of the OrderController 
  * implementation.
  *
@@ -16,8 +16,14 @@
  * - deleteOrder()
  * - searchOrder()
  *
- * The setup and teardown methods handle the initialization and cleanup 
+ * The setup and teardown methods handle the initialisation and cleanup 
  * of mock objects.
+ *
+ * Each test follows a structured approach with three main phases:
+ * 1. Setup: Created environment for the test.
+ * 2. Mocks: Configuring the mock objects (Added separate comment just for better readability).
+ * 3. Exercise: Calling an instance method.
+ * 4. Verify: Verify that the outcome matches the expected behavior.
  *
  * @see OrderController
  * @see OrderRepository
@@ -88,6 +94,9 @@ public class OrderControllerTest {
 
 	/** The closeable. */
 	private AutoCloseable closeable;
+
+	/** The order id. */
+	private long ORDER_ID = 1l;
 
 	/** The customer name. */
 	private String CUSTOMER_NAME = "Muhammad Ibtihaj";
@@ -758,8 +767,8 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
-		long orderId = 1l;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Exercise
@@ -1050,8 +1059,8 @@ public class OrderControllerTest {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
-		long orderId = 1l;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -1080,8 +1089,8 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, workerCategory);
-		long orderId = 1l;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, orderCategory, ORDER_STATUS, worker);
 
 		// Mocks
@@ -1219,8 +1228,8 @@ public class OrderControllerTest {
 		// Setup
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
-		long orderId = 1l;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 		worker.setOrders(asList(order));
 
@@ -1228,7 +1237,7 @@ public class OrderControllerTest {
 		when(workerRepository.findById(workerId)).thenReturn(worker);
 		when(orderRepository.save(order)).thenReturn(order);
 		when(workerRepository.findById(workerId)).thenReturn(worker);
-		when(orderRepository.findById(orderId)).thenReturn(order);
+		when(orderRepository.findById(ORDER_ID)).thenReturn(order);
 
 		// Exercise
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
@@ -1244,10 +1253,10 @@ public class OrderControllerTest {
 
 	/**
 	 * Test create or update order method when operation type none and operation
-	 * type is update.
+	 * type is none.
 	 */
 	@Test
-	public void testCreateOrUpdateOrderMethodWhenOperationTypeNoneAndOperationTypeIsUpdate() {
+	public void testCreateOrUpdateOrderMethodWhenOperationTypeNoneAndOperationTypeIsNone() {
 		// Setup
 		CustomerOrder order = new CustomerOrder();
 
@@ -1335,11 +1344,11 @@ public class OrderControllerTest {
 	public void testFetchOrderByIdMethodWhenOrderIdIsValidButOrderNotFound() {
 		// Setup
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
+
+		order.setOrderId(ORDER_ID);
 
 		// Mocks
-		when(orderRepository.findById(orderId)).thenReturn(null);
+		when(orderRepository.findById(ORDER_ID)).thenReturn(null);
 
 		// Exercise
 		orderController.fetchOrderById(order);
@@ -1358,15 +1367,15 @@ public class OrderControllerTest {
 	public void testFetchOrderByIdMethodWhenOrderIdIsValid() {
 		// Setup
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
+
+		order.setOrderId(ORDER_ID);
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
-		CustomerOrder savedOrder = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder savedOrder = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
-		when(orderRepository.findById(orderId)).thenReturn(savedOrder);
+		when(orderRepository.findById(ORDER_ID)).thenReturn(savedOrder);
 
 		// Exercise
 		orderController.fetchOrderById(order);
@@ -1451,11 +1460,11 @@ public class OrderControllerTest {
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidButNoOrderFoundWithId() {
 		// Setup
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
+
+		order.setOrderId(ORDER_ID);
 
 		// Mocks
-		when(orderRepository.findById(orderId)).thenReturn(null);
+		when(orderRepository.findById(ORDER_ID)).thenReturn(null);
 
 		// Exercise
 		orderController.deleteOrder(order);
@@ -1474,11 +1483,11 @@ public class OrderControllerTest {
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidAndOrderFound() {
 		// Setup
 		CustomerOrder order = new CustomerOrder();
-		long orderId = 1l;
-		order.setOrderId(orderId);
+
+		order.setOrderId(ORDER_ID);
 
 		// Mocks
-		when(orderRepository.findById(orderId)).thenReturn(order);
+		when(orderRepository.findById(ORDER_ID)).thenReturn(order);
 
 		// Exercise
 		orderController.deleteOrder(order);
@@ -1663,20 +1672,19 @@ public class OrderControllerTest {
 	public void searchOrderWhenSearchOptionIsOrderIdSearchTextIsValidNumberButOrderNotFound() {
 		// Setup
 		String searchText = "1";
-		long orderId = 1l;
 
 		// Mocks
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
-		when(validationConfigurations.validateStringNumber(Long.toString(orderId))).thenReturn(orderId);
-		when(orderRepository.findById(orderId)).thenReturn(null);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(ORDER_ID);
+		when(validationConfigurations.validateStringNumber(Long.toString(ORDER_ID))).thenReturn(ORDER_ID);
+		when(orderRepository.findById(ORDER_ID)).thenReturn(null);
 
 		// Exercise
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
 
 		// Verify
 		InOrder inOrder = Mockito.inOrder(orderView, orderRepository, workerRepository);
-		inOrder.verify(orderView).showSearchError("No result found with ID: " + orderId, searchText);
+		inOrder.verify(orderView).showSearchError("No result found with ID: " + ORDER_ID, searchText);
 		verifyNoMoreInteractions(ignoreStubs(orderRepository));
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
@@ -1689,14 +1697,14 @@ public class OrderControllerTest {
 	public void searchOrderWhenSearchOptionIsOrderIdSearchTextIsValidNumberAndOrderFound() {
 		// Setup
 		String searchText = "1";
-		long orderId = 1l;
+
 		CustomerOrder order = new CustomerOrder();
 
 		// Mocks
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
-		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(orderId);
-		when(validationConfigurations.validateStringNumber(Long.toString(orderId))).thenReturn(orderId);
-		when(orderRepository.findById(orderId)).thenReturn(order);
+		when(validationConfigurations.validateStringNumber(searchText)).thenReturn(ORDER_ID);
+		when(validationConfigurations.validateStringNumber(Long.toString(ORDER_ID))).thenReturn(ORDER_ID);
+		when(orderRepository.findById(ORDER_ID)).thenReturn(order);
 
 		// Exercise
 		orderController.searchOrder(searchText, OrderSearchOptions.ORDER_ID);
@@ -2171,6 +2179,11 @@ public class OrderControllerTest {
 
 		// Mocks
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		/**
+		 * eq(OrderCategory.class) ensures that the second argument must be exactly
+		 * OrderStatus.class. This is used to verify that the correct enum type is being
+		 * validated.
+		 */
 		doThrow(new NullPointerException("Status field cannot be empty.")).when(validationConfigurations)
 				.validateEnum(any(), eq(OrderStatus.class));
 
@@ -2195,6 +2208,11 @@ public class OrderControllerTest {
 
 		// Mocks
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		/**
+		 * eq(OrderCategory.class) ensures that the second argument must be exactly
+		 * OrderStatus.class. This is used to verify that the correct enum type is being
+		 * validated.
+		 */
 		doThrow(new IllegalArgumentException(
 				"The status cannot contain whitespaces. Please remove any whitespaces from the status."))
 				.when(validationConfigurations).validateEnum(anyString(), eq(OrderStatus.class));
@@ -2299,6 +2317,11 @@ public class OrderControllerTest {
 
 		// Mocks
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		/**
+		 * eq(OrderCategory.class) ensures that the second argument must be exactly
+		 * OrderCategory.class. This is used to verify that the correct enum type is
+		 * being validated.
+		 */
 		doThrow(new NullPointerException("category field cannot be empty.")).when(validationConfigurations)
 				.validateEnum(any(), eq(OrderCategory.class));
 
@@ -2323,6 +2346,11 @@ public class OrderControllerTest {
 
 		// Mocks
 		when(validationConfigurations.validateSearchString(searchText)).thenReturn(searchText);
+		/**
+		 * eq(OrderCategory.class) ensures that the second argument must be exactly
+		 * OrderCategory.class. This is used to verify that the correct enum type is
+		 * being validated.
+		 */
 		doThrow(new IllegalArgumentException(
 				"The category cannot contain whitespaces. Please remove any whitespaces from the category."))
 				.when(validationConfigurations).validateEnum(any(), eq(OrderCategory.class));
