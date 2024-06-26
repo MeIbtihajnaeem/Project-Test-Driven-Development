@@ -1,9 +1,7 @@
 package com.mycompany.orderassignmentsystem.controller.utils.extensions;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -204,32 +202,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 					"The phone number must start with 3. Please provide a valid phone number.");
 		}
 		return phoneNumber;
-	}
-
-	/**
-	 * Validates a date.
-	 *
-	 * @param dateTime the date to validate
-	 * @return the validated date
-	 * @throws IllegalArgumentException if validation fails
-	 */
-	public LocalDate validateDate(LocalDate dateTime) {
-		LocalDate currentDateTime = LocalDate.now();
-
-		if (dateTime == null) {
-			LOGGER.info("The Date field cannot be empty.");
-			throw new NullPointerException("The Date field cannot be empty.");
-		}
-		if (ChronoUnit.DAYS.between(currentDateTime, dateTime) < 0) {
-			LOGGER.info("Please provide a valid date that is not before today's date.");
-			throw new IllegalArgumentException("Please provide a valid date that is not before today's date.");
-		}
-		if (Period.between(currentDateTime, dateTime).getMonths() > 6) {
-			LOGGER.info("Please provide a valid date that is not 6 months after today's date.");
-			throw new IllegalArgumentException("Please provide a valid date that is not 6 months after today's date.");
-		}
-
-		return dateTime;
 	}
 
 	/**
