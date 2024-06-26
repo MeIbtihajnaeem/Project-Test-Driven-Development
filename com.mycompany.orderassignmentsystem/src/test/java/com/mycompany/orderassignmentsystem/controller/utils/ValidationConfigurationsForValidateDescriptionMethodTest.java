@@ -50,30 +50,30 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with null string.
+	 * Test Validate Description Method with null string.
 	 */
 	@Test
-	public void testDescriptionMethodWithNullString() {
+	public void testValidateDescriptionMethodWithNullString() {
 		// Setup & Exercise & Verify
 		assertThatThrownBy(() -> validationConfigurations.validateDescription(null))
 				.isInstanceOf(NullPointerException.class).hasMessage("The description field cannot be empty.");
 	}
 
 	/**
-	 * Test description method with empty string.
+	 * Test Validate Description Method with empty string.
 	 */
 	@Test
-	public void testDescriptionMethodWithEmptyString() {
+	public void testValidateDescriptionMethodWithEmptyString() {
 		// Setup & Exercise & Verify
 		assertThatThrownBy(() -> validationConfigurations.validateDescription(""))
 				.isInstanceOf(NullPointerException.class).hasMessage("The description field cannot be empty.");
 	}
 
 	/**
-	 * Test description method with short string less than ten characters.
+	 * Test Validate Description Method with short string less than ten characters.
 	 */
 	@Test
-	public void testDescriptionMethodWithShortStringLessThanTenCharacters() {
+	public void testValidateDescriptionMethodWithShortStringLessThanTenCharacters() {
 		// Setup
 		String description = "repair";
 
@@ -84,10 +84,10 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with short string equals to ten characters.
+	 * Test Validate Description Method with short string equals to ten characters.
 	 */
 	@Test
-	public void testDescriptionMethodWithShortStringEqualsToTenCharacters() {
+	public void testValidateDescriptionMethodWithShortStringEqualsToTenCharacters() {
 		// Setup
 		String description = "change pip";
 
@@ -98,10 +98,11 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with large string equals to eleven characters.
+	 * Test Validate Description Method with large string equals to eleven
+	 * characters.
 	 */
 	@Test
-	public void testDescriptionMethodWithLargeStringEqualsToElevenCharacters() {
+	public void testValidateDescriptionMethodWithLargeStringEqualsToElevenCharacters() {
 		// Setup
 		String description = "change pips";
 
@@ -110,10 +111,11 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with large string greater than fifty characters.
+	 * Test Validate Description Method with large string greater than fifty
+	 * characters.
 	 */
 	@Test
-	public void testDescriptionMethodWithLargeStringGreaterThanFiftyCharacters() {
+	public void testValidateDescriptionMethodWithLargeStringGreaterThanFiftyCharacters() {
 		// Setup
 		String description = "Please ensure the pipes are tightly sealed and all!";
 
@@ -124,10 +126,11 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with large string equals to fifty characters.
+	 * Test Validate Description Method with large string equals to fifty
+	 * characters.
 	 */
 	@Test
-	public void testDescriptionMethodWithLargeStringEqualsToFiftyCharacters() {
+	public void testValidateDescriptionMethodWithLargeStringEqualsToFiftyCharacters() {
 		// Setup
 		String description = "Please ensure all connection are leak-proof.Thanks";
 
@@ -136,10 +139,10 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with tabs.
+	 * Test Validate Description Method with tabs.
 	 */
 	@Test
-	public void testDescriptionMethodWithTabs() {
+	public void testValidateDescriptionMethodWithTabs() {
 		// Setup
 		String description = "Please ensure all connection \t are leak-proof.";
 
@@ -150,10 +153,10 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with one leading white space.
+	 * Test Validate Description Method with one leading white space.
 	 */
 	@Test
-	public void testDescriptionMethodWithOneLeadingWhiteSpace() {
+	public void testValidateDescriptionMethodWithOneLeadingWhiteSpace() {
 		// Setup
 		String description = " Please ensure all connection are leak-proof.";
 		String expectedDescription = "Please ensure all connection are leak-proof.";
@@ -163,10 +166,10 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with two leading white space.
+	 * Test Validate Description Method with two leading white space.
 	 */
 	@Test
-	public void testDescriptionMethodWithTwoLeadingWhiteSpace() {
+	public void testValidateDescriptionMethodWithTwoLeadingWhiteSpace() {
 		// Setup
 		String description = "  Please ensure all connection are leak-proof.";
 		String expectedDescription = "Please ensure all connection are leak-proof.";
@@ -177,10 +180,10 @@ public class ValidationConfigurationsForValidateDescriptionMethodTest {
 	}
 
 	/**
-	 * Test description method with one ending white space.
+	 * Test Validate Description Method with one ending white space.
 	 */
 	@Test
-	public void testDescriptionMethodWithOneEndingWhiteSpace() {
+	public void testValidateDescriptionMethodWithOneEndingWhiteSpace() {
 		// Setup
 		String description = "Please ensure all connection are leak-proof. ";
 		String expectedDescription = "Please ensure all connection are leak-proof.";

@@ -48,30 +48,30 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with null string.
+	 * Test Validate Address Method with null string.
 	 */
 	@Test
-	public void testAddressMethodWithNullString() {
+	public void testValidateAddressMethodWithNullString() {
 		// Setup & Exercise & Verify
 		assertThatThrownBy(() -> validationConfigurations.validateAddress(null))
 				.isInstanceOf(NullPointerException.class).hasMessage("The address field cannot be empty.");
 	}
 
 	/**
-	 * Test address method with empty string.
+	 * Test Validate Address Method with empty string.
 	 */
 	@Test
-	public void testAddressMethodWithEmptyString() {
+	public void testValidateAddressMethodWithEmptyString() {
 		// Setup & Exercise & Verify
 		assertThatThrownBy(() -> validationConfigurations.validateAddress("")).isInstanceOf(NullPointerException.class)
 				.hasMessage("The address field cannot be empty.");
 	}
 
 	/**
-	 * Test address method with short string less than ten characters.
+	 * Test Validate Address Method with short string less than ten characters.
 	 */
 	@Test
-	public void testAddressMethodWithShortStringLessThanTenCharacters() {
+	public void testValidateAddressMethodWithShortStringLessThanTenCharacters() {
 		// Setup
 		String address = "42 Will";
 
@@ -82,10 +82,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with short string equals to ten characters.
+	 * Test Validate Address Method with short string equals to ten characters.
 	 */
 	@Test
-	public void testAddressMethodWithShortStringEqualsToTenCharacters() {
+	public void testValidateAddressMethodWithShortStringEqualsToTenCharacters() {
 		// Setup
 		String address = "42 Willowa";
 
@@ -96,10 +96,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with large string equals to eleven characters.
+	 * Test Validate Address Method with large string equals to eleven characters.
 	 */
 	@Test
-	public void testAddressMethodWithLargeStringEqualsToElevenCharacters() {
+	public void testValidateAddressMethodWithLargeStringEqualsToElevenCharacters() {
 		// Setup
 		String address = "1234 Main S";
 
@@ -108,10 +108,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with large string greater than fifty characters.
+	 * Test Validate Address Method with large string greater than fifty characters.
 	 */
 	@Test
-	public void testAddressMethodWithLargeStringGreaterThanFiftyCharacters() {
+	public void testValidateAddressMethodWithLargeStringGreaterThanFiftyCharacters() {
 		// Setup
 		String address = "123 Main Street Near Bakary, Apt 10, Springfield, 1";
 
@@ -122,10 +122,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with tabs.
+	 * Test Validate Address Method with tabs.
 	 */
 	@Test
-	public void testAddressMethodWithTabs() {
+	public void testValidateAddressMethodWithTabs() {
 		// Setup
 		String address = "1234 Main Street\t Apt 101, Springfield, USA 12345";
 
@@ -136,10 +136,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with one leading white space.
+	 * Test Validate Address Method with one leading white space.
 	 */
 	@Test
-	public void testAddressMethodWithOneLeadingWhiteSpace() {
+	public void testValidateAddressMethodWithOneLeadingWhiteSpace() {
 		// Setup
 		String address = " 123 Main Street , Apt 101, Springfield, USA 12345";
 		String expectedAdddress = "123 Main Street , Apt 101, Springfield, USA 12345";
@@ -150,10 +150,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with two leading white space.
+	 * Test Validate Address Method with two leading white space.
 	 */
 	@Test
-	public void testAddressMethodWithTwoLeadingWhiteSpace() {
+	public void testValidateAddressMethodWithTwoLeadingWhiteSpace() {
 		// Setup
 		String address = "  123 Main Street, Apt 101, Springfield, USA 12345";
 		String expectedAdddress = "123 Main Street, Apt 101, Springfield, USA 12345";
@@ -164,10 +164,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with large string equals to fifty characters.
+	 * Test Validate Address Method with large string equals to fifty characters.
 	 */
 	@Test
-	public void testAddressMethodWithLargeStringEqualsToFiftyCharacters() {
+	public void testValidateAddressMethodWithLargeStringEqualsToFiftyCharacters() {
 		// Setup
 		String address = "1234 Main Street , Apt 101, Springfield, USA 12345";
 
@@ -177,10 +177,10 @@ public class ValidationConfigurationsForValidateAddressMethodTest {
 	}
 
 	/**
-	 * Test address method with one ending white space.
+	 * Test Validate Address Method with one ending white space.
 	 */
 	@Test
-	public void testAddressMethodWithOneEndingWhiteSpace() {
+	public void testValidateAddressMethodWithOneEndingWhiteSpace() {
 		// Setup
 		String address = "123 Main Street, Apt 101, Springfield, USA 12345 ";
 		String expectedAdddress = "123 Main Street, Apt 101, Springfield, USA 12345";
