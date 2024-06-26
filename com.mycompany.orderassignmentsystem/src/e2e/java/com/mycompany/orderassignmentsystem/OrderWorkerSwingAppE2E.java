@@ -2,6 +2,7 @@ package com.mycompany.orderassignmentsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -114,11 +115,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 			} catch (Exception i) {
 				attempt++;
 				if (attempt < MAX_RETRIES) {
-					try {
-						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					await().atMost(RETRY_DELAY_SECONDS, TimeUnit.SECONDS);
 				}
 			}
 

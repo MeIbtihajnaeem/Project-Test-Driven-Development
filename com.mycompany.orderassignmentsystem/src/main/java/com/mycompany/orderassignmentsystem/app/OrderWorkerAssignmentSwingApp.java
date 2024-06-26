@@ -49,9 +49,7 @@ public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 	@Override
 	public Void call() throws Exception {
 		EventQueue.invokeLater(() -> {
-
 			try {
-
 				String persistenceUnitName = "OriginalPersistenceUnit";
 				String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
 				properties.put("javax.persistence.jdbc.url", jdbcUrl);
@@ -59,7 +57,6 @@ public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 				properties.put("javax.persistence.jdbc.password", password);
 				properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
 				properties.put("hibernate.hbm2ddl.auto", "update");
-
 				entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnitName, properties);
 				OrderDatabaseRepository orderRepository = new OrderDatabaseRepository(entityManagerFactory);
 				WorkerDatabaseRepository workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
@@ -72,7 +69,6 @@ public class OrderWorkerAssignmentSwingApp implements Callable<Void> {
 						validationConfigurations);
 				workerController.getAllWorkers();
 				workerView.setWorkerController(workerController);
-
 				orderView.setOrderController(orderController);
 				orderView.setWorkerSwingView(workerView);
 				orderView.setVisible(true);

@@ -181,12 +181,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 			@Override
 			public void keyTyped(KeyEvent event) {
-				char character = event.getKeyChar();
-				if (!((character >= '0') && (character <= '9') || (character == KeyEvent.VK_BACK_SPACE))) {
-					getToolkit().beep();
-					event.consume();
-				}
+				checkCharacterIsNumber(event);
 			}
+
 		});
 
 		GridBagConstraints gbcTxtOrderId = new GridBagConstraints();
@@ -654,16 +651,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
 				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
 
-		btnFetch.setEnabled(
-				!isOrderIdEmpty 
-				&& isCustomerNameEmpty 
-				&& isCustomerAddressEmpty
-				&& isCustomerPhoneNumberEmpty 
-				&& isOrderDescriptionEmpty 
-				&& isAppointmentDateEmpty
-				&& isOrderCategoryEmpty 
-				&& isOrderStatusEmpty 
-				&& isAssignedWorkerEmpty);
+		btnFetch.setEnabled(!isOrderIdEmpty && isCustomerNameEmpty && isCustomerAddressEmpty
+				&& isCustomerPhoneNumberEmpty && isOrderDescriptionEmpty && isAppointmentDateEmpty
+				&& isOrderCategoryEmpty && isOrderStatusEmpty && isAssignedWorkerEmpty);
 
 	}
 
@@ -820,6 +810,14 @@ public class OrderSwingView extends JFrame implements OrderView {
 			orderController.createOrUpdateOrder(order, OperationType.ADD);
 		}).start();
 
+	}
+
+	private void checkCharacterIsNumber(KeyEvent event) {
+		char character = event.getKeyChar();
+		if (!((character >= '0') && (character <= '9') || (character == KeyEvent.VK_BACK_SPACE))) {
+			getToolkit().beep();
+			event.consume();
+		}
 	}
 
 	@Override

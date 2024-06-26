@@ -1,5 +1,7 @@
 package com.mycompany.orderassignmentsystem.bdd.steps;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +49,7 @@ public class DatabaseSteps extends ConfigSteps {
 			} catch (Exception i) {
 				attempt++;
 				if (attempt < MAX_RETRIES) {
-					try {
-						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					await().atMost(RETRY_DELAY_SECONDS, TimeUnit.SECONDS);
 				}
 			}
 

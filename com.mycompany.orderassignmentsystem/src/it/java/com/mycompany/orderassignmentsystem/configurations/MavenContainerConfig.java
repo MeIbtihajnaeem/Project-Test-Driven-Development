@@ -1,5 +1,7 @@
 package com.mycompany.orderassignmentsystem.configurations;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
@@ -26,11 +28,7 @@ public class MavenContainerConfig implements DBConfig {
 			} catch (Exception i) {
 				attempt++;
 				if (attempt < MAX_RETRIES) {
-					try {
-						TimeUnit.SECONDS.sleep(RETRY_DELAY_SECONDS);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					await().atMost(RETRY_DELAY_SECONDS, TimeUnit.SECONDS);
 				}
 			}
 

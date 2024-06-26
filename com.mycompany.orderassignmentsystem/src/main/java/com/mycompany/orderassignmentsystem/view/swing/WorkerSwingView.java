@@ -193,11 +193,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE))) {
-					getToolkit().beep();
-					e.consume();
-				}
+				checkCharacterIsNumber(e);
 			}
 
 		});
@@ -705,6 +701,14 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
 		worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
 		workerController.createOrUpdateWorker(worker, OperationType.ADD);
+	}
+
+	private void checkCharacterIsNumber(KeyEvent e) {
+		char c = e.getKeyChar();
+		if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE))) {
+			getToolkit().beep();
+			e.consume();
+		}
 	}
 
 }

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,12 +23,20 @@ public class WorkerH2RepositoryTest {
 	private EntityManagerFactory entityManagerFactory;
 	private EntityManager entityManager;
 	private WorkerDatabaseRepository workerDataRepository;
-	private static final String PERSISTENCE_UNIT_NAME = "testUnit";
+	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+	private static Map<String, String> properties = new HashMap<>();
 
 	@Before
 	public void onSetUp() {
-
-		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		properties.put("javax.persistence.jdbc.driver", "org.h2.Driver");
+		properties.put("javax.persistence.jdbc.url", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
+		properties.put("javax.persistence.jdbc.user", "sa");
+		properties.put("javax.persistence.jdbc.password", "");
+		properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+		properties.put("hibernate.hbm2ddl.auto", "create-drop");
+		properties.put("hibernate.show_sql", "true");
+		properties.put("hibernate.format_sql", "true");
+		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
 		entityManager = entityManagerFactory.createEntityManager();
 		workerDataRepository = new WorkerDatabaseRepository(entityManagerFactory);
 	}
