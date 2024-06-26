@@ -56,6 +56,12 @@ public class Worker {
 	public Worker() {
 	}
 
+	public Worker(Long workerId, OrderCategory workerCategory) {
+		super();
+		this.workerId = workerId;
+		this.workerCategory = workerCategory;
+	}
+
 	/**
 	 * Parameterised constructor.
 	 *

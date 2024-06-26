@@ -69,6 +69,9 @@ public class OrderController {
 		orderView.showAllOrder(orderRepository.findAll());
 	}
 
+	/**
+	 * Retrieves all workers.
+	 */
 	public synchronized void allWorkers() {
 		LOGGER.info("Retrieving all workers");
 		orderView.showAllWorkers(workerRepository.findAll());
@@ -89,10 +92,9 @@ public class OrderController {
 	}
 
 	private synchronized void update(CustomerOrder order) {
-		Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
-		order.setOrderId(id);
+		validationConfigurations.validateStringNumber(order.getOrderId().toString());
 		Worker worker = getValidWorker(order);
-		CustomerOrder savedOrder = orderRepository.findById(id);
+		CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
 		if (!Objects.equals(worker.getWorkerId(), savedOrder.getWorker().getWorkerId())) {
 			checkForPendingOrders(worker.getOrders());
 		}
@@ -111,15 +113,16 @@ public class OrderController {
 		try {
 			Objects.requireNonNull(operation, "Operation Type is null");
 			Objects.requireNonNull(order, "Order is null");
-			validateOrder(order);
 
 			switch (operation) {
 
 			case ADD:
+				validateOrder(order);
 				LOGGER.info("Creating a new order");
 				add(order);
 				break;
 			case UPDATE:
+				validateOrder(order);
 				LOGGER.info("Updating an existing order");
 				update(order);
 				break;
@@ -147,8 +150,7 @@ public class OrderController {
 
 		try {
 			Objects.requireNonNull(order, "Order is null.");
-			Long id = validationConfigurations.validateStringNumber(order.getOrderId().toString());
-			order.setOrderId(id);
+			validationConfigurations.validateStringNumber(order.getOrderId().toString());
 			CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
 			if (savedOrder == null) {
 				throw new NoSuchElementException("Order with ID " + order.getOrderId() + " not found.");
@@ -173,7 +175,7 @@ public class OrderController {
 	public synchronized void deleteOrder(CustomerOrder order) {
 		try {
 			Objects.requireNonNull(order, "Order is null");
-			order.setOrderId(validationConfigurations.validateStringNumber(order.getOrderId().toString()));
+			validationConfigurations.validateStringNumber(order.getOrderId().toString());
 			CustomerOrder existingOrder = orderRepository.findById(order.getOrderId());
 			if (existingOrder == null) {
 				throw new NoSuchElementException("No order found with ID: " + order.getOrderId());
@@ -267,8 +269,7 @@ public class OrderController {
 	 * @return the list of orders
 	 */
 	private synchronized List<CustomerOrder> searchByCategory(String searchText) {
-		OrderCategory category;
-		category = validationConfigurations.validateEnum(searchText, OrderCategory.class);
+		OrderCategory category = validationConfigurations.validateEnum(searchText, OrderCategory.class);
 		List<CustomerOrder> orders = orderRepository.findByOrderCategory(category);
 		if (orders == null || orders.isEmpty()) {
 			throw new NoSuchElementException("No orders found with category: " + category);
@@ -374,16 +375,15 @@ public class OrderController {
 	 * @param order the order
 	 */
 	private void validateOrder(CustomerOrder order) {
-		order.setCustomerName(validationConfigurations.validateName(order.getCustomerName()));
-		order.setCustomerPhoneNumber(validationConfigurations.validatePhoneNumber(order.getCustomerPhoneNumber()));
-		order.setCustomerAddress(validationConfigurations.validateAddress(order.getCustomerAddress()));
-		order.setAppointmentDate(validationConfigurations.validateStringDate(order.getAppointmentDate()));
-		order.setOrderDescription(validationConfigurations.validateDescription(order.getOrderDescription()));
-		order.setOrderCategory(validationConfigurations.validateCategory(order.getOrderCategory()));
-		order.setOrderStatus(validationConfigurations.validateStatus(order.getOrderStatus()));
+		validationConfigurations.validateName(order.getCustomerName());
+		validationConfigurations.validatePhoneNumber(order.getCustomerPhoneNumber());
+		validationConfigurations.validateAddress(order.getCustomerAddress());
+		validationConfigurations.validateStringDate(order.getAppointmentDate());
+		validationConfigurations.validateDescription(order.getOrderDescription());
+		validationConfigurations.validateCategory(order.getOrderCategory());
+		validationConfigurations.validateStatus(order.getOrderStatus());
 		Objects.requireNonNull(order.getWorker(), "The worker field cannot be empty.");
-		order.getWorker()
-				.setWorkerId(validationConfigurations.validateStringNumber(order.getWorker().getWorkerId().toString()));
+		validationConfigurations.validateStringNumber(order.getWorker().getWorkerId().toString());
 	}
 
 	/**
