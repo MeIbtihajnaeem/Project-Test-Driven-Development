@@ -1,3 +1,31 @@
+/*
+ * Unit tests for the OrderController class.
+ *
+ * These tests verify the functionality of the OrderController, including
+ * fetching all orders and workers, creating or updating orders under 
+ * various conditions, and searching for orders using different criteria.
+ * The tests utilize Mockito for mocking dependencies and follow Test Driven 
+ * Development (TDD) principles to ensure correctness of the OrderController 
+ * implementation.
+ *
+ * Methods tested include:
+ * - allOrders()
+ * - allWorkers()
+ * - createOrUpdateOrder()
+ * - fetchOrderById()
+ * - deleteOrder()
+ * - searchOrder()
+ *
+ * The setup and teardown methods handle the initialization and cleanup 
+ * of mock objects.
+ *
+ * @see OrderController
+ * @see OrderRepository
+ * @see WorkerRepository
+ * @see OrderView
+ * @see ValidationConfigurations
+ */
+
 package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
@@ -33,44 +61,76 @@ import com.mycompany.orderassignmentsystem.repository.OrderRepository;
 import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
 import com.mycompany.orderassignmentsystem.view.OrderView;
 
+/**
+ * The Class OrderControllerTest.
+ */
 public class OrderControllerTest {
 
+	/** The order repository. */
 	@Mock
 	private OrderRepository orderRepository;
 
+	/** The order view. */
 	@Mock
 	private OrderView orderView;
 
+	/** The worker repository. */
 	@Mock
 	private WorkerRepository workerRepository;
 
+	/** The validation configurations. */
 	@Mock
 	private ValidationConfigurations validationConfigurations;
 
+	/** The order controller. */
 	@InjectMocks
 	private OrderController orderController;
 
+	/** The closeable. */
 	private AutoCloseable closeable;
 
+	/** The customer name. */
 	private String CUSTOMER_NAME = "Muhammad Ibtihaj";
+
+	/** The customer phone. */
 	private String CUSTOMER_PHONE = "3401372678";
+
+	/** The customer address. */
 	private String CUSTOMER_ADDRESS = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+	/** The order appointment date. */
 	private String ORDER_APPOINTMENT_DATE = "12-12-2024";
+
+	/** The order description. */
 	private String ORDER_DESCRIPTION = "Please ensure all connection are leak-proof.Thanks";
+
+	/** The order category. */
 	private OrderCategory ORDER_CATEGORY = OrderCategory.PLUMBER;
+
+	/** The order status. */
 	private OrderStatus ORDER_STATUS = OrderStatus.PENDING;
 
+	/**
+	 * Setup.
+	 */
 	@Before
-	public void Setup() {
+	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 	}
 
+	/**
+	 * Release mocks.
+	 *
+	 * @throws Exception the exception
+	 */
 	@After
 	public void releaseMocks() throws Exception {
 		closeable.close();
 	}
 
-	// Tests for show all orders
+	/**
+	 * Test all orders method when customer.
+	 */
 	@Test
 	public void testAllOrdersMethodWhenCustomer() {
 		// Setup
@@ -86,6 +146,9 @@ public class OrderControllerTest {
 		verify(orderView).showAllOrder(orders);
 	}
 
+	/**
+	 * Test all orders method when empty list.
+	 */
 	@Test
 	public void testAllOrdersMethodWhenEmptyList() {
 		// Setup
@@ -101,6 +164,9 @@ public class OrderControllerTest {
 		verify(orderView).showAllOrder(emptyList);
 	}
 
+	/**
+	 * Test all orders method when null list.
+	 */
 	@Test
 	public void testAllOrdersMethodWhenNullList() {
 		// Setup, mock
@@ -113,7 +179,9 @@ public class OrderControllerTest {
 		verify(orderView).showAllOrder(null);
 	}
 
-	// Tests for show all workers
+	/**
+	 * Test all workers method when worker.
+	 */
 	@Test
 	public void testAllWorkersMethodWhenWorker() {
 		// Setup
@@ -129,6 +197,9 @@ public class OrderControllerTest {
 		verify(orderView).showAllWorkers(workers);
 	}
 
+	/**
+	 * Test all workers method when empty list.
+	 */
 	@Test
 	public void testAllWorkersMethodWhenEmptyList() {
 		// Setup
@@ -144,6 +215,9 @@ public class OrderControllerTest {
 		verify(orderView).showAllWorkers(emptyList);
 	}
 
+	/**
+	 * Test all workers method when null list.
+	 */
 	@Test
 	public void testAllWorkersMethodWhenNullList() {
 		// Setup, mock
@@ -156,9 +230,11 @@ public class OrderControllerTest {
 		verify(orderView).showAllWorkers(null);
 	}
 
-	// Tests for create order method
+	/**
+	 * Test create or update order method when null and operation type null.
+	 */
 	@Test
-	public void testCreateOrUpdateOrderMethodWhenNullOperationType() {
+	public void testCreateOrUpdateOrderMethodWhenNullAndOperationTypeNull() {
 		// Setup, Exercise
 		orderController.createOrUpdateOrder(null, null);
 
@@ -170,6 +246,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when null customer order and operation
+	 * type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenNullCustomerOrderAndOperationTypeIsAdd() {
 		// Setup, Exercise
@@ -183,6 +263,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate name throws null pointer
+	 * exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateNameThrowsNullPointerExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -204,6 +288,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate name throws illegal argument
+	 * exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateNameThrowsIllegalArgumentExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -225,6 +313,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate phone number throws null
+	 * pointer exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidatePhoneNumberThrowsNullPointerExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -248,6 +340,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate phone number throws illegal
+	 * argument exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidatePhoneNumberThrowsIllegalArgumentExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -273,6 +369,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate address throws null pointer
+	 * exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateAddressThrowsNullPointerExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -297,6 +397,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate address throws illegal
+	 * argument exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateAddressThrowsIllegalArgumentExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -323,6 +427,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate date throws null pointer
+	 * exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateDateThrowsNullPointerExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -348,6 +456,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate date throws illegal argument
+	 * exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateDateThrowsIllegalArgumentExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -373,6 +485,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate description throws null
+	 * pointer exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateDescriptionThrowsNullPointerExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -399,6 +515,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate description throws illegal
+	 * argument exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateDescriptionThrowsIllegalArgumentExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -427,6 +547,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate category throws null pointer
+	 * exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateCategoryThrowsNullPointerExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -452,6 +576,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate category throws illegal
+	 * argument exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateCategoryThrowsIllegalArgumentExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -477,6 +605,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate status throws null pointer
+	 * exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateStatusThrowsNullPointerExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -503,6 +635,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate status throws illegal
+	 * argument exception and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateStatusThrowsIllegalArgumentExceptionAndOperationTypeIsAdd() {
 		// Setup
@@ -529,6 +665,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when worker is null and operation type is
+	 * add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenWorkerIsNullAndOperationTypeIsAdd() {
 		// Setup
@@ -552,6 +692,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate string number throws null
+	 * pointer exception for worker id and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateStringNumberThrowsNullPointerExceptionForWorkerIdAndOperationTypeIsAdd() {
 		// Setup
@@ -576,6 +720,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate string number throws illegal
+	 * argument exception for worker id and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateStringNumberThrowsIllegalArgumentExceptionForWorkerIdAndOperationTypeIsAdd() {
 		// Setup
@@ -600,6 +748,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when customer order id is not null and
+	 * operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenCustomerOrderIdIsNotNullAndOperationTypeIsAdd() {
 		// Setup
@@ -622,6 +774,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when order status is not pending and
+	 * operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenOrderStatusIsNotPendingAndOperationTypeIsAdd() {
 		// Setup
@@ -646,6 +802,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when worker not found and operation type
+	 * is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenWorkerNotFoundAndOperationTypeIsAdd() {
 		// Setup
@@ -671,6 +831,10 @@ public class OrderControllerTest {
 
 	}
 
+	/**
+	 * Test create or update order method when worker and order category not aligned
+	 * and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenWorkerAndOrderCategoryNotAlignedAndOperationTypeIsAdd() {
 		// Setup
@@ -696,6 +860,10 @@ public class OrderControllerTest {
 
 	}
 
+	/**
+	 * Test create or update order method when worker orders are null and operation
+	 * type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersAreNullAndOperationTypeIsAdd() {
 		// Setup
@@ -721,6 +889,10 @@ public class OrderControllerTest {
 
 	}
 
+	/**
+	 * Test create or update order method when worker orders are empty and operation
+	 * type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersAreEmptyAndOperationTypeIsAdd() {
 		// Setup
@@ -747,6 +919,10 @@ public class OrderControllerTest {
 
 	}
 
+	/**
+	 * Test create or update order method when worker orders have pending order and
+	 * operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersHavePendingOrderAndOperationTypeIsAdd() {
 		// Setup
@@ -775,6 +951,10 @@ public class OrderControllerTest {
 
 	}
 
+	/**
+	 * Test create or update order method when worker orders have no pending orders
+	 * and operation type is add.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersHaveNoPendingOrdersAndOperationTypeIsAdd() {
 		// Setup
@@ -803,8 +983,10 @@ public class OrderControllerTest {
 
 	}
 
-	// Update
-
+	/**
+	 * Test create or update order method when validate string number throws null
+	 * pointer exception and operation type is update.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateStringNumberThrowsNullPointerExceptionAndOperationTypeIsUpdate() {
 		// Setup
@@ -829,6 +1011,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when validate string number throws illegal
+	 * argument exception and operation type is update.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenValidateStringNumberThrowsIllegalArgumentExceptionAndOperationTypeIsUpdate() {
 		// Setup
@@ -854,8 +1040,12 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(workerRepository);
 	}
 
+	/**
+	 * Test create or update order method when worker not found and operation type
+	 * is update.
+	 */
 	@Test
-	public void testUpdateOrderMethodWhenWorkerNotFoundAndOperationTypeIsUpdate() {
+	public void testCreateOrUpdateOrderMethodWhenWorkerNotFoundAndOperationTypeIsUpdate() {
 		// Setup
 		Worker worker = new Worker();
 		long workerId = 1l;
@@ -879,8 +1069,12 @@ public class OrderControllerTest {
 
 	}
 
+	/**
+	 * Test create or update order method when worker and order category not aligned
+	 * and operation type is update.
+	 */
 	@Test
-	public void testUpdateOrderMethodWhenWorkerAndOrderCategoryNotAlignedAndOperationTypeIsUpdate() {
+	public void testCreateOrUpdateOrderMethodWhenWorkerAndOrderCategoryNotAlignedAndOperationTypeIsUpdate() {
 		// Setup
 		OrderCategory orderCategory = OrderCategory.PLUMBER;
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
@@ -905,8 +1099,12 @@ public class OrderControllerTest {
 
 	}
 
+	/**
+	 * Test create or update order method when worker orders are null and operation
+	 * type is update.
+	 */
 	@Test
-	public void testUpdateOrderWhenWorkerOrdersAreNullAndOperationTypeIsUpdate() {
+	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersAreNullAndOperationTypeIsUpdate() {
 		// Setup
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
@@ -938,8 +1136,12 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Test create or update order method when worker orders are empty and operation
+	 * type is update.
+	 */
 	@Test
-	public void testUpdateOrderMethodWhenWorkerOrdersAreEmptyAndOperationTypeIsUpdate() {
+	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersAreEmptyAndOperationTypeIsUpdate() {
 		// Setup
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
@@ -970,8 +1172,12 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Test create or update order method when worker orders have pending order and
+	 * operation type is update.
+	 */
 	@Test
-	public void testUpdateOrderMethodWhenWorkerOrdersHavePendingOrderAndOperationTypeIsUpdate() {
+	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersHavePendingOrderAndOperationTypeIsUpdate() {
 		// Setup
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
@@ -1004,8 +1210,12 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Test create or update order method when worker orders have no pending orders
+	 * and operation type is update.
+	 */
 	@Test
-	public void testUpdateOrderMethodWhenWorkerOrdersHaveNoPendingOrdersAndOperationTypeIsUpdate() {
+	public void testCreateOrUpdateOrderMethodWhenWorkerOrdersHaveNoPendingOrdersAndOperationTypeIsUpdate() {
 		// Setup
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
@@ -1032,6 +1242,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Test create or update order method when operation type none and operation
+	 * type is update.
+	 */
 	@Test
 	public void testCreateOrUpdateOrderMethodWhenOperationTypeNoneAndOperationTypeIsUpdate() {
 		// Setup
@@ -1049,6 +1263,9 @@ public class OrderControllerTest {
 
 	// tests for fetch by order id method
 
+	/**
+	 * Test fetch order by id method when order is null.
+	 */
 	@Test
 	public void testFetchOrderByIdMethodWhenOrderIsNull() {
 		// Setup & Exercise
@@ -1061,6 +1278,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test fetch order by id method when validate string number throws null pointer
+	 * exception.
+	 */
 	@Test
 	public void testFetchOrderByIdMethodWhenValidateStringNumberThrowsNullPointerException() {
 		// Setup
@@ -1082,6 +1303,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test fetch order by id method when validate string number throws illegal
+	 * argument exception.
+	 */
 	@Test
 	public void testFetchOrderByIdMethodWhenValidateStringNumberThrowsIllegalArgumentException() {
 		// Setup
@@ -1103,6 +1328,9 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test fetch order by id method when order id is valid but order not found.
+	 */
 	@Test
 	public void testFetchOrderByIdMethodWhenOrderIdIsValidButOrderNotFound() {
 		// Setup
@@ -1123,6 +1351,9 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test fetch order by id method when order id is valid.
+	 */
 	@Test
 	public void testFetchOrderByIdMethodWhenOrderIdIsValid() {
 		// Setup
@@ -1149,6 +1380,9 @@ public class OrderControllerTest {
 
 	// Tests for delete order
 
+	/**
+	 * Test delete order method when null customer order.
+	 */
 	@Test
 	public void testDeleteOrderMethodWhenNullCustomerOrder() {
 		// Setup & Exercise
@@ -1161,6 +1395,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test delete order method when validate string number throws null pointer
+	 * exception.
+	 */
 	@Test
 	public void testDeleteOrderMethodWhenValidateStringNumberThrowsNullPointerException() {
 		// Setup
@@ -1181,6 +1419,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test delete order method when validate string number throws illegal argument
+	 * exception.
+	 */
 	@Test
 	public void testDeleteOrderMethodWhenValidateStringNumberThrowsIllegalArgumentException() {
 		// Setup
@@ -1201,6 +1443,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test delete order method when customer order id is valid but no order found
+	 * with id.
+	 */
 	@Test
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidButNoOrderFoundWithId() {
 		// Setup
@@ -1221,6 +1467,9 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test delete order method when customer order id is valid and order found.
+	 */
 	@Test
 	public void testDeleteOrderMethodWhenCustomerOrderIdIsValidAndOrderFound() {
 		// Setup
@@ -1244,6 +1493,9 @@ public class OrderControllerTest {
 
 	// tests for search options
 
+	/**
+	 * Test search order method when validate search throws null pointer exception.
+	 */
 	@Test
 	public void testSearchOrderMethodWhenValidateSearchThrowsNullPointerException() {
 		// Mocks
@@ -1260,6 +1512,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test search order method when validate search throws illegal argument
+	 * exception.
+	 */
 	@Test
 	public void testSearchOrderMethodWhenValidateSearchThrowsIllegalArgumentException() {
 		// Setup
@@ -1281,6 +1537,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Test search order method when search text is valid string and search option
+	 * is null.
+	 */
 	@Test
 	public void testSearchOrderMethodWhenSearchTextIsValidStringAndSearchOptionIsNull() {
 		// Setup
@@ -1299,6 +1559,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order id and validate string number throws
+	 * null pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderIdAndValidateStringNumberThrowsNullPointerException() {
 		// Setup
@@ -1319,6 +1583,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order id and validate string number throws
+	 * illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderIdAndValidateStringNumberThrowsIllegalArgumentException() {
 		// Setup
@@ -1339,6 +1607,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order id andvalidate string number throws
+	 * null pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderIdAndvalidateStringNumberThrowsNullPointerException() {
 		// Setup
@@ -1359,6 +1631,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order id andvalidate string number throws
+	 * illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderIdAndvalidateStringNumberThrowsIllegalArgumentException() {
 		// Setup
@@ -1379,6 +1655,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order id search text is valid number but
+	 * order not found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderIdSearchTextIsValidNumberButOrderNotFound() {
 		// Setup
@@ -1401,6 +1681,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order id search text is valid number and
+	 * order found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderIdSearchTextIsValidNumberAndOrderFound() {
 		// Setup
@@ -1424,6 +1708,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is worker id and validate string number
+	 * throws null pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdAndValidateStringNumberThrowsNullPointerException() {
 		// Setup
@@ -1444,6 +1732,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is worker id and validate string number
+	 * throws illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdAndValidateStringNumberThrowsIllegalArgumentException() {
 		// Setup
@@ -1462,6 +1754,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is worker id andvalidate string number throws
+	 * null pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdAndvalidateStringNumberThrowsNullPointerException() {
 		// Setup
@@ -1482,6 +1778,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is worker id andvalidate string number throws
+	 * illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdAndvalidateStringNumberThrowsIllegalArgumentException() {
 		// Setup
@@ -1502,6 +1802,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is worker id search text is valid number but
+	 * worker not found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdSearchTextIsValidNumberButWorkerNotFound() {
 		// Setup
@@ -1525,6 +1829,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Search order when search option is worker id search text is valid number but
+	 * orders are null.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdSearchTextIsValidNumberButOrdersAreNull() {
 		// Setup
@@ -1549,6 +1857,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Search order when search option is worker id search text is valid number but
+	 * orders are empty.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdSearchTextIsValidNumberButOrdersAreEmpty() {
 		// Setup
@@ -1574,6 +1886,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Search order when search option is worker id search text is valid number and
+	 * order found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsWorkerIdSearchTextIsValidNumberAndOrderFound() {
 		// Setup
@@ -1600,6 +1916,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView);
 	}
 
+	/**
+	 * Search order when search option is customer phone number and validate phone
+	 * number throws null pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerPhoneNumberAndValidatePhoneNumberThrowsNullPointerException() {
 		// Setup
@@ -1620,6 +1940,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer phone number and validate phone
+	 * number throws illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerPhoneNumberAndValidatePhoneNumberThrowsIllegalArgumentException() {
 		// Setup
@@ -1640,6 +1964,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer phone number search text is valid
+	 * phone number but orders are null.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerPhoneNumberSearchTextIsValidPhoneNumberButOrdersAreNull() {
 		// Setup
@@ -1660,6 +1988,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer phone number search text is valid
+	 * phone number but orders are empty.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerPhoneNumberSearchTextIsValidPhoneNumberButOrdersAreEmpty() {
 		// Setup
@@ -1680,6 +2012,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer phone number search text is valid
+	 * phone number.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerPhoneNumberSearchTextIsValidPhoneNumber() {
 		// Setup
@@ -1701,6 +2037,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer name and validate name throws
+	 * null pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerNameAndValidateNameThrowsNullPointerException() {
 		// Setup
@@ -1721,6 +2061,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer name and validate name illegal
+	 * argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerNameAndValidateName_IllegalArgumentException() {
 		// Setup
@@ -1743,6 +2087,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer name search text is valid name
+	 * but orders are null.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerNameSearchTextIsValidNameButOrdersAreNull() {
 		// Setup
@@ -1763,6 +2111,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer name search text is valid name
+	 * but orders are empty.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerNameSearchTextIsValidNameButOrdersAreEmpty() {
 		// Setup
@@ -1783,6 +2135,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is customer name search text is valid name
+	 * order found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsCustomerNameSearchTextIsValidName_OrderFound() {
 		// Setup
@@ -1804,6 +2160,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order status and validate enum throws null
+	 * pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderStatusAndValidateEnumThrowsNullPointerException() {
 		// Setup
@@ -1824,6 +2184,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order status and validate enum throws
+	 * illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderStatusAndValidateEnumThrowsIllegalArgumentException() {
 		// Setup
@@ -1846,6 +2210,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order status search text is valid status
+	 * but orders are null.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderStatusSearchTextIsValidStatusButOrdersAreNull() {
 		// Setup
@@ -1868,6 +2236,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order status search text is valid status
+	 * but orders are empty.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderStatusSearchTextIsValidStatusButOrdersAreEmpty() {
 		// Setup
@@ -1890,6 +2262,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order status search text is valid status
+	 * and orders found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderStatusSearchTextIsValidStatusAndOrdersFound() {
 		// Setup
@@ -1912,6 +2288,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order category and validate enum throws
+	 * null pointer exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderCategoryAndValidateEnumThrowsNullPointerException() {
 		// Setup
@@ -1932,6 +2312,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order category and validate enum throws
+	 * illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderCategoryAndValidateEnumThrowsIllegalArgumentException() {
 		// Setup
@@ -1955,6 +2339,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order category search text is valid
+	 * category but orders are null.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderCategorySearchTextIsValidCategoryButOrdersAreNull() {
 		// Setup
@@ -1977,6 +2365,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order category search text is valid
+	 * category but orders are empty.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderCategorySearchTextIsValidCategoryButOrdersAreEmpty() {
 		// Setup
@@ -1999,6 +2391,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order category search text is valid
+	 * category and orders found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderCategorySearchTextIsValidCategoryAndOrdersFound() {
 		// Setup
@@ -2021,6 +2417,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order date and validate string date throws
+	 * null poitner exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderDateAndValidateStringDateThrowsNullPoitnerException() {
 		// Setup
@@ -2041,6 +2441,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order date and validate string date throws
+	 * illegal argument exception.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderDateAndValidateStringDateThrowsIllegalArgumentException() {
 		// Setup
@@ -2061,6 +2465,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order date search text is valid string
+	 * date but orders are null.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderDateSearchTextIsValidStringDateButOrdersAreNull() {
 		// Setup
@@ -2081,6 +2489,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order date search text is valid string
+	 * date but orders are empty.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderDateSearchTextIsValidStringDateButOrdersAreEmpty() {
 		// Setup
@@ -2101,6 +2513,10 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is order date search text is valid string
+	 * date and orders found.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsOrderDateSearchTextIsValidStringDateAndOrdersFound() {
 		// Setup
@@ -2122,6 +2538,9 @@ public class OrderControllerTest {
 		verifyNoMoreInteractions(orderView, workerRepository);
 	}
 
+	/**
+	 * Search order when search option is none.
+	 */
 	@Test
 	public void searchOrderWhenSearchOptionIsNone() {
 		// Setup
