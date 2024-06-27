@@ -1,5 +1,5 @@
 /**
- * Integration tests for the OrderModelViewController class.
+ * Integration tests for the OrderModelViewControllerIT class.
  *
  * These tests verify the integration between the OrderController, OrderSwingView,
  * and the underlying repositories. The tests cover scenarios such as adding, updating,
@@ -185,6 +185,7 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testAddOrder() {
+		// Setup & Exercise
 		GuiActionRunner.execute(() -> orderController.allWorkers());
 
 		window.textBox("txtOrderId").enterText(" "); // Make sure orderId is empty
@@ -198,6 +199,8 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		window.comboBox("cmbWorker").selectItem(Pattern.compile(".*" + WORKER_NAME_1 + ".*"));
 
 		window.button(JButtonMatcher.withName("btnAdd")).click();
+
+		// Verify
 		CustomerOrder savedOrder = orderRepository.findAll().get(0);
 		assertThat(orderRepository.findById(savedOrder.getOrderId())).isEqualTo(savedOrder);
 	}
@@ -208,13 +211,17 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testUpdateAndFetchOrder() {
 		// This method first save order in the database then fetch the
-		// order by id and edit the customer name and then update it
-		// both fetch and update are by button click
+		// order by id using fetch button and then
+		// edit the customer name using update button
+		// both fetch and update are by button clicked
 
+		// Setup
 		GuiActionRunner.execute(() -> orderController.allWorkers());
 		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
 				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 		order = orderRepository.save(order);
+
+		// Exercise
 		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 
@@ -222,8 +229,8 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtCustomerName").enterText(updatedCustomerName);
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 
+		// Verify
 		order.setCustomerName(updatedCustomerName);
-
 		assertThat(orderRepository.findById(ORDER_ID_1)).isEqualTo(order);
 	}
 
@@ -233,14 +240,18 @@ public class OrderModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	@Test
 	public void testDeleteOrder() {
 
+		// Setup
 		GuiActionRunner.execute(() -> orderController.allWorkers());
 		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
 				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
-
 		order = orderRepository.save(order);
 		GuiActionRunner.execute(() -> orderController.allOrders());
+
+		// Exercise
 		window.list("listOrders").selectItem(0);
 		window.button(JButtonMatcher.withName("btnDelete")).click();
+
+		// Verify
 		assertThat(orderRepository.findById(order.getOrderId())).isNull();
 	}
 }
