@@ -35,10 +35,11 @@ import com.mycompany.orderassignmentsystem.view.WorkerView;
 
 /**
  * The WorkerSwingView class represents the graphical user interface for
- * managing workers and their orders.
+ * managing workers.
  */
 public class WorkerSwingView extends JFrame implements WorkerView {
 
+	/** The Constant ARIAL. */
 	private static final String ARIAL = "Arial";
 
 	/** Unique identifier for serialization.. */
@@ -91,7 +92,11 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 	/** The show error while worker not found error. */
 	private JLabel showErrorNotFoundLbl;
+
+	/** The scroll pane. */
 	private JScrollPane scrollPane;
+
+	/** The btn delete. */
 	private JButton btnDelete;
 
 	/** The worker list model. */
@@ -107,6 +112,15 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	 */
 	public DefaultListModel<Worker> getWorkerListModel() {
 		return workerListModel;
+	}
+
+	/**
+	 * Sets the worker controller.
+	 *
+	 * @param workerController the new worker controller
+	 */
+	public void setWorkerController(WorkerController workerController) {
+		this.workerController = workerController;
 	}
 
 	/**
@@ -509,17 +523,139 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 	}
 
-	private void openOrderForm() {
-		this.setVisible(false);
+	@Override
+	public void showAllWorkers(List<Worker> worker) {
+		resetAllSearchStates();
+		workerListModel.clear();
+		worker.stream().forEach(workerListModel::addElement);
+		resetErrorLabel();
+	}
+
+	@Override
+	public void workerAdded(Worker worker) {
+		workerListModel.addElement(worker);
+		resetErrorLabel();
+	}
+
+	@Override
+	public void workerModified(Worker worker) {
+		for (int i = 0; i < workerListModel.getSize(); i++) {
+			if (workerListModel.getElementAt(i).getWorkerId().equals(worker.getWorkerId())) {
+				workerListModel.removeElementAt(i);
+				workerListModel.addElement(worker);
+
+			}
+		}
+		resetErrorLabel();
+
+	}
+
+	@Override
+	public void showFetchedWorker(Worker worker) {
+		txtWorkerName.setText(worker.getWorkerName());
+		txtWorkerPhone.setText(worker.getWorkerPhoneNumber());
+		cmbWorkerCategory.setSelectedItem(worker.getWorkerCategory());
+		resetErrorLabel();
+	}
+
+	@Override
+	public void showSearchResultForWorker(List<Worker> workers) {
+		workerListModel.removeAllElements();
+		workers.stream().forEach(workerListModel::addElement);
+		resetErrorLabel();
+	}
+
+	@Override
+	public void workerRemoved(Worker worker) {
+		workerListModel.removeElement(worker);
+		resetErrorLabel();
+	}
+
+	@Override
+	public void showError(String message, Worker worker) {
+		showErrorLbl.setText(message + ": " + worker);
+	}
+
+	@Override
+	public void showErrorNotFound(String message, Worker worker) {
+		showErrorNotFoundLbl.setText(message + ": " + worker);
+	}
+
+	@Override
+	public void showSearchError(String message, String searchText) {
+		showErrorLblSearchWorker.setText(message + ": " + searchText);
 	}
 
 	/**
-	 * Sets the worker controller.
-	 *
-	 * @param workerController the new worker controller
+	 * Reset error label.
 	 */
-	public void setWorkerController(WorkerController workerController) {
-		this.workerController = workerController;
+	private void resetErrorLabel() {
+		showErrorLbl.setText(" ");
+		showErrorNotFoundLbl.setText(" ");
+		showErrorLblSearchWorker.setText(" ");
+	}
+
+	/**
+	 * Reset all search states.
+	 */
+	private void resetAllSearchStates() {
+		txtSearchWorker.setText(" ");
+		cmbSearchByOptions.setSelectedItem(null);
+	}
+
+	/**
+	 * Fetch worker method.
+	 */
+	private void fetchWorkerMethod() {
+		Worker worker = new Worker();
+		Long id = Long.parseLong(txtWorkerId.getText());
+
+		worker.setWorkerId(id);
+		workerController.fetchWorkerById(worker);
+	}
+
+	/**
+	 * Update worker method.
+	 */
+	private void updateWorkerMethod() {
+		Worker worker = new Worker();
+		Long id = Long.parseLong(txtWorkerId.getText());
+		worker.setWorkerId(id);
+		worker.setWorkerName(txtWorkerName.getText());
+		worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
+		worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
+		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
+	}
+
+	/**
+	 * Adds the worker method.
+	 */
+	private void addWorkerMethod() {
+		Worker worker = new Worker();
+		worker.setWorkerName(txtWorkerName.getText());
+		worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
+		worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
+		workerController.createOrUpdateWorker(worker, OperationType.ADD);
+	}
+
+	/**
+	 * Check character is number.
+	 *
+	 * @param e the e
+	 */
+	private void checkCharacterIsNumber(KeyEvent e) {
+		char c = e.getKeyChar();
+		if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE))) {
+			getToolkit().beep();
+			e.consume();
+		}
+	}
+
+	/**
+	 * Open order form.
+	 */
+	private void openOrderForm() {
+		this.setVisible(false);
 	}
 
 	/**
@@ -547,168 +683,6 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		boolean isSearchOptionEmpty = cmbSearchByOptions.getSelectedItem() == null;
 		btnSearchWorker.setEnabled(!isSearchWorkerTextEmpty && !isSearchOptionEmpty);
 		btnClearSearchWorker.setEnabled(!isSearchWorkerTextEmpty && !isSearchOptionEmpty);
-	}
-
-	/**
-	 * Show all workers.
-	 *
-	 * @param worker the worker
-	 */
-	@Override
-	public void showAllWorkers(List<Worker> worker) {
-		resetAllSearchStates();
-		workerListModel.clear();
-		worker.stream().forEach(workerListModel::addElement);
-		resetErrorLabel();
-	}
-
-	/**
-	 * Worker added.
-	 *
-	 * @param worker the worker
-	 */
-	@Override
-	public void workerAdded(Worker worker) {
-		workerListModel.addElement(worker);
-		resetErrorLabel();
-	}
-
-	/**
-	 * Worker modified.
-	 *
-	 * @param worker the worker
-	 */
-	@Override
-	public void workerModified(Worker worker) {
-		for (int i = 0; i < workerListModel.getSize(); i++) {
-			if (workerListModel.getElementAt(i).getWorkerId().equals(worker.getWorkerId())) {
-				workerListModel.removeElementAt(i);
-				workerListModel.addElement(worker);
-
-			}
-		}
-		resetErrorLabel();
-
-	}
-
-	/**
-	 * Show fetched worker.
-	 *
-	 * @param worker the worker
-	 */
-	@Override
-	public void showFetchedWorker(Worker worker) {
-		txtWorkerName.setText(worker.getWorkerName());
-		txtWorkerPhone.setText(worker.getWorkerPhoneNumber());
-		cmbWorkerCategory.setSelectedItem(worker.getWorkerCategory());
-		resetErrorLabel();
-	}
-
-	/**
-	 * Show search result for worker.
-	 *
-	 * @param workers the workers
-	 */
-	@Override
-	public void showSearchResultForWorker(List<Worker> workers) {
-		workerListModel.removeAllElements();
-		workers.stream().forEach(workerListModel::addElement);
-		resetErrorLabel();
-	}
-
-	/**
-	 * Worker removed.
-	 *
-	 * @param worker the worker
-	 */
-	@Override
-	public void workerRemoved(Worker worker) {
-		workerListModel.removeElement(worker);
-		resetErrorLabel();
-	}
-
-	/**
-	 * Show error.
-	 *
-	 * @param message the message
-	 * @param worker  the worker
-	 */
-	@Override
-	public void showError(String message, Worker worker) {
-		showErrorLbl.setText(message + ": " + worker);
-	}
-
-	/**
-	 * Show error not found.
-	 *
-	 * @param message the message
-	 * @param worker  the worker
-	 */
-	@Override
-	public void showErrorNotFound(String message, Worker worker) {
-		showErrorNotFoundLbl.setText(message + ": " + worker);
-	}
-
-	/**
-	 * Show search error.
-	 *
-	 * @param message    the message
-	 * @param searchText the search text
-	 */
-	@Override
-	public void showSearchError(String message, String searchText) {
-		showErrorLblSearchWorker.setText(message + ": " + searchText);
-	}
-
-	/**
-	 * Reset error label.
-	 */
-	private void resetErrorLabel() {
-		showErrorLbl.setText(" ");
-		showErrorNotFoundLbl.setText(" ");
-		showErrorLblSearchWorker.setText(" ");
-	}
-
-	/**
-	 * Reset all search states.
-	 */
-	private void resetAllSearchStates() {
-		txtSearchWorker.setText(" ");
-		cmbSearchByOptions.setSelectedItem(null);
-	}
-
-	private void fetchWorkerMethod() {
-		Worker worker = new Worker();
-		Long id = Long.parseLong(txtWorkerId.getText());
-
-		worker.setWorkerId(id);
-		workerController.fetchWorkerById(worker);
-	}
-
-	private void updateWorkerMethod() {
-		Worker worker = new Worker();
-		Long id = Long.parseLong(txtWorkerId.getText());
-		worker.setWorkerId(id);
-		worker.setWorkerName(txtWorkerName.getText());
-		worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
-		worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
-		workerController.createOrUpdateWorker(worker, OperationType.UPDATE);
-	}
-
-	private void addWorkerMethod() {
-		Worker worker = new Worker();
-		worker.setWorkerName(txtWorkerName.getText());
-		worker.setWorkerPhoneNumber(txtWorkerPhone.getText());
-		worker.setWorkerCategory((OrderCategory) cmbWorkerCategory.getSelectedItem());
-		workerController.createOrUpdateWorker(worker, OperationType.ADD);
-	}
-
-	private void checkCharacterIsNumber(KeyEvent e) {
-		char c = e.getKeyChar();
-		if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE))) {
-			getToolkit().beep();
-			e.consume();
-		}
 	}
 
 }

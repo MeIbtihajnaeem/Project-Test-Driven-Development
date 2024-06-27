@@ -37,7 +37,8 @@ import com.mycompany.orderassignmentsystem.model.Worker;
 import com.mycompany.orderassignmentsystem.view.OrderView;
 
 /**
- * The Class OrderSwingView.
+ * The OrderSwingView class represents the graphical user interface for managing
+ * orders.
  */
 public class OrderSwingView extends JFrame implements OrderView {
 
