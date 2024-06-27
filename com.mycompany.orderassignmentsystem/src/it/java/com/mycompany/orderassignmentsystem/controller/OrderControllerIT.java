@@ -1,3 +1,32 @@
+/**
+ * Integration tests for the OrderController class.
+ *
+ * These tests verify the integration between the OrderController and its 
+ * dependencies, including OrderRepository, OrderView, 
+ * and ValidationConfigurations. The tests cover various scenarios such 
+ * as creating, updating, fetching, deleting, and searching orders. The 
+ * tests utilise Mockito for mocking dependencies and ensure the 
+ * correctness of the OrderController implementation.
+ *
+ * Key features tested include:
+ * - Retrieving all orders and workers.
+ * - Creating or updating orders with various conditions.
+ * - Searching for orders based on different criteria.
+ *
+ * The setup and teardown methods handle the initialisation and cleanup 
+ * of resources, including database connections and mock objects.
+ *
+ * The databaseConfig variable is responsible for starting the Docker container.
+ * If the test is run from Eclipse, it runs the Docker container using Testcontainers.
+ * If the test is run using a Maven command, it starts a real Docker container.
+ *
+ * @see OrderController
+ * @see OrderRepository
+ * @see WorkerRepository
+ * @see OrderView
+ * @see ValidationConfigurations
+ */
+
 package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
@@ -29,34 +58,112 @@ import com.mycompany.orderassignmentsystem.repository.postgres.OrderDatabaseRepo
 import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
 import com.mycompany.orderassignmentsystem.view.OrderView;
 
+/**
+ * The Class OrderControllerIT.
+ */
 public class OrderControllerIT {
 
+	/** The order repository. */
 	@Mock
 	private OrderRepository orderRepository;
 
+	/** The order view. */
 	@Mock
 	private OrderView orderView;
 
+	/** The worker repository. */
 	@Mock
 	private WorkerRepository workerRepository;
 
+	/**
+	 * The validation config
+	 */
 	@Mock
 	private ValidationConfigurations validationConfig;
 
+	/** The order controller. */
 	@InjectMocks
 	private OrderController orderController;
 
+	/** The closeable. */
 	private AutoCloseable closeable;
+
+	/** The entity manager factory. */
 	private EntityManagerFactory entityManagerFactory;
 
+	/**
+	 * This variable is responsible for starting the Docker container. If the test
+	 * is run from Eclipse, it runs the Docker container using Testcontainers. If
+	 * the test is run using a Maven command, it starts a real Docker container.
+	 */
 	private static DBConfig databaseConfig;
 
+	/** The worker name 1. */
+	private String WORKER_NAME_1 = "Bob";
+
+	/** The worker phone 1. */
+	private String WORKER_PHONE_1 = "3401372678";
+
+	/** The worker category 1. */
+	private OrderCategory WORKER_CATEGORY_1 = OrderCategory.PLUMBER;
+
+	/** The customer name 1. */
+	private String CUSTOMER_NAME_1 = "Jhon";
+
+	/** The customer phone 1. */
+	private String CUSTOMER_PHONE_1 = "3401372671";
+
+	/** The customer address 1. */
+	private String CUSTOMER_ADDRESS_1 = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+	/** The order appointment date 1. */
+	private String ORDER_APPOINTMENT_DATE_1 = "12-12-2024";
+
+	/** The order description 1. */
+	private String ORDER_DESCRIPTION_1 = "Please be on time";
+
+	/** The order category 1. */
+	private OrderCategory ORDER_CATEGORY_1 = OrderCategory.PLUMBER;
+
+	/** The order status 1. */
+	private OrderStatus ORDER_STATUS_1 = OrderStatus.PENDING;
+
+	/** The customer name 2. */
+	private String CUSTOMER_NAME_2 = "Alic";
+
+	/** The customer phone 2. */
+	private String CUSTOMER_PHONE_2 = "3401372672";
+
+	/** The customer address 2. */
+	private String CUSTOMER_ADDRESS_2 = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+	/** The order appointment date 2. */
+	private String ORDER_APPOINTMENT_DATE_2 = "12-12-2024";
+
+	/** The order description 2. */
+	private String ORDER_DESCRIPTION_2 = "Please bring tape";
+
+	/** The order category 2. */
+	private OrderCategory ORDER_CATEGORY_2 = OrderCategory.PLUMBER;
+
+	/** The order status 2. */
+	private OrderStatus ORDER_STATUS_2 = OrderStatus.PENDING;
+
+	/** The worker. */
+	private Worker worker;
+
+	/**
+	 * Setup.
+	 */
 	@BeforeClass
 	public static void setup() {
 		databaseConfig = DatabaseConfig.getDatabaseConfig();
 		databaseConfig.testAndStartDatabaseConnection();
 	}
 
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
@@ -66,310 +173,302 @@ public class OrderControllerIT {
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
 		orderController = new OrderController(orderRepository, orderView, workerRepository, validationConfig);
+
+		worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
+		worker = workerRepository.save(worker);
+
 	}
 
+	/**
+	 * Release mocks.
+	 *
+	 * @throws Exception the exception
+	 */
 	@After
 	public void releaseMocks() throws Exception {
 		entityManagerFactory.close();
 		closeable.close();
 	}
 
+	/**
+	 * Test all orders.
+	 */
 	@Test
 	public void testAllOrders() {
-		CustomerOrder order = new CustomerOrder();
-		order.setAppointmentDate("12/12/2024");
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		order.setWorker(savedWorker);
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 		CustomerOrder savedOrder = orderRepository.save(order);
+
+		// Exercise
 		orderController.allOrders();
+
+		// Verify
 		verify(orderView).showAllOrder(asList(savedOrder));
 	}
 
+	/**
+	 * Test all workers on order view.
+	 */
 	@Test
 	public void testAllWorkersOnOrderView() {
-		Worker worker = new Worker();
-		worker.setWorkerName("John");
-		worker.setWorkerPhoneNumber("3401372678");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker newWorker = workerRepository.save(worker);
+		// Setup in @Before method
+
+		// Exercise
 		orderController.allWorkers();
-		verify(orderView).showAllWorkers(asList(newWorker));
+
+		// Verify
+		verify(orderView).showAllWorkers(asList(worker));
 	}
 
+	/**
+	 * Test new order.
+	 */
 	@Test
 	public void testNewOrder() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+
+		// Exercise
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
-		CustomerOrder savedOrder = orderRepository.findAll().get(0);
-		verify(orderView).orderAdded(savedOrder);
+		order = orderRepository.findAll().get(0);
+
+		// Verify
+		verify(orderView).orderAdded(order);
 	}
 
+	/**
+	 * Test new order with worker have pending order.
+	 */
 	@Test
 	public void testNewOrderWithWorkerHavePendingOrder() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+
+		// Exercise
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
 		orderController.createOrUpdateOrder(order, OperationType.ADD);
+
+		// Verify
 		verify(orderView).showError(
 				"Cannot assign a new order to this worker because they already have a pending order.", order);
 	}
 
+	/**
+	 * Test update order.
+	 */
 	@Test
 	public void testUpdateOrder() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 		order = orderRepository.save(order);
 		order.setOrderStatus(OrderStatus.COMPLETED);
+
+		// Exercise
 		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
-		CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
+		order = orderRepository.findById(order.getOrderId());
 
-		verify(orderView).orderModified(savedOrder);
+		// Verify
+		verify(orderView).orderModified(order);
 	}
 
+	/**
+	 * Test update order with worker have pending order.
+	 */
 	@Test
-	public void testUpdateOrderWorkerHavePendingOrder() {
-		Worker worker1 = new Worker();
-		worker1.setWorkerName("Jhon");
-		worker1.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker1 = workerRepository.save(worker1);
+	public void testUpdateOrderWithWorkerHavePendingOrder() {
+		// Setup
+		Worker workerForOrder1 = new Worker("Jhon", "3401372672", OrderCategory.PLUMBER);
+		workerForOrder1 = workerRepository.save(workerForOrder1);
 
-		Worker worker2 = new Worker();
-		worker2.setWorkerName("Bob");
-		worker2.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker2 = workerRepository.save(worker2);
+		Worker workerForOrder2 = new Worker("Bob", "3401372673", OrderCategory.PLUMBER);
+		workerForOrder2 = workerRepository.save(workerForOrder2);
 
-		CustomerOrder order1 = new CustomerOrder("Jhon", "Piazza Luigi Dalla", "3401372678", "12-12-2024",
-				"No description", OrderCategory.PLUMBER, OrderStatus.PENDING, savedWorker1);
-		CustomerOrder order2 = new CustomerOrder("Alic", "Piazza Luigi Dalla", "3401372678", "12-12-2024",
-				"No description", OrderCategory.PLUMBER, OrderStatus.PENDING, savedWorker2);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, workerForOrder1);
+		CustomerOrder order2 = new CustomerOrder(CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, workerForOrder2);
 
+		// Saving each order with its corresponding worker
 		orderRepository.save(order1);
-		CustomerOrder savedOrder2 = orderRepository.save(order2);
-		savedOrder2.setWorker(savedWorker1);
-		orderController.createOrUpdateOrder(savedOrder2, OperationType.UPDATE);
+		order2 = orderRepository.save(order2);
+
+		// Exercise
+		order2.setWorker(workerForOrder1);
+		orderController.createOrUpdateOrder(order2, OperationType.UPDATE);
+
+		// Verify
 		verify(orderView).showError(
-				"Cannot assign a new order to this worker because they already have a pending order.", savedOrder2);
+				"Cannot assign a new order to this worker because they already have a pending order.", order2);
 	}
 
+	/**
+	 * Test fetch order by id.
+	 */
 	@Test
 	public void testFetchOrderById() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		orderController.fetchOrderById(savedOrder);
-		verify(orderView).showFetchedOrder(savedOrder);
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		orderController.fetchOrderById(order);
+
+		// Verify
+		verify(orderView).showFetchedOrder(order);
 
 	}
 
+	/**
+	 * Test delete order.
+	 */
 	@Test
 	public void testDeleteOrder() {
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		orderController.deleteOrder(savedOrder);
-		verify(orderView).orderRemoved(savedOrder);
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		orderController.deleteOrder(order);
+
+		// Verify
+		verify(orderView).orderRemoved(order);
 	}
 
+	/**
+	 * Test search order with order id.
+	 */
 	@Test
 	public void testSearchOrderWithOrderId() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		orderController.searchOrder(savedOrder.getOrderId().toString(), OrderSearchOptions.ORDER_ID);
-		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		orderController.searchOrder(order.getOrderId().toString(), OrderSearchOptions.ORDER_ID);
+
+		// Verify
+		verify(orderView).showSearchResultForOrder(asList(order));
 
 	}
 
+	/**
+	 * Test search order with worker id.
+	 */
 	@Test
 	public void testSearchOrderWithWorkerId() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		orderController.searchOrder(savedWorker.getWorkerId().toString(), OrderSearchOptions.WORKER_ID);
-		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		String searchText = order.getWorker().getWorkerId().toString();
+		orderController.searchOrder(searchText, OrderSearchOptions.WORKER_ID);
+
+		// Verify
+		verify(orderView).showSearchResultForOrder(asList(order));
 
 	}
 
+	/**
+	 * Test search order with customer phone number.
+	 */
 	@Test
 	public void testSearchOrderWithCustomerPhoneNumber() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		String searchText = "3401372678";
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		String searchText = CUSTOMER_PHONE_1;
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_PHONE);
-		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
+		// Verify
+		verify(orderView).showSearchResultForOrder(asList(order));
 
 	}
 
+	/**
+	 * Test search order with appointment date.
+	 */
 	@Test
 	public void testSearchOrderWithAppointmentDate() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		String searchText = "12-12-2024";
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		String searchText = ORDER_APPOINTMENT_DATE_1;
 		orderController.searchOrder(searchText, OrderSearchOptions.DATE);
-		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
+		// Verify
+		verify(orderView).showSearchResultForOrder(asList(order));
 
 	}
 
+	/**
+	 * Test search order with order status.
+	 */
 	@Test
 	public void testSearchOrderWithOrderStatus() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		String searchText = "PENDING";
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		String searchText = ORDER_STATUS_1.name();
 		orderController.searchOrder(searchText, OrderSearchOptions.STATUS);
-		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
+		// Verify
+		verify(orderView).showSearchResultForOrder(asList(order));
 
 	}
 
+	/**
+	 * Test search order with order category.
+	 */
 	@Test
 	public void testSearchOrderWithOrderCategory() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		String searchText = "PLUMBER";
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		String searchText = ORDER_CATEGORY_1.name();
 		orderController.searchOrder(searchText, OrderSearchOptions.CATEGORY);
-		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
+		// Verify
+		verify(orderView).showSearchResultForOrder(asList(order));
 
 	}
 
+	/**
+	 * Test search order with customer name.
+	 */
 	@Test
 	public void testSearchOrderWithCustomerName() {
-		Worker worker = new Worker();
-		worker.setWorkerName("Jhon");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		Worker savedWorker = workerRepository.save(worker);
-		CustomerOrder order = new CustomerOrder();
-		order.setCustomerName("Jhon");
-		order.setCustomerAddress("Piazza Luigi Dalla");
-		order.setCustomerPhoneNumber("3401372678");
-		order.setAppointmentDate("12-12-2024");
-		order.setOrderDescription("No description");
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
-		order.setWorker(savedWorker);
-		CustomerOrder savedOrder = orderRepository.save(order);
-		String searchText = "Jhon";
+		// Setup
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		order = orderRepository.save(order);
+
+		// Exercise
+		String searchText = CUSTOMER_NAME_1;
 		orderController.searchOrder(searchText, OrderSearchOptions.CUSTOMER_NAME);
-		verify(orderView).showSearchResultForOrder(asList(savedOrder));
+
+		// Verify
+		verify(orderView).showSearchResultForOrder(asList(order));
 
 	}
 }

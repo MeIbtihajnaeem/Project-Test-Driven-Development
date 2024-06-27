@@ -712,7 +712,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
 				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
 
-		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_PHONE_2, CUSTOMER_ADDRESS_2,
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
 				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> orderSwingView.showAllOrder(Arrays.asList(order1, order2)));
@@ -860,7 +860,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
 				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
 
-		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_PHONE_2, CUSTOMER_ADDRESS_2,
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
 				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> {
@@ -883,7 +883,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
 				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
 
-		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_PHONE_2, CUSTOMER_ADDRESS_2,
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
 				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> {
@@ -1023,7 +1023,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
 				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
 
-		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_PHONE_2, CUSTOMER_ADDRESS_2,
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
 				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> {

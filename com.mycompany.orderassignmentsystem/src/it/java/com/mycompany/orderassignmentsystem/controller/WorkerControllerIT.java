@@ -43,6 +43,11 @@ public class WorkerControllerIT {
 
 	private EntityManagerFactory entityManagerFactory;
 
+	/**
+	 * This variable is responsible for starting the Docker container. If the test
+	 * is run from Eclipse, it runs the Docker container using Testcontainers. If
+	 * the test is run using a Maven command, it starts a real Docker container.
+	 */
 	private static DBConfig databaseConfig;
 
 	@BeforeClass
