@@ -188,7 +188,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	 * Test add button error.
 	 */
 	@Test
-	@GUITest
 	public void testAddButtonError() {
 
 		String phoneNumber = "4401372678";
@@ -210,7 +209,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	 * Test delete button success.
 	 */
 	@Test
-	@GUITest
 	public void testDeleteButtonSuccess() {
 		Worker worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
@@ -226,7 +224,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	 * Test update button success.
 	 */
 	@Test
-	@GUITest
 	public void testUpdateButtonSuccess() {
 
 		Worker worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
@@ -252,7 +249,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	 * Test fetch button success.
 	 */
 	@Test
-	@GUITest
 	public void testFetchButtonSuccess() {
 		Worker worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
@@ -271,7 +267,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	 * Test fetch button error.
 	 */
 	@Test
-	@GUITest
 	public void testFetchButtonError() {
 		Worker worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 
@@ -296,7 +291,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	 * Test update button error.
 	 */
 	@Test
-	@GUITest
 	public void testUpdateButtonError() {
 		Worker worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerController.createOrUpdateWorker(worker, OperationType.ADD));
@@ -325,7 +319,6 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	 * Test delete button error.
 	 */
 	@Test
-	@GUITest
 	public void testDeleteButtonError() {
 
 		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);

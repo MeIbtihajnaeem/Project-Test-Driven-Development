@@ -380,6 +380,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test order view update and fetch button success.
 	 */
 	@Test
+	@GUITest
 	public void testOrderViewUpdateAndFetchButtonSuccess() {
 		String updatedName = "Ibtihaj";
 
@@ -400,6 +401,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test order view fetch failure.
 	 */
 	@Test
+	@GUITest
 	public void testOrderViewFetchFailure() {
 
 		Long orderId = 3L;
@@ -414,6 +416,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test order view update button failure.
 	 */
 	@Test
+	@GUITest
 	public void testOrderViewUpdateButtonFailure() {
 
 		String updatedPhone = "4401372678";
@@ -435,6 +438,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test order view search success.
 	 */
 	@Test
+	@GUITest
 	public void testOrderViewSearchSuccess() {
 		String searchText = ORDER_CUSTOMER_FIXTURE_1_CUSTOMER_NAME;
 		orderViewWindow.textBox("txtSearchOrder").enterText(searchText);
@@ -454,6 +458,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test order view search failure.
 	 */
 	@Test
+	@GUITest
 	public void testOrderViewSearchFailure() {
 		String searchText = "Bob";
 		orderViewWindow.textBox("txtSearchOrder").enterText(searchText);
@@ -467,6 +472,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test order view clear search.
 	 */
 	@Test
+	@GUITest
 	public void testOrderViewClearSearch() {
 		String searchText = ORDER_CUSTOMER_FIXTURE_1_CUSTOMER_NAME;
 		int searchOptionIndex = 2;
@@ -489,6 +495,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test order view delete button success.
 	 */
 	@Test
+	@GUITest
 	public void testOrderViewDeleteButtonSuccess() {
 		orderViewWindow.list("listOrders").selectItem(0);
 		orderViewWindow.button(JButtonMatcher.withName("btnDelete")).click();
@@ -642,6 +649,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test worker view search worker success.
 	 */
 	@Test
+	@GUITest
 	public void testWorkerViewSearchWorkerSuccess() {
 		openWorkerView();
 		String searchText = WORKER_FIXTURE_1_NAME;
@@ -661,6 +669,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test worker view search worker error.
 	 */
 	@Test
+	@GUITest
 	public void testWorkerViewSearchWorkerError() {
 		openWorkerView();
 		String searchText = "Ibtihaj";
@@ -677,6 +686,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 * Test worker view clear search.
 	 */
 	@Test
+	@GUITest
 	public void testWorkerViewClearSearch() {
 		openWorkerView();
 		String searchText = WORKER_FIXTURE_1_NAME;
