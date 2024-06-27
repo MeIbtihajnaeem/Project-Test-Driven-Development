@@ -1,3 +1,24 @@
+/**
+ * Unit tests for the WorkerSwingView class with AssertJ-Swing for GUI testing.
+ *
+ * These tests ensure that the WorkerSwingView class correctly interacts with the user 
+ * interface components and delegates actions to the WorkerController.
+ *
+ * The setup method initialises the GUI components and mocks necessary dependencies. 
+ * The teardown method cleans up resources.
+ *
+ * Test cases include:
+ * - Initial state verifications of labels, text fields, combo boxes, and buttons.
+ * - Enabling/disabling the Add, Update, Fetch, Search, Delete and Clear buttons based on user input.
+ * - Delegation of user actions to the OrderController such as adding, updating, fetching, 
+ *   searching, and deleting workers.
+ * - Displaying workers and workers in the UI components like lists and combo boxes.
+ * - Showing error messages in the error labels.
+ *
+ * @see WorkerSwingView
+ * @see WorkerController
+ * @see Worker
+ */
 package com.mycompany.orderassignmentsystem.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +69,36 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	/** The closeable. */
 	private AutoCloseable closeable;
+
+	/** The worker id 1. */
+	private long WORKER_ID_1 = 1l;
+
+	/** The worker name 1. */
+	private String WORKER_NAME_1 = "Bob";
+
+	/** The worker phone 1. */
+	private String WORKER_PHONE_1 = "3401372678";
+
+	/** The worker category 1. */
+	private OrderCategory WORKER_CATEGORY_1 = OrderCategory.PLUMBER;
+
+	/** The worker id 2. */
+	private Long WORKER_ID_2 = 2l;
+
+	/** The worker name 2. */
+	private String WORKER_NAME_2 = "Alic";
+
+	/** The worker phone 2. */
+	private String WORKER_PHONE_2 = "3401372679";
+
+	/** The worker category 2. */
+	private OrderCategory WORKER_CATEGORY_2 = OrderCategory.ELECTRICIAN;
+
+	/** The selecting category index. */
+	private int SELECTING_CATEGORY_INDEX = 0;
+
+	/** The selecting search option index. */
+	private int SELECTING_SEARCH_OPTION_INDEX = 1;
 
 	/**
 	 * On set up.
@@ -130,10 +181,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testWhenWorkerIdWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndAddButtonShouldBeDisable() {
-		window.textBox("txtWorkerId").enterText("1");
-		window.textBox("txtWorkerName").enterText("Naeem");
-		window.textBox("txtWorkerPhone").enterText("3401372678");
-		window.comboBox("cmbWorkerCategory").selectItem(0);
+		window.textBox("txtWorkerId").enterText(Long.toString(WORKER_ID_1));
+		window.textBox("txtWorkerName").enterText(WORKER_NAME_1);
+		window.textBox("txtWorkerPhone").enterText(WORKER_PHONE_1);
+		window.comboBox("cmbWorkerCategory").selectItem(SELECTING_CATEGORY_INDEX);
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
 	}
 
@@ -145,9 +196,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndAddButtonShouldBeEnable() {
-		window.textBox("txtWorkerName").enterText("Naeem");
-		window.textBox("txtWorkerPhone").enterText("3401372678");
-		window.comboBox("cmbWorkerCategory").selectItem(0);
+		window.textBox("txtWorkerName").enterText(WORKER_NAME_1);
+		window.textBox("txtWorkerPhone").enterText(WORKER_PHONE_1);
+		window.comboBox("cmbWorkerCategory").selectItem(SELECTING_CATEGORY_INDEX);
 		window.button(JButtonMatcher.withName("btnAdd")).requireEnabled();
 	}
 
@@ -157,8 +208,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionIsNotEmptyAndSearchButtonShouldBeEnabled() {
-		window.textBox("txtSearchWorker").enterText("Naeem");
-		window.comboBox("cmbSearchByOptions").selectItem(0);
+		window.textBox("txtSearchWorker").enterText(WORKER_NAME_1);
+		window.comboBox("cmbSearchByOptions").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireEnabled();
 	}
 
@@ -188,8 +239,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionsIsNotEmptyAndClearWorkerButtonShouldBeEnabled() {
-		window.textBox("txtSearchWorker").enterText("Naeem");
-		window.comboBox("cmbSearchByOptions").selectItem(0);
+		window.textBox("txtSearchWorker").enterText(WORKER_NAME_1);
+		window.comboBox("cmbSearchByOptions").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireEnabled();
 	}
 
@@ -200,9 +251,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndUpdateButtonShouldBeDisable() {
-		window.textBox("txtWorkerName").enterText("Naeem");
-		window.textBox("txtWorkerPhone").enterText("3401372678");
-		window.comboBox("cmbWorkerCategory").selectItem(0);
+		window.textBox("txtWorkerName").enterText(WORKER_NAME_1);
+		window.textBox("txtWorkerPhone").enterText(WORKER_PHONE_1);
+		window.comboBox("cmbWorkerCategory").selectItem(SELECTING_CATEGORY_INDEX);
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
 	}
 
@@ -212,10 +263,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWhenWorkerIdWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndUpdateButtonShouldBeEnable() {
-		window.textBox("txtWorkerId").enterText("1");
-		window.textBox("txtWorkerName").enterText("Naeem");
-		window.textBox("txtWorkerPhone").enterText("3401372678");
-		window.comboBox("cmbWorkerCategory").selectItem(0);
+		window.textBox("txtWorkerId").enterText(Long.toString(WORKER_ID_1));
+		window.textBox("txtWorkerName").enterText(WORKER_NAME_1);
+		window.textBox("txtWorkerPhone").enterText(WORKER_PHONE_1);
+		window.comboBox("cmbWorkerCategory").selectItem(SELECTING_CATEGORY_INDEX);
 		window.button(JButtonMatcher.withName("btnUpdate")).requireEnabled();
 	}
 
@@ -226,8 +277,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWhenWorkerIdIsEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsNotEmptyAndFetchButtonShouldBeDisable() {
-		window.textBox("txtWorkerName").enterText("Naeem");
-		window.textBox("txtWorkerPhone").enterText("3401372678");
+		window.textBox("txtWorkerName").enterText(WORKER_NAME_1);
+		window.textBox("txtWorkerPhone").enterText(WORKER_PHONE_1);
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
 	}
 
@@ -238,7 +289,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWhenWorkerIdIsNotEmptyWorkerNameWorkerPhoneNumberWorkerCategoryIsEmptyAndFetchButtonShouldBeEnable() {
-		window.textBox("txtWorkerId").enterText("1");
+		window.textBox("txtWorkerId").enterText(Long.toString(WORKER_ID_1));
 		window.button(JButtonMatcher.withName("btnFetch")).requireEnabled();
 		window.comboBox("cmbWorkerCategory").requireNoSelection();
 
@@ -252,15 +303,18 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testWhenEitherNameOrCategoryOrPhoneNumberAreBlankThenAddButtonShouldBeDisabled() {
 		JTextComponentFixture name = window.textBox("txtWorkerName");
 		JTextComponentFixture phoneNumber = window.textBox("txtWorkerPhone");
+
 		name.enterText(" ");
 		phoneNumber.enterText(" ");
 		JComboBoxFixture combo = window.comboBox("cmbWorkerCategory");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
+
 		phoneNumber.enterText("123");
 		name.setText("abc");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
+
 		phoneNumber.enterText(" ");
 		name.setText(" ");
 		combo.selectItem(0);
@@ -275,12 +329,15 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testWhenEitherSearchStringOrSearchOptionAreBlankThenSearchWorkerButtonShouldBeDisabled() {
 		JTextComponentFixture txtSearch = window.textBox("txtSearchWorker");
 		txtSearch.enterText(" ");
+
 		JComboBoxFixture combo = window.comboBox("cmbSearchByOptions");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireDisabled();
+
 		txtSearch.enterText("1");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireDisabled();
+
 		txtSearch.setText(" ");
 		combo.selectItem(0);
 		window.button(JButtonMatcher.withName("btnSearchWorker")).requireDisabled();
@@ -297,9 +354,11 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		JComboBoxFixture combo = window.comboBox("cmbSearchByOptions");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireDisabled();
+
 		txtSearch.enterText("1");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireDisabled();
+
 		txtSearch.setText(" ");
 		combo.selectItem(0);
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).requireDisabled();
@@ -314,17 +373,20 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		JTextComponentFixture orderId = window.textBox("txtWorkerId");
 		JTextComponentFixture name = window.textBox("txtWorkerName");
 		JTextComponentFixture phoneNumber = window.textBox("txtWorkerPhone");
+
 		orderId.enterText("\b");
 		name.enterText(" ");
 		phoneNumber.enterText(" ");
 		JComboBoxFixture combo = window.comboBox("cmbWorkerCategory");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
+
 		orderId.enterText("1");
 		phoneNumber.enterText("123");
 		name.setText("abc");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
+
 		orderId.enterText("\b");
 		phoneNumber.enterText(" ");
 		name.setText(" ");
@@ -341,17 +403,20 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		JTextComponentFixture orderId = window.textBox("txtWorkerId");
 		JTextComponentFixture name = window.textBox("txtWorkerName");
 		JTextComponentFixture phoneNumber = window.textBox("txtWorkerPhone");
+
 		orderId.enterText("\b");
 		name.enterText(" ");
 		phoneNumber.enterText(" ");
 		JComboBoxFixture combo = window.comboBox("cmbWorkerCategory");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
+
 		orderId.enterText("1");
 		phoneNumber.enterText("123");
 		name.setText("abc");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
+
 		orderId.enterText("\b");
 		phoneNumber.enterText(" ");
 		name.setText(" ");
@@ -359,6 +424,10 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
 	}
 
+	/**
+	 * Test when worker id only numbers then fetch button should be fetch button
+	 * enabled.
+	 */
 	@Test
 	public void testWhenWorkerIdOnlyNumbersThenFetchButtonShouldBeFetchButtonEnabled() {
 		JTextComponentFixture workerId = window.textBox("txtWorkerId");
@@ -383,7 +452,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAWorkerIsSelected() {
 		JListFixture list = window.list("listWorkers");
 		JButtonFixture deleteButton = window.button(JButtonMatcher.withName("btnDelete"));
-		Worker worker = new Worker(1l, "Naeem Ibtihaj", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 
 		GuiActionRunner.execute(() -> {
 
@@ -404,9 +473,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testsShowAllWorkersAddWorkerDescriptionToTheListWorkers() {
-		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker1 = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 
-		Worker worker2 = new Worker(2l, "Bob", "3401372678", OrderCategory.PLUMBER);
+		Worker worker2 = new Worker(WORKER_ID_2, WORKER_NAME_2, WORKER_PHONE_2, WORKER_CATEGORY_2);
 
 		GuiActionRunner.execute(() -> workerSwingView.showAllWorkers(Arrays.asList(worker1, worker2)));
 		String[] listContents = window.list("listWorkers").contents();
@@ -419,7 +488,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerSwingView.showError("error message", worker));
 		window.label("showErrorLbl").requireText("error message: " + worker);
 	}
@@ -441,7 +510,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testShowNotFoundErrorShouldShowTheMessageInTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerSwingView.showErrorNotFound("error message", worker));
 		window.label("showErrorNotFoundLbl").requireText("error message: " + worker);
 	}
@@ -452,7 +521,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerAddedShouldAddTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerSwingView.workerAdded(worker));
 		String[] listContents = window.list("listWorkers").contents();
 		assertThat(listContents).containsExactly(worker.toString());
@@ -465,7 +534,7 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerFetchShouldFetchTheWorkerToTheFieldsAndResetTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerSwingView.showFetchedWorker(worker));
 		String name = window.textBox("txtWorkerName").target().getText();
 		String phoneNumber = window.textBox("txtWorkerPhone").target().getText();
@@ -483,9 +552,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerModifiedShouldModifyAndAddTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerSwingView.workerAdded(worker));
-		Worker updatedWorker = new Worker(1l, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
+		Worker updatedWorker = new Worker(WORKER_ID_1, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
 
 		GuiActionRunner.execute(() -> workerSwingView.workerModified(updatedWorker));
 		String[] listContents = window.list("listWorkers").contents();
@@ -499,9 +568,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerModifiedShouldNotModifyAndDonotAddTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 		GuiActionRunner.execute(() -> workerSwingView.workerAdded(worker));
-		Worker updatedWorker = new Worker(2l, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
+		Worker updatedWorker = new Worker(WORKER_ID_2, WORKER_NAME_2, WORKER_PHONE_2, WORKER_CATEGORY_2);
 
 		GuiActionRunner.execute(() -> workerSwingView.workerModified(updatedWorker));
 		String[] listContents = window.list("listWorkers").contents();
@@ -515,9 +584,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerRemovedShouldRemoveTheWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-
-		Worker worker2 = new Worker(1l, "Bob", "3401372679", OrderCategory.ELECTRICIAN);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
+		Worker worker2 = new Worker(WORKER_ID_2, WORKER_NAME_2, WORKER_PHONE_2, WORKER_CATEGORY_2);
 
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Worker> listOrderModel = workerSwingView.getWorkerListModel();
@@ -537,8 +605,8 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testWorkerSearchShouldModifyAndShowOnlySearchedWorkerToTheListAndResetTheErrorLabel() {
-		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker(2l, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
+		Worker worker1 = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
+		Worker worker2 = new Worker(WORKER_ID_2, WORKER_NAME_2, WORKER_PHONE_2, WORKER_CATEGORY_2);
 
 		GuiActionRunner.execute(() -> {
 			workerSwingView.workerAdded(worker1);
@@ -552,6 +620,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Test manage order button hide worker view.
+	 */
 	@Test
 	public void testManageOrderButtonHideWorkerView() {
 
@@ -567,20 +638,14 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testAddButtonShouldDelegateToWorkerControllerNewWorker() {
-		String name = "Naeem";
-		String phoneNumber = "3401372678";
-		int categoryIndex = 0;
-		window.textBox("txtWorkerName").enterText(name);
-		window.textBox("txtWorkerPhone").enterText(phoneNumber);
 
-		window.comboBox("cmbWorkerCategory").selectItem(categoryIndex);
-		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
-
+		window.textBox("txtWorkerName").enterText(WORKER_NAME_1);
+		window.textBox("txtWorkerPhone").enterText(WORKER_PHONE_1);
+		window.comboBox("cmbWorkerCategory").selectItem(SELECTING_CATEGORY_INDEX);
 		window.button(JButtonMatcher.withName("btnAdd")).click();
-		Worker worker = new Worker();
-		worker.setWorkerName(name);
-		worker.setWorkerPhoneNumber(phoneNumber);
-		worker.setWorkerCategory(category);
+
+		Worker worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
+
 		verify(workerController).createOrUpdateWorker(worker, OperationType.ADD);
 	}
 
@@ -590,29 +655,23 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testUpdateButtonShouldDelegateToWorkerControllerUpdateWorker() {
-		Long workerId = 1l;
 
-		String name = "Naeem";
 		String updatedName = "Ibtihaj";
-		String phoneNumber = "3401372678";
-		int categoryIndex = 0;
 
-		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
-
-		Worker worker = new Worker(workerId, name, phoneNumber, category);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 
 		GuiActionRunner.execute(() -> {
 			workerSwingView.workerAdded(worker);
 		});
 
-		window.textBox("txtWorkerId").enterText(workerId.toString());
+		window.textBox("txtWorkerId").enterText(Long.toString(WORKER_ID_1));
 		window.textBox("txtWorkerName").enterText(updatedName);
-		window.textBox("txtWorkerPhone").enterText(phoneNumber);
-		window.comboBox("cmbWorkerCategory").selectItem(categoryIndex);
+		window.textBox("txtWorkerPhone").enterText(WORKER_PHONE_1);
+		window.comboBox("cmbWorkerCategory").selectItem(SELECTING_CATEGORY_INDEX);
 
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
-		Worker updatedWorker = new Worker(workerId, updatedName, phoneNumber, category);
-		verify(workerController).createOrUpdateWorker(updatedWorker, OperationType.UPDATE);
+		worker.setWorkerName(updatedName);
+		verify(workerController).createOrUpdateWorker(worker, OperationType.UPDATE);
 	}
 
 	/**
@@ -621,13 +680,12 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testFetchButtonShouldDelegateToWorkerControllerFetchWorkerById() {
-		Long workerId = 1l;
 
-		window.textBox("txtWorkerId").enterText(workerId.toString());
+		window.textBox("txtWorkerId").enterText(Long.toString(WORKER_ID_1));
 
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 		Worker worker = new Worker();
-		worker.setWorkerId(workerId);
+		worker.setWorkerId(WORKER_ID_1);
 
 		verify(workerController).fetchWorkerById(worker);
 	}
@@ -638,13 +696,12 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testSearchWorkerButtonShouldDelegateToWorkerControllerSearchWorkerByOptions() {
-		String searchText = "Ibtihaj";
-		int searchOptionIndex = 1;
+		String searchText = WORKER_NAME_1;
 		WorkerSearchOption searchOption = (WorkerSearchOption) window.comboBox("cmbSearchByOptions").target()
-				.getItemAt(searchOptionIndex);
+				.getItemAt(SELECTING_SEARCH_OPTION_INDEX);
 
 		window.textBox("txtSearchWorker").enterText(searchText);
-		window.comboBox("cmbSearchByOptions").selectItem(searchOptionIndex);
+		window.comboBox("cmbSearchByOptions").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 
 		window.button(JButtonMatcher.withName("btnSearchWorker")).click();
 
@@ -658,22 +715,16 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testClearSearchWorkerButtonShouldDelegateToWorkerControllerShowAllWorkers() {
-		String searchText = "Ibtihaj";
-		int searchOptionIndex = 1;
-		Long workerId = 1l;
-		int categoryIndex = 0;
-		String name = "Naeem";
-		String phoneNumber = "3401372678";
-		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
+		String searchText = WORKER_NAME_1;
 
-		Worker worker = new Worker(workerId, name, phoneNumber, category);
+		Worker worker = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
 
 		GuiActionRunner.execute(() -> {
 			workerSwingView.workerAdded(worker);
 		});
 
 		window.textBox("txtSearchWorker").enterText(searchText);
-		window.comboBox("cmbSearchByOptions").selectItem(searchOptionIndex);
+		window.comboBox("cmbSearchByOptions").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 
 		window.button(JButtonMatcher.withName("btnClearSearchWorker")).click();
 		verify(workerController).getAllWorkers();
@@ -685,19 +736,9 @@ public class WorkerSwingViewTest extends AssertJSwingJUnitTestCase {
 	 */
 	@Test
 	public void testDeleteButtonShouldDelegateToWorkerControllerRemoveWorker() {
-		Long workerId = 1l;
-		Long workerId2 = 2l;
 
-		String name = "Naeem";
-		String name2 = "Bob";
-		String phoneNumber = "3401372678";
-		String phoneNumber2 = "3401372679";
-		int categoryIndex = 0;
-
-		OrderCategory category = (OrderCategory) window.comboBox("cmbWorkerCategory").target().getItemAt(categoryIndex);
-
-		Worker worker1 = new Worker(workerId, name, phoneNumber, category);
-		Worker worker2 = new Worker(workerId2, name2, phoneNumber2, category);
+		Worker worker1 = new Worker(WORKER_ID_1, WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
+		Worker worker2 = new Worker(WORKER_ID_2, WORKER_NAME_2, WORKER_PHONE_2, WORKER_CATEGORY_2);
 
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Worker> listOrderModel = workerSwingView.getWorkerListModel();
