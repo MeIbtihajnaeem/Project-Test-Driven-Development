@@ -711,7 +711,7 @@ public class OrderControllerTest {
 		long workerId = 0l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -739,7 +739,7 @@ public class OrderControllerTest {
 		long workerId = -1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -768,7 +768,7 @@ public class OrderControllerTest {
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 
-		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Exercise
@@ -794,7 +794,7 @@ public class OrderControllerTest {
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
 		OrderStatus status = OrderStatus.COMPLETED;
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, status, worker);
 
 		// Mocks
@@ -821,7 +821,7 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		Worker worker = new Worker();
 		worker.setWorkerId(workerId);
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -851,7 +851,7 @@ public class OrderControllerTest {
 		OrderCategory workerCategory = OrderCategory.ELECTRICIAN;
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, workerCategory);
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, orderCategory, ORDER_STATUS, worker);
 
 		// Mocks
@@ -878,7 +878,7 @@ public class OrderControllerTest {
 		// Setup
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -908,7 +908,7 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
 		worker.setOrders(Collections.emptyList());
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -940,7 +940,7 @@ public class OrderControllerTest {
 		CustomerOrder workerOrder = new CustomerOrder();
 		workerOrder.setOrderStatus(OrderStatus.PENDING);
 		worker.setOrders(asList(workerOrder));
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -972,7 +972,7 @@ public class OrderControllerTest {
 		CustomerOrder workerOrder = new CustomerOrder();
 		workerOrder.setOrderStatus(OrderStatus.COMPLETED);
 		worker.setOrders(asList(workerOrder));
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -1002,7 +1002,7 @@ public class OrderControllerTest {
 		Worker worker = new Worker();
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
-		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS, ORDER_APPOINTMENT_DATE,
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE, ORDER_APPOINTMENT_DATE,
 				ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -1031,7 +1031,7 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 		long orderId = 0l;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -1060,7 +1060,7 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		worker.setWorkerId(workerId);
 
-		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
@@ -1090,7 +1090,7 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, workerCategory);
 
-		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, orderCategory, ORDER_STATUS, worker);
 
 		// Mocks
@@ -1119,13 +1119,13 @@ public class OrderControllerTest {
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
 
 		long orderId = 1L;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		long savedWorkerId = 2L;
 		Worker savedWorker = new Worker(savedWorkerId, ORDER_CATEGORY);
 
-		CustomerOrder savedOrder = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder savedOrder = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, savedWorker);
 
 		// Mocks
@@ -1156,11 +1156,11 @@ public class OrderControllerTest {
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
 		worker.setOrders(Collections.emptyList());
 		long orderId = 1L;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 		long savedWorkerId = 2l;
 		Worker savedWorker = new Worker(savedWorkerId, ORDER_CATEGORY);
-		CustomerOrder savedOrder = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder savedOrder = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, savedWorker);
 
 		// Mocks
@@ -1194,11 +1194,11 @@ public class OrderControllerTest {
 		workerOrder.setOrderStatus(OrderStatus.PENDING);
 		worker.setOrders(asList(workerOrder));
 		long orderId = 1L;
-		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 		long savedWorkerId = 2l;
 		Worker savedWorker = new Worker(savedWorkerId, ORDER_CATEGORY);
-		CustomerOrder savedOrder = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder savedOrder = new CustomerOrder(orderId, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, savedWorker);
 
 		// Mocks
@@ -1229,7 +1229,7 @@ public class OrderControllerTest {
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
 
-		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder order = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 		worker.setOrders(asList(order));
 
@@ -1371,7 +1371,7 @@ public class OrderControllerTest {
 		order.setOrderId(ORDER_ID);
 		long workerId = 1l;
 		Worker worker = new Worker(workerId, ORDER_CATEGORY);
-		CustomerOrder savedOrder = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_PHONE, CUSTOMER_ADDRESS,
+		CustomerOrder savedOrder = new CustomerOrder(ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS, CUSTOMER_PHONE,
 				ORDER_APPOINTMENT_DATE, ORDER_DESCRIPTION, ORDER_CATEGORY, ORDER_STATUS, worker);
 
 		// Mocks
