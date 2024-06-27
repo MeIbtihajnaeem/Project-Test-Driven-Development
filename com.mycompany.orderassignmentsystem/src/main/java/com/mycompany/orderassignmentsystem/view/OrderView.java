@@ -20,6 +20,12 @@ public interface OrderView {
 	 */
 	void showAllOrder(List<CustomerOrder> order);
 
+	/**
+	 * Displays all workers.
+	 *
+	 * @param worker the worker
+	 */
+
 	void showAllWorkers(List<Worker> worker);
 
 	/**
@@ -57,6 +63,9 @@ public interface OrderView {
 	 */
 	void orderRemoved(CustomerOrder order);
 
+	/**
+	 * Reset all fields on the view.
+	 */
 	void resetAllFields();
 
 	/**

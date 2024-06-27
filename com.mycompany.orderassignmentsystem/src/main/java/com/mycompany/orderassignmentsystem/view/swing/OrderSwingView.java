@@ -36,56 +36,128 @@ import com.mycompany.orderassignmentsystem.model.CustomerOrder;
 import com.mycompany.orderassignmentsystem.model.Worker;
 import com.mycompany.orderassignmentsystem.view.OrderView;
 
+/**
+ * The OrderSwingView class represents the graphical user interface for managing
+ * orders.
+ */
 public class OrderSwingView extends JFrame implements OrderView {
 
+	/** The Constant ARIAL. */
 	private static final String ARIAL = "Arial";
+
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2L;
+
+	/** The content pane. */
 	private JPanel contentPane;
+
+	/** The txt order id. */
 	private JTextField txtOrderId;
+
+	/** The txt customer name. */
 	private JTextField txtCustomerName;
+
+	/** The txt customer address. */
 	private JTextField txtCustomerAddress;
+
+	/** The txt customer phone. */
 	private JTextField txtCustomerPhone;
+
+	/** The txt order description. */
 	private JTextField txtOrderDescription;
+
+	/** The txt search order. */
 	private JTextField txtSearchOrder;
 
+	/** The btn fetch. */
 	private JButton btnFetch;
+
+	/** The btn add. */
 	private JButton btnAdd;
+
+	/** The btn update. */
 	private JButton btnUpdate;
+
+	/** The btn clear search. */
 	private JButton btnClearSearch;
+
+	/** The btn search order. */
 	private JButton btnSearchOrder;
+
+	/** The btn delete. */
 	private JButton btnDelete;
 
+	/** The show error not found lbl. */
 	private JLabel showErrorNotFoundLbl;
+
+	/** The txt selected date. */
 	private JTextField txtSelectedDate;
+
+	/** The show error. */
 	private JLabel showError;
+
+	/** The show search error lbl. */
 	private JLabel showSearchErrorLbl;
+
+	/** The order controller. */
 	private transient OrderController orderController;
+
+	/** The worker swing view. */
 	private WorkerSwingView workerSwingView;
 
-	// List of combo box
-
+	/** The cmb order category. */
 	private JComboBox<OrderCategory> cmbOrderCategory;
+
+	/** The cmb search by. */
 	private JComboBox<OrderSearchOptions> cmbSearchBy;
+
+	/** The cmb order status. */
 	private JComboBox<OrderStatus> cmbOrderStatus;
 
-	// List of orders and worker
+	/** The worker list model. */
 	private DefaultComboBoxModel<Worker> workerListModel;
+
+	/** The order list model. */
 	private DefaultListModel<CustomerOrder> orderListModel;
+
+	/** The list orders. */
 	private JList<CustomerOrder> listOrders;
+
+	/** The cmb worker. */
 	private JComboBox<Worker> cmbWorker;
 
+	/**
+	 * Sets the order controller.
+	 *
+	 * @param orderController the new order controller
+	 */
 	public void setOrderController(OrderController orderController) {
 		this.orderController = orderController;
 	}
 
+	/**
+	 * Gets the worker list model.
+	 *
+	 * @return the worker list model
+	 */
 	public DefaultComboBoxModel<Worker> getWorkerListModel() {
 		return workerListModel;
 	}
 
+	/**
+	 * Gets the order list model.
+	 *
+	 * @return the order list model
+	 */
 	public DefaultListModel<CustomerOrder> getOrderListModel() {
 		return orderListModel;
 	}
 
+	/**
+	 * Sets the worker swing view.
+	 *
+	 * @param workerSwingView the new worker swing view
+	 */
 	public void setWorkerSwingView(WorkerSwingView workerSwingView) {
 		this.workerSwingView = workerSwingView;
 	}
@@ -181,12 +253,9 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 			@Override
 			public void keyTyped(KeyEvent event) {
-				char character = event.getKeyChar();
-				if (!((character >= '0') && (character <= '9') || (character == KeyEvent.VK_BACK_SPACE))) {
-					getToolkit().beep();
-					event.consume();
-				}
+				checkCharacterIsNumber(event);
 			}
+
 		});
 
 		GridBagConstraints gbcTxtOrderId = new GridBagConstraints();
@@ -632,48 +701,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	}
 
-	private void openWorkerForm() {
-		workerSwingView.setVisible(true);
-	}
-
-	protected void handleButtonAndComboBoxStates() {
-		boolean isOrderIdEmpty = txtOrderId.getText().trim().isEmpty();
-		boolean isCustomerNameEmpty = txtCustomerName.getText().trim().isEmpty();
-		boolean isCustomerAddressEmpty = txtCustomerAddress.getText().trim().isEmpty();
-		boolean isCustomerPhoneNumberEmpty = txtCustomerPhone.getText().trim().isEmpty();
-		boolean isOrderDescriptionEmpty = txtOrderDescription.getText().trim().isEmpty();
-		boolean isAppointmentDateEmpty = txtSelectedDate.getText().trim().isEmpty();
-		boolean isOrderCategoryEmpty = cmbOrderCategory.getSelectedItem() == null;
-		boolean isOrderStatusEmpty = cmbOrderStatus.getSelectedItem() == null;
-		boolean isAssignedWorkerEmpty = cmbWorker.getSelectedItem() == null;
-		btnAdd.setEnabled(isOrderIdEmpty && !isCustomerNameEmpty && !isCustomerAddressEmpty
-				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
-				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
-
-		btnUpdate.setEnabled(!isOrderIdEmpty && !isCustomerNameEmpty && !isCustomerAddressEmpty
-				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
-				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
-
-		btnFetch.setEnabled(
-				!isOrderIdEmpty 
-				&& isCustomerNameEmpty 
-				&& isCustomerAddressEmpty
-				&& isCustomerPhoneNumberEmpty 
-				&& isOrderDescriptionEmpty 
-				&& isAppointmentDateEmpty
-				&& isOrderCategoryEmpty 
-				&& isOrderStatusEmpty 
-				&& isAssignedWorkerEmpty);
-
-	}
-
-	private void handleSearchAndClearButtonStates() {
-		boolean isSearchOrderTextEmpty = txtSearchOrder.getText().trim().isEmpty();
-		boolean isSearchOptionEmpty = cmbSearchBy.getSelectedItem() == null;
-		btnSearchOrder.setEnabled(!isSearchOrderTextEmpty && !isSearchOptionEmpty);
-		btnClearSearch.setEnabled(!isSearchOrderTextEmpty && !isSearchOptionEmpty);
-	}
-
 	@Override
 	public void showAllOrder(List<CustomerOrder> order) {
 		resetAllSearchStates();
@@ -754,74 +781,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	}
 
-	private void resetAllSearchStates() {
-		txtSearchOrder.setText(" ");
-		cmbSearchBy.setSelectedItem(null);
-	}
-
-	private void resetErrorLabelAndClearComboBoxSelection() {
-		cmbWorker.setSelectedItem(null);
-		cmbOrderStatus.setSelectedItem(null);
-		cmbOrderCategory.setSelectedItem(null);
-		resetErrorLabels();
-	}
-
-	private void resetErrorLabels() {
-		showError.setText(" ");
-		showErrorNotFoundLbl.setText(" ");
-		showSearchErrorLbl.setText(" ");
-	}
-
-	private void deleteOrderMethod() {
-		orderController.deleteOrder(listOrders.getSelectedValue());
-	}
-
-	private void searchOrderByTextMethod() {
-		String searchText = txtSearchOrder.getText();
-		OrderSearchOptions searchOption = (OrderSearchOptions) cmbSearchBy.getSelectedItem();
-		orderController.searchOrder(searchText, searchOption);
-	}
-
-	private void fetchOrderMethod() {
-		CustomerOrder order = new CustomerOrder();
-		Long id = Long.parseLong(txtOrderId.getText());
-
-		order.setOrderId(id);
-		orderController.fetchOrderById(order);
-	}
-
-	private void updateOrderMethod() {
-		CustomerOrder order = new CustomerOrder();
-		Long id = Long.parseLong(txtOrderId.getText());
-
-		order.setOrderId(id);
-		order.setCustomerName(txtCustomerName.getText());
-		order.setCustomerAddress(txtCustomerAddress.getText());
-		order.setCustomerPhoneNumber(txtCustomerPhone.getText());
-		order.setOrderDescription(txtOrderDescription.getText());
-		order.setAppointmentDate(txtSelectedDate.getText());
-		order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
-		order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
-		order.setWorker((Worker) cmbWorker.getSelectedItem());
-		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
-	}
-
-	private void addOrderMethod() {
-		new Thread(() -> {
-			CustomerOrder order = new CustomerOrder();
-			order.setCustomerName(txtCustomerName.getText());
-			order.setCustomerAddress(txtCustomerAddress.getText());
-			order.setCustomerPhoneNumber(txtCustomerPhone.getText());
-			order.setOrderDescription(txtOrderDescription.getText());
-			order.setAppointmentDate(txtSelectedDate.getText());
-			order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
-			order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
-			order.setWorker((Worker) cmbWorker.getSelectedItem());
-			orderController.createOrUpdateOrder(order, OperationType.ADD);
-		}).start();
-
-	}
-
 	@Override
 	public void resetAllFields() {
 		txtOrderId.setText("\b");
@@ -838,6 +797,155 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 		orderController.allOrders();
 
+	}
+
+	/**
+	 * Reset all search states.
+	 */
+	private void resetAllSearchStates() {
+		txtSearchOrder.setText(" ");
+		cmbSearchBy.setSelectedItem(null);
+	}
+
+	/**
+	 * Reset error label and clear combo box selection.
+	 */
+	private void resetErrorLabelAndClearComboBoxSelection() {
+		cmbWorker.setSelectedItem(null);
+		cmbOrderStatus.setSelectedItem(null);
+		cmbOrderCategory.setSelectedItem(null);
+		resetErrorLabels();
+	}
+
+	/**
+	 * Reset error labels.
+	 */
+	private void resetErrorLabels() {
+		showError.setText(" ");
+		showErrorNotFoundLbl.setText(" ");
+		showSearchErrorLbl.setText(" ");
+	}
+
+	/**
+	 * Delete order method.
+	 */
+	private void deleteOrderMethod() {
+		orderController.deleteOrder(listOrders.getSelectedValue());
+	}
+
+	/**
+	 * Search order by text method.
+	 */
+	private void searchOrderByTextMethod() {
+		String searchText = txtSearchOrder.getText();
+		OrderSearchOptions searchOption = (OrderSearchOptions) cmbSearchBy.getSelectedItem();
+		orderController.searchOrder(searchText, searchOption);
+	}
+
+	/**
+	 * Fetch order method.
+	 */
+	private void fetchOrderMethod() {
+		CustomerOrder order = new CustomerOrder();
+		Long id = Long.parseLong(txtOrderId.getText());
+
+		order.setOrderId(id);
+		orderController.fetchOrderById(order);
+	}
+
+	/**
+	 * Update order method.
+	 */
+	private void updateOrderMethod() {
+		CustomerOrder order = new CustomerOrder();
+		Long id = Long.parseLong(txtOrderId.getText());
+
+		order.setOrderId(id);
+		order.setCustomerName(txtCustomerName.getText());
+		order.setCustomerAddress(txtCustomerAddress.getText());
+		order.setCustomerPhoneNumber(txtCustomerPhone.getText());
+		order.setOrderDescription(txtOrderDescription.getText());
+		order.setAppointmentDate(txtSelectedDate.getText());
+		order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
+		order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
+		order.setWorker((Worker) cmbWorker.getSelectedItem());
+		orderController.createOrUpdateOrder(order, OperationType.UPDATE);
+	}
+
+	/**
+	 * Adds the order method.
+	 */
+	private void addOrderMethod() {
+		new Thread(() -> {
+			CustomerOrder order = new CustomerOrder();
+			order.setCustomerName(txtCustomerName.getText());
+			order.setCustomerAddress(txtCustomerAddress.getText());
+			order.setCustomerPhoneNumber(txtCustomerPhone.getText());
+			order.setOrderDescription(txtOrderDescription.getText());
+			order.setAppointmentDate(txtSelectedDate.getText());
+			order.setOrderCategory((OrderCategory) cmbOrderCategory.getSelectedItem());
+			order.setOrderStatus((OrderStatus) cmbOrderStatus.getSelectedItem());
+			order.setWorker((Worker) cmbWorker.getSelectedItem());
+			orderController.createOrUpdateOrder(order, OperationType.ADD);
+		}).start();
+
+	}
+
+	/**
+	 * Check character is number.
+	 *
+	 * @param event the event
+	 */
+	private void checkCharacterIsNumber(KeyEvent event) {
+		char character = event.getKeyChar();
+		if (!((character >= '0') && (character <= '9') || (character == KeyEvent.VK_BACK_SPACE))) {
+			getToolkit().beep();
+			event.consume();
+		}
+	}
+
+	/**
+	 * Open worker form.
+	 */
+	private void openWorkerForm() {
+		workerSwingView.setVisible(true);
+	}
+
+	/**
+	 * Handle button and combo box states.
+	 */
+	protected void handleButtonAndComboBoxStates() {
+		boolean isOrderIdEmpty = txtOrderId.getText().trim().isEmpty();
+		boolean isCustomerNameEmpty = txtCustomerName.getText().trim().isEmpty();
+		boolean isCustomerAddressEmpty = txtCustomerAddress.getText().trim().isEmpty();
+		boolean isCustomerPhoneNumberEmpty = txtCustomerPhone.getText().trim().isEmpty();
+		boolean isOrderDescriptionEmpty = txtOrderDescription.getText().trim().isEmpty();
+		boolean isAppointmentDateEmpty = txtSelectedDate.getText().trim().isEmpty();
+		boolean isOrderCategoryEmpty = cmbOrderCategory.getSelectedItem() == null;
+		boolean isOrderStatusEmpty = cmbOrderStatus.getSelectedItem() == null;
+		boolean isAssignedWorkerEmpty = cmbWorker.getSelectedItem() == null;
+		btnAdd.setEnabled(isOrderIdEmpty && !isCustomerNameEmpty && !isCustomerAddressEmpty
+				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
+				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
+
+		btnUpdate.setEnabled(!isOrderIdEmpty && !isCustomerNameEmpty && !isCustomerAddressEmpty
+				&& !isCustomerPhoneNumberEmpty && !isOrderDescriptionEmpty && !isAppointmentDateEmpty
+				&& !isOrderCategoryEmpty && !isOrderStatusEmpty && !isAssignedWorkerEmpty);
+
+		btnFetch.setEnabled(!isOrderIdEmpty && isCustomerNameEmpty && isCustomerAddressEmpty
+				&& isCustomerPhoneNumberEmpty && isOrderDescriptionEmpty && isAppointmentDateEmpty
+				&& isOrderCategoryEmpty && isOrderStatusEmpty && isAssignedWorkerEmpty);
+
+	}
+
+	/**
+	 * Handle search and clear button states.
+	 */
+	private void handleSearchAndClearButtonStates() {
+		boolean isSearchOrderTextEmpty = txtSearchOrder.getText().trim().isEmpty();
+		boolean isSearchOptionEmpty = cmbSearchBy.getSelectedItem() == null;
+		btnSearchOrder.setEnabled(!isSearchOrderTextEmpty && !isSearchOptionEmpty);
+		btnClearSearch.setEnabled(!isSearchOrderTextEmpty && !isSearchOptionEmpty);
 	}
 
 }

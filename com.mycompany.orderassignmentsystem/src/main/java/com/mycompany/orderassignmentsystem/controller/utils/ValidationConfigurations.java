@@ -3,8 +3,6 @@
  */
 package com.mycompany.orderassignmentsystem.controller.utils;
 
-import java.time.LocalDate;
-
 import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
 import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 
@@ -57,15 +55,6 @@ public interface ValidationConfigurations {
 	 * @throws IllegalArgumentException if validation fails
 	 */
 	public String validatePhoneNumber(String phoneNumber);
-
-	/**
-	 * Validates a date.
-	 *
-	 * @param dateTime the date to validate
-	 * @return the validated date
-	 * @throws IllegalArgumentException if validation fails
-	 */
-	public LocalDate validateDate(LocalDate dateTime);
 
 	/**
 	 * Validates a string date.

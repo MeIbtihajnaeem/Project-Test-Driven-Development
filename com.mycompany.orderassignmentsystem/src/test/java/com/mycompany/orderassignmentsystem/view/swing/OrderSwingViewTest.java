@@ -1,3 +1,26 @@
+/*
+ * Unit tests for the OrderSwingView class with AssertJ-Swing for GUI testing.
+ *
+ * These tests ensure that the OrderSwingView class correctly interacts with the user 
+ * interface components and delegates actions to the OrderController.
+ *
+ * The setup method initialises the GUI components and mocks necessary dependencies. 
+ * The teardown method cleans up resources.
+ *
+ * Test cases include:
+ * - Initial state verifications of labels, text fields, combo boxes, and buttons.
+ * - Enabling/disabling the Add, Update, Fetch, Search, Delete and Clear buttons based on user input.
+ * - Delegation of user actions to the OrderController such as adding, updating, fetching, 
+ *   searching, and deleting orders.
+ * - Displaying orders and workers in the UI components like lists and combo boxes.
+ * - Showing error messages in the error labels.
+ *
+ * @see OrderSwingView
+ * @see OrderController
+ * @see CustomerOrder
+ * @see Worker
+ */
+
 package com.mycompany.orderassignmentsystem.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,21 +52,104 @@ import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 import com.mycompany.orderassignmentsystem.model.CustomerOrder;
 import com.mycompany.orderassignmentsystem.model.Worker;
 
+/**
+ * The Class OrderSwingViewTest.
+ */
 @RunWith(GUITestRunner.class)
 
 public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
+	/** The window. */
 	private FrameFixture window;
 
+	/** The order swing view. */
 	private OrderSwingView orderSwingView;
+
+	/** The order controller. */
 	@Mock
 	private OrderController orderController;
 
+	/** The worker view. */
 	@Mock
 	private WorkerSwingView workerView;
 
+	/** The closeable. */
 	private AutoCloseable closeable;
 
+	/** The order id 1. */
+	private long ORDER_ID_1 = 1l;
+
+	/** The order id 2. */
+	private long ORDER_ID_2 = 2l;
+
+	/** The customer name 1. */
+	private String CUSTOMER_NAME_1 = "Jhon";
+
+	/** The customer phone 1. */
+	private String CUSTOMER_PHONE_1 = "3401372671";
+
+	/** The customer address 1. */
+	private String CUSTOMER_ADDRESS_1 = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+	/** The order appointment date 1. */
+	private String ORDER_APPOINTMENT_DATE_1 = "12-12-2024";
+
+	/** The order description 1. */
+	private String ORDER_DESCRIPTION_1 = "Please be on time";
+
+	/** The order category 1. */
+	private OrderCategory ORDER_CATEGORY_1 = OrderCategory.PLUMBER;
+
+	/** The order status 1. */
+	private OrderStatus ORDER_STATUS_1 = OrderStatus.PENDING;
+
+	/** The customer name 2. */
+	private String CUSTOMER_NAME_2 = "Alic";
+
+	/** The customer phone 2. */
+	private String CUSTOMER_PHONE_2 = "3401372672";
+
+	/** The customer address 2. */
+	private String CUSTOMER_ADDRESS_2 = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+	/** The order appointment date 2. */
+	private String ORDER_APPOINTMENT_DATE_2 = "12-12-2024";
+
+	/** The order description 2. */
+	private String ORDER_DESCRIPTION_2 = "Please bring tape";
+
+	/** The order category 2. */
+	private OrderCategory ORDER_CATEGORY_2 = OrderCategory.PLUMBER;
+
+	/** The order status 2. */
+	private OrderStatus ORDER_STATUS_2 = OrderStatus.PENDING;
+
+	/** The worker 1. */
+	private Worker worker1 = new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER);
+
+	/** The worker 2. */
+	private Worker worker2 = new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN);
+
+	/** The worker 3. */
+	private Worker worker3 = new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN);
+
+	/** The selecting category index. */
+	private int SELECTING_CATEGORY_INDEX = 0;
+
+	/** The selecting status index. */
+	private int SELECTING_STATUS_INDEX = 0;
+
+	/** The selecting worker index. */
+	private int SELECTING_WORKER_INDEX = 0;
+
+	/** The selecting search option index. */
+	private int SELECTING_SEARCH_OPTION_INDEX = 1;
+
+	/**
+	 * On set up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Override
 	protected void onSetUp() throws Exception {
 		closeable = MockitoAnnotations.openMocks(this);
@@ -59,11 +165,19 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.show();
 	}
 
+	/**
+	 * On tear down.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Override
 	protected void onTearDown() throws Exception {
 		closeable.close();
 	}
 
+	/**
+	 * Test controls initial states.
+	 */
 	@Test
 	@GUITest
 	public void testControlsInitialStates() {
@@ -115,137 +229,116 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
+	/**
+	 * Test when order id is empty customer name customer address customer phone
+	 * order description appointment date order category order status worker is not
+	 * empty and add button should be enable.
+	 */
 	@Test
 	public void testWhenOrderIdIsEmptyCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsNotEmptyAndAddButtonShouldBeEnable() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
-
 		});
-
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12/12/20224";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
 		window.textBox("txtOrderId").enterText(" "); // Make sure orderId is empty
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 		window.button(JButtonMatcher.withName("btnAdd")).requireEnabled();
 	}
 
+	/**
+	 * Test when order id customer name customer address customer phone order
+	 * description appointment date order category order status worker is not empty
+	 * and add button should be disable.
+	 */
 	@Test
 	public void testWhenOrderIdCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsNotEmptyAndAddButtonShouldBeDisable() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
 		});
-		Long orderId = 1l;
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12/12/20224";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		window.textBox("txtOrderId").enterText(orderId.toString());
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
 	}
 
+	/**
+	 * Test when order id customer name customer address customer phone order
+	 * description appointment date order category order status worker is not empty
+	 * and update button should be enable.
+	 */
 	@Test
 	public void testWhenOrderIdCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsNotEmptyAndUpdateButtonShouldBeEnable() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
 		});
-		Long orderId = 1l;
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12/12/20224";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		window.textBox("txtOrderId").enterText(orderId.toString());
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 		window.button(JButtonMatcher.withName("btnUpdate")).requireEnabled();
 	}
 
+	/**
+	 * Test when order id is empty but customer name customer address customer phone
+	 * order description appointment date order category order status worker is not
+	 * empty and update button should be disable.
+	 */
 	@Test
 	public void testWhenOrderIdIsEmptyButCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsNotEmptyAndUpdateButtonShouldBeDisable() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
 		});
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12/12/20224";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
 	}
 
+	/**
+	 * Test when order id is not empty but customer name customer address customer
+	 * phone order description appointment date order category order status worker
+	 * is empty and fetch button should be enable.
+	 */
 	@Test
 	public void testWhenOrderIdIsNotEmptyButCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsEmptyAndFetchButtonShouldBeEnable() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
 		});
 		Long orderId = 1l;
@@ -255,12 +348,10 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.textBox("txtCustomerPhone").enterText("a");
 		window.textBox("txtOrderDescription").enterText("a");
 		window.textBox("txtSelectedDate").enterText("a");
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 		window.textBox("txtCustomerName").deleteText();
 		window.textBox("txtCustomerAddress").deleteText();
 		window.textBox("txtCustomerPhone").deleteText();
@@ -270,6 +361,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.comboBox("cmbOrderStatus").clearSelection();
 		window.comboBox("cmbWorker").clearSelection();
 		window.button(JButtonMatcher.withName("btnFetch")).requireEnabled();
+
 		window.textBox("txtCustomerName").requireText("");
 		window.textBox("txtCustomerAddress").requireText("");
 		window.textBox("txtCustomerPhone").requireText("");
@@ -281,37 +373,36 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
+	/**
+	 * Test when order id is empty but customer name customer address customer phone
+	 * order description appointment date order category order status worker is not
+	 * empty and fetch button should be disabled.
+	 */
 	@Test
 	public void testWhenOrderIdIsEmptyButCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerIsNotEmptyAndFetchButtonShouldBeDisabled() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
 		});
-		String orderId = "";
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12/12/20224";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		window.textBox("txtOrderId").enterText(orderId);
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
 	}
 
+	/**
+	 * Test when search string and search option is not empty and search button
+	 * should be enabled.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionIsNotEmptyAndSearchButtonShouldBeEnabled() {
 		window.textBox("txtSearchOrder").enterText("Naeem");
@@ -319,18 +410,30 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireEnabled();
 	}
 
+	/**
+	 * Test when search string and search option is empty and search button should
+	 * be disabled.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionIsEmptyAndSearchButtonShouldBeDisabled() {
 		window.textBox("txtSearchOrder").enterText(" ");
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
 	}
 
+	/**
+	 * Test when search string and search options is empty and clear worker button
+	 * should be disabled.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionsIsEmptyAndClearWorkerButtonShouldBeDisabled() {
 		window.textBox("txtSearchOrder").enterText(" ");
 		window.button(JButtonMatcher.withName("btnClearSearch")).requireDisabled();
 	}
 
+	/**
+	 * Test when search string and search options is not empty and clear worker
+	 * button should be enabled.
+	 */
 	@Test
 	public void testWhenSearchStringAndSearchOptionsIsNotEmptyAndClearWorkerButtonShouldBeEnabled() {
 		window.textBox("txtSearchOrder").enterText("Naeem");
@@ -338,14 +441,17 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnClearSearch")).requireEnabled();
 	}
 
+	/**
+	 * Test when either customer name customer address customer phone order
+	 * description appointment date order category order status worker are blank and
+	 * add button should be disable.
+	 */
 	@Test
 	public void testWhenEitherCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerAreBlankAndAddButtonShouldBeDisable() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
 		});
 		JTextComponentFixture orderId = window.textBox("txtOrderId");
@@ -371,6 +477,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
+
 		orderId.enterText("1");
 		name.enterText("name");
 		address.enterText("address");
@@ -384,6 +491,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
+
 		orderId.enterText("\b");
 		name.enterText(" ");
 		address.enterText(" ");
@@ -393,15 +501,19 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnAdd")).requireDisabled();
 	}
 
+	/**
+	 * Test when either order id customer name customer address customer phone order
+	 * description appointment date order category order status worker are blank and
+	 * update button should be disable.
+	 */
 	@Test
 	public void testWhenEitherOrderIdCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerAreBlankAndUpdateButtonShouldBeDisable() {
 		// sadf
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
+
 			orderSwingView.resetAllFields();
 		});
 		JTextComponentFixture orderId = window.textBox("txtOrderId");
@@ -424,17 +536,18 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
+
 		orderId.enterText("1");
 		name.enterText("name");
 		address.enterText("address");
 		phone.enterText("phone");
 		description.enterText("description");
 		txtDate.enterText("12/12/2024");
-
 		category.clearSelection();
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
+
 		orderId.enterText("\b");
 		name.enterText(" ");
 		address.enterText(" ");
@@ -447,14 +560,17 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnUpdate")).requireDisabled();
 	}
 
+	/**
+	 * Test when either order id customer name customer address customer phone order
+	 * description appointment date order category order status worker are blank and
+	 * fetch button should be disable.
+	 */
 	@Test
 	public void testWhenEitherOrderIdCustomerNameCustomerAddressCustomerPhoneOrderDescriptionAppointmentDateOrderCategoryOrderStatusWorkerAreBlankAndFetchButtonShouldBeDisable() {
 		GuiActionRunner.execute(() -> {
-			orderSwingView.getWorkerListModel().addElement(new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(2l, "Bob", "123456780", OrderCategory.ELECTRICIAN));
-			orderSwingView.getWorkerListModel()
-					.addElement(new Worker(3l, "Alic", "123456781", OrderCategory.ELECTRICIAN));
+			orderSwingView.getWorkerListModel().addElement(worker1);
+			orderSwingView.getWorkerListModel().addElement(worker2);
+			orderSwingView.getWorkerListModel().addElement(worker3);
 			orderSwingView.resetAllFields();
 		});
 		JTextComponentFixture orderId = window.textBox("txtOrderId");
@@ -480,6 +596,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
+
 		orderId.enterText("1l");
 		name.enterText("name");
 		address.enterText("address");
@@ -493,6 +610,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		status.clearSelection();
 		worker.clearSelection();
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
+
 		orderId.enterText("\b");
 		name.enterText(" ");
 		address.enterText(" ");
@@ -502,6 +620,10 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnFetch")).requireDisabled();
 	}
 
+	/**
+	 * Test when worker id only numbers then fetch button should be fetch button
+	 * enabled.
+	 */
 	@Test
 	public void testWhenWorkerIdOnlyNumbersThenFetchButtonShouldBeFetchButtonEnabled() {
 		JTextComponentFixture orderId = window.textBox("txtOrderId");
@@ -519,6 +641,10 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	}
 
+	/**
+	 * Test when either search string or search option are blank then search button
+	 * should be disabled.
+	 */
 	@Test
 	public void testWhenEitherSearchStringOrSearchOptionAreBlankThenSearchButtonShouldBeDisabled() {
 		JTextComponentFixture txtSearch = window.textBox("txtSearchOrder");
@@ -526,14 +652,20 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		JComboBoxFixture combo = window.comboBox("cmbSearchBy");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
+
 		txtSearch.enterText("1l");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
+
 		txtSearch.setText(" ");
 		combo.selectItem(0);
 		window.button(JButtonMatcher.withName("btnSearchOrder")).requireDisabled();
 	}
 
+	/**
+	 * Test when either search string or search option are blank then clear search
+	 * button should be disabled.
+	 */
 	@Test
 	public void testWhenEitherSearchStringOrSearchOptionAreBlankThenClearSearchButtonShouldBeDisabled() {
 		JTextComponentFixture txtSearch = window.textBox("txtSearchOrder");
@@ -541,19 +673,25 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		JComboBoxFixture combo = window.comboBox("cmbSearchBy");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnClearSearch")).requireDisabled();
+
 		txtSearch.enterText("1l");
 		combo.clearSelection();
 		window.button(JButtonMatcher.withName("btnClearSearch")).requireDisabled();
+
 		txtSearch.setText(" ");
 		combo.selectItem(0);
 		window.button(JButtonMatcher.withName("btnClearSearch")).requireDisabled();
 	}
 
+	/**
+	 * Test delete button should be enabled only when A order is selected.
+	 */
 	@Test
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAOrderIsSelected() {
 		JListFixture list = window.list("listOrders");
 		JButtonFixture deleteButton = window.button(JButtonMatcher.withName("btnDelete"));
 		CustomerOrder order = new CustomerOrder();
+
 		GuiActionRunner.execute(() -> {
 			orderSwingView.getOrderListModel().addElement(order);
 		});
@@ -565,30 +703,37 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		deleteButton.requireDisabled();
 	}
 
+	/**
+	 * Tests show all orders add order description to the list orders.
+	 */
 	@Test
 	public void testsShowAllOrdersAddOrderDescriptionToTheListOrders() {
-		String appointmentDate = "12-12-2024";
 
-		CustomerOrder order1 = new CustomerOrder(1l, "Jhon", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
-		CustomerOrder order2 = new CustomerOrder(2l, "Alic", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, new Worker());
+		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> orderSwingView.showAllOrder(Arrays.asList(order1, order2)));
 		String[] listContents = window.list("listOrders").contents();
 		assertThat(listContents).containsExactly(order1.toString(), order2.toString());
 	}
 
+	/**
+	 * Tests show all workers add worker description to the worker combo box.
+	 */
 	@Test
 	public void testsShowAllWorkersAddWorkerDescriptionToTheWorkerComboBox() {
-		Worker worker1 = new Worker(1l, "John", "3401372678", OrderCategory.PLUMBER);
-		Worker worker2 = new Worker(2l, "Bob", "3401372678", OrderCategory.ELECTRICIAN);
 
 		GuiActionRunner.execute(() -> orderSwingView.showAllWorkers(Arrays.asList(worker1, worker2)));
 		String[] listContents = window.comboBox("cmbWorker").contents();
 		assertThat(listContents).containsExactly(worker1.toString(), worker2.toString());
 	}
 
+	/**
+	 * Test show error should show the message in the error label.
+	 */
 	@Test
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
 		CustomerOrder order = new CustomerOrder();
@@ -596,6 +741,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showError").requireText("error message: " + order);
 	}
 
+	/**
+	 * Test show search error should show the message in the error label.
+	 */
 	@Test
 	public void testShowSearchErrorShouldShowTheMessageInTheErrorLabel() {
 		String searchText = "1l";
@@ -603,6 +751,9 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showSearchErrorLbl").requireText("error message: " + searchText);
 	}
 
+	/**
+	 * Test show not found error should show the message in the error label.
+	 */
 	@Test
 	public void testShowNotFoundErrorShouldShowTheMessageInTheErrorLabel() {
 		CustomerOrder order = new CustomerOrder();
@@ -610,24 +761,30 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showErrorNotFoundLbl").requireText("error message: " + order);
 	}
 
+	/**
+	 * Test order added should add the order to the list and reset the error label.
+	 */
 	@Test
 	public void testOrderAddedShouldAddTheOrderToTheListAndResetTheErrorLabel() {
-		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(1l);
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
+
+		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
 		GuiActionRunner.execute(() -> orderSwingView.orderAdded(order));
 		String[] listContents = window.list("listOrders").contents();
 		assertThat(listContents).containsExactly(order.toString());
 		window.label("showError").requireText(" ");
 	}
 
+	/**
+	 * Test order modified should modify and add the order to the list and reset the
+	 * error label.
+	 */
 	@Test
 	public void testOrderModifiedShouldModifyAndAddTheOrderToTheListAndResetTheErrorLabel() {
-		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(1l);
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
+		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
 		GuiActionRunner.execute(() -> orderSwingView.orderAdded(order));
 		order.setOrderStatus(OrderStatus.CANCELLED);
 		GuiActionRunner.execute(() -> orderSwingView.orderModified(order));
@@ -636,12 +793,15 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showError").requireText(" ");
 	}
 
+	/**
+	 * Test order modified should not modify and add the order to the list and reset
+	 * the error label.
+	 */
 	@Test
 	public void testOrderModifiedShouldNotModifyAndAddTheOrderToTheListAndResetTheErrorLabel() {
-		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(1l);
-		order.setOrderCategory(OrderCategory.PLUMBER);
-		order.setOrderStatus(OrderStatus.PENDING);
+		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
 		GuiActionRunner.execute(() -> orderSwingView.orderAdded(order));
 		CustomerOrder newOrder = new CustomerOrder();
 		newOrder.setOrderId(2l);
@@ -653,16 +813,18 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showError").requireText(" ");
 	}
 
+	/**
+	 * Test order fetch should fetch the order to the fields and reset the error
+	 * label.
+	 */
 	@Test
 	public void testOrderFetchShouldFetchTheOrderToTheFieldsAndResetTheErrorLabel() {
-		Worker worker = new Worker();
-		worker.setWorkerId(1l);
-		worker.setWorkerName("Alic");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		CustomerOrder order = new CustomerOrder(1l, "Jhon", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
+
+		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
 		GuiActionRunner.execute(() -> {
-			orderSwingView.showAllWorkers(Arrays.asList(worker));
+			orderSwingView.showAllWorkers(Arrays.asList(worker1));
 			orderSwingView.showFetchedOrder(order);
 
 		});
@@ -689,12 +851,17 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showError").requireText(" ");
 	}
 
+	/**
+	 * Test order removed should remove the order to the list and reset the error
+	 * label.
+	 */
 	@Test
 	public void testOrderRemovedShouldRemoveTheOrderToTheListAndResetTheErrorLabel() {
-		CustomerOrder order1 = new CustomerOrder(1l, "Jhon", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
-		CustomerOrder order2 = new CustomerOrder(2l, "Alic", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, new Worker());
+		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> {
 			orderSwingView.orderAdded(order1);
@@ -707,12 +874,17 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showError").requireText(" ");
 	}
 
+	/**
+	 * Test order search should modify and show only searched order to the list and
+	 * reset the error label.
+	 */
 	@Test
 	public void testOrderSearchShouldModifyAndShowOnlySearchedOrderToTheListAndResetTheErrorLabel() {
-		CustomerOrder order1 = new CustomerOrder(1l, "Jhon", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
-		CustomerOrder order2 = new CustomerOrder(2l, "Alic", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, new Worker());
+		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> {
 			orderSwingView.orderAdded(order1);
@@ -725,139 +897,134 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.label("showSearchErrorLbl").requireText(" ");
 	}
 
+	/**
+	 * Test manage worker button shows worker swing view.
+	 */
 	@Test
 	public void testManageWorkerButtonShowsWorkerSwingView() {
 		window.button(JButtonMatcher.withName("btnManageWorker")).click();
 		verify(workerView).setVisible(true);
 	}
 
+	/**
+	 * Test add button should delegate to order controller create or update order.
+	 */
 	@Test
 	public void testAddButtonShouldDelegateToOrderControllerCreateOrUpdateOrder() {
-		Worker worker = new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER);
 
 		GuiActionRunner.execute(() -> {
-			orderSwingView.showAllWorkers(Arrays.asList(worker));
+			orderSwingView.showAllWorkers(Arrays.asList(worker1));
 		});
 
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
-
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 
 		window.button(JButtonMatcher.withName("btnAdd")).click();
 
-		CustomerOrder order = new CustomerOrder(null, customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, category, status, worker);
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
 		verify(orderController).createOrUpdateOrder(order, OperationType.ADD);
 	}
 
+	/**
+	 * Test update button should delegate to order controller create or update
+	 * order.
+	 */
 	@Test
 	public void testUpdateButtonShouldDelegateToOrderControllerCreateOrUpdateOrder() {
-		Worker worker = new Worker(1l, "Jhon", "123456789", OrderCategory.PLUMBER);
 
 		GuiActionRunner.execute(() -> {
-			orderSwingView.showAllWorkers(Arrays.asList(worker));
+			orderSwingView.showAllWorkers(Arrays.asList(worker1));
 		});
-		Long orderId = 1l;
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(statusIndex);
 
-		window.textBox("txtOrderId").enterText(orderId.toString());
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 
-		CustomerOrder order = new CustomerOrder(orderId, customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, category, status, worker);
+		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
 		verify(orderController).createOrUpdateOrder(order, OperationType.UPDATE);
 	}
 
+	/**
+	 * Test fetch button should delegate to order controller fetch order by id.
+	 */
 	@Test
 	public void testFetchButtonShouldDelegateToOrderControllerFetchOrderById() {
-		Long orderId = 1l;
 
-		window.textBox("txtOrderId").enterText(orderId.toString());
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
 
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 		CustomerOrder order = new CustomerOrder();
-		order.setOrderId(orderId);
+		order.setOrderId(ORDER_ID_1);
 
 		verify(orderController).fetchOrderById(order);
 
 	}
 
+	/**
+	 * Test search order button should delegate to worker controller search order by
+	 * options.
+	 */
 	@Test
 	public void testSearchOrderButtonShouldDelegateToWorkerControllerSearchOrderByOptions() {
-		Long orderId = 1l;
-		int searchOptionIndex = 1;
 		OrderSearchOptions searchOption = (OrderSearchOptions) window.comboBox("cmbSearchBy").target()
-				.getItemAt(searchOptionIndex);
+				.getItemAt(SELECTING_SEARCH_OPTION_INDEX);
 
-		window.textBox("txtSearchOrder").enterText(orderId.toString());
-		window.comboBox("cmbSearchBy").selectItem(searchOptionIndex);
+		window.textBox("txtSearchOrder").enterText(Long.toString(ORDER_ID_1));
+		window.comboBox("cmbSearchBy").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 
 		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
 
-		verify(orderController).searchOrder(orderId.toString(), searchOption);
+		verify(orderController).searchOrder(Long.toString(ORDER_ID_1), searchOption);
 
 	}
 
+	/**
+	 * Test clear search button should delegate to order controller show all orders.
+	 */
 	@Test
 	public void testClearSearchButtonShouldDelegateToOrderControllerShowAllOrders() {
-		Long orderId = 1l;
 
-		CustomerOrder order = new CustomerOrder(1l, "Jhon", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
+		CustomerOrder order = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
 
 		GuiActionRunner.execute(() -> {
 			orderSwingView.orderAdded(order);
 		});
-		int searchOptionIndex = 1;
-		window.textBox("txtSearchOrder").enterText(orderId.toString());
-		window.comboBox("cmbSearchBy").selectItem(searchOptionIndex);
+		window.textBox("txtSearchOrder").enterText(Long.toString(ORDER_ID_1));
+		window.comboBox("cmbSearchBy").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 
 		window.button(JButtonMatcher.withName("btnClearSearch")).click();
 		verify(orderController).allOrders();
 	}
 
+	/**
+	 * Test delete button should delegate to order controller remove order.
+	 */
 	@Test
 	public void testDeleteButtonShouldDelegateToOrderControllerRemoveOrder() {
-		String appointmentDate = "12-12-2024";
 
-		CustomerOrder order1 = new CustomerOrder(1l, "Jhon", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, new Worker());
-		CustomerOrder order2 = new CustomerOrder(2l, "Alic", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, new Worker());
+		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker1);
+
+		CustomerOrder order2 = new CustomerOrder(ORDER_ID_2, CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker2);
 
 		GuiActionRunner.execute(() -> {
 			orderSwingView.orderAdded(order1);

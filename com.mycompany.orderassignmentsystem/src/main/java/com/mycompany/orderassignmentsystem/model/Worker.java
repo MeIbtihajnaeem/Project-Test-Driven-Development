@@ -57,6 +57,18 @@ public class Worker {
 	}
 
 	/**
+	 * Instantiates a new worker.
+	 *
+	 * @param workerId       the worker id
+	 * @param workerCategory the worker category
+	 */
+	public Worker(Long workerId, OrderCategory workerCategory) {
+		super();
+		this.workerId = workerId;
+		this.workerCategory = workerCategory;
+	}
+
+	/**
 	 * Parameterised constructor.
 	 *
 	 * @param workerId          the worker id
@@ -72,6 +84,13 @@ public class Worker {
 		this.workerCategory = workerCategory;
 	}
 
+	/**
+	 * Instantiates a new worker.
+	 *
+	 * @param workerName        the worker name
+	 * @param workerPhoneNumber the worker phone number
+	 * @param workerCategory    the worker category
+	 */
 	public Worker(String workerName, String workerPhoneNumber, OrderCategory workerCategory) {
 		super();
 
@@ -173,6 +192,7 @@ public class Worker {
 	/**
 	 * Generates the hash code for the Worker object.
 	 *
+	 * @param obj the obj
 	 * @return the hash code value
 	 */
 
@@ -186,11 +206,21 @@ public class Worker {
 		return Objects.equals(workerId, other.workerId);
 	}
 
+	/**
+	 * Hash code.
+	 *
+	 * @return the int
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(workerId);
 	}
 
+	/**
+	 * To string.
+	 *
+	 * @return the string
+	 */
 	@Override
 	public String toString() {
 		return this.workerId + ") " + this.workerName + " -- " + this.workerCategory + " -- " + this.workerPhoneNumber;

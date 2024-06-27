@@ -12,6 +12,14 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<logback-classic-version>1.2.6</logback-classic-version>
+		<slf4j-api-version>1.7.32</slf4j-api-version>
+		<postgres.user>mavenUser</postgres.user>
+		<postgres.password>maven1234</postgres.password>
+		<postgres.dbName>orderWorkerTestDb</postgres.dbName>
+		<postgres.server>testContainer</postgres.server>
+		<testcontainers-version>1.19.8</testcontainers-version>
+		<docker-java-version>3.3.6</docker-java-version>
 		<picocli-version>4.6.1</picocli-version>
 		<h2-version46>2.2.224</h2-version46>
 		<awaitility-version>4.0.2</awaitility-version>
@@ -25,9 +33,7 @@
 		<log4j.version>2.13.0</log4j.version>
 		<postgresql.version>42.7.2</postgresql.version>
 		<assertj-swing-junit-version>3.17.1</assertj-swing-junit-version>
-		<postgres.user>testUser</postgres.user>
-		<postgres.password>test123</postgres.password>
-		<postgres.dbName>orderWorkerTestDb</postgres.dbName>
+
 		<cucumber.version>5.5.0</cucumber.version>
 		<sonar.issue.ignore.multicriteria>
 			e11,e12,e13,e14,e15,e16,e17,e18,e19,e20,e21,e22</sonar.issue.ignore.multicriteria>
@@ -146,7 +152,35 @@
 	</properties>
 
 	<dependencies>
+		<!-- Dependency to fix the issue of test containers-->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-api-version}</version>
+		</dependency>
 
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback-classic-version}</version>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/org.testcontainers/testcontainers -->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>${testcontainers-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- To start postgres container from java tests-->
+		<dependency>
+			<groupId>com.github.docker-java</groupId>
+			<artifactId>docker-java</artifactId>
+			<version>${docker-java-version}</version>
+		</dependency>
 
 		<!-- H2 database just to micic postgresql for unit test -->
 		<dependency>
@@ -353,21 +387,44 @@
 					<configuration>
 						<targetClasses>
 							<param>
-								com.mycompany.orderassignmentsystem.controller.*</param>
+								com.mycompany.orderassignmentsystem.controller.**</param>
+							<param>
+								com.mycompany.orderassignmentsystem.controller.utils.**</param>
+
 						</targetClasses>
 						<targetTests>
 							<param>
-								com.mycompany.orderassignmentsystem.controller.*</param>
+								com.mycompany.orderassignmentsystem.controller.**</param>
+							<param>
+								com.mycompany.orderassignmentsystem.controller.utils.**</param>
+
 						</targetTests>
 						<excludedClasses>
 							<param>
-								com.mycompany.orderassignmentsystem.repository.postgresql.**</param>
+								com.mycompany.orderassignmentsystem.repository.**</param>
 							<param>
-								com.mycompany.orderassignmentsystem.repository.view.swing.**</param>
+								com.mycompany.orderassignmentsystem.view.swing.**</param>
+							<param>
+								com.mycompany.orderassignmentsystem.model.**</param>
+							<param>
+								com.mycompany.orderassignmentsystem.enumerations.**</param>
+							<param>
+								com.mycompany.orderassignmentsystem.app.**</param>
 						</excludedClasses>
 						<excludedTestClasses>
 							<param>
 								com.mycompany.orderassignmentsystem.controller.**IT</param>
+							<param>
+								com.mycompany.orderassignmentsystem.bdd.**</param>
+
+							<param>
+								com.mycompany.orderassignmentsystem.**E2E</param>
+							<param>
+								com.mycompany.orderassignmentsystem.repository.**</param>
+							<param>
+								com.mycompany.orderassignmentsystem.view.swing.**</param>
+							<param>
+								com.mycompany.orderassignmentsystem.racecondition.**</param>
 						</excludedTestClasses>
 						<mutators>
 							<mutator>STRONGER</mutator>
@@ -375,7 +432,7 @@
 						<outputFormats>
 							<outputFormat>HTML</outputFormat>
 						</outputFormats>
-						<mutationThreshold>90</mutationThreshold>
+						<mutationThreshold>100</mutationThreshold>
 					</configuration>
 					<executions>
 						<execution>
@@ -439,6 +496,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>integration-test-profile</id>
 			<build>
@@ -499,6 +557,11 @@
 									<goal>integration-test</goal>
 									<goal>verify</goal>
 								</goals>
+								<configuration>
+									<excludes>
+										<exclude>**/*Config.java</exclude>
+									</excludes>
+								</configuration>
 							</execution>
 							<execution>
 								<id>e2e-tests</id>
@@ -509,6 +572,7 @@
 								<configuration>
 									<excludes>
 										<exclude>**/*IT.java</exclude>
+										<exclude>**/*Config.java</exclude>
 									</excludes>
 									<includes>
 										<include>**/*E2E.java</include>
@@ -524,6 +588,7 @@
 								<configuration>
 									<excludes>
 										<exclude>**/*IT.java</exclude>
+										<exclude>**/*Config.java</exclude>
 									</excludes>
 									<includes>
 										<include>**/*BDD.java</include>

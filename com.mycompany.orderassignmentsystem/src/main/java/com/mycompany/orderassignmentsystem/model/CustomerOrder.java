@@ -99,6 +99,18 @@ public class CustomerOrder {
 		this.worker = worker;
 	}
 
+	/**
+	 * Instantiates a new customer order.
+	 *
+	 * @param customerName        the customer name
+	 * @param customerAddress     the customer address
+	 * @param customerPhoneNumber the customer phone number
+	 * @param appointmentDate     the appointment date
+	 * @param orderDescription    the order description
+	 * @param orderCategory       the order category
+	 * @param orderStatus         the order status
+	 * @param worker              the worker
+	 */
 	public CustomerOrder(String customerName, String customerAddress, String customerPhoneNumber,
 			String appointmentDate, String orderDescription, OrderCategory orderCategory, OrderStatus orderStatus,
 			Worker worker) {
@@ -275,6 +287,12 @@ public class CustomerOrder {
 		this.worker = worker;
 	}
 
+	/**
+	 * Equals.
+	 *
+	 * @param obj the obj
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -285,11 +303,21 @@ public class CustomerOrder {
 		return Objects.equals(orderId, other.orderId);
 	}
 
+	/**
+	 * Hash code.
+	 *
+	 * @return the int
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(orderId);
 	}
 
+	/**
+	 * To string.
+	 *
+	 * @return the string
+	 */
 	@Override
 	public String toString() {
 		return "Order ID: " + orderId + ", Name: " + customerName + ", Address: " + customerAddress + ", " + "Phone: "
