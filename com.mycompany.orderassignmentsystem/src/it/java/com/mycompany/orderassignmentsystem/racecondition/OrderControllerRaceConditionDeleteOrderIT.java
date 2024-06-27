@@ -20,6 +20,11 @@
  * @see WorkerRepository
  * @see OrderView
  * @see ValidationConfigurations
+ * @see ExtendedValidationConfigurations
+ * @see DatabaseConfig
+ * @see DBConfig
+ * @see MavenContainerConfig
+ * @see TestContainerConfig
  */
 
 package com.mycompany.orderassignmentsystem.racecondition;

@@ -19,6 +19,11 @@
  * @see WorkerRepository
  * @see WorkerView
  * @see ValidationConfigurations
+ * @see ExtendedValidationConfigurations
+ * @see DatabaseConfig
+ * @see DBConfig
+ * @see MavenContainerConfig
+ * @see TestContainerConfig
  */
 
 package com.mycompany.orderassignmentsystem.racecondition;
@@ -117,7 +122,7 @@ public class WorkerControllerRaceConditionDeleteWorkerIT {
 	 */
 	@Test
 	public void deleteWorkerConcurrent() {
-		Worker worker = new Worker("John","3401372678",OrderCategory.PLUMBER);
+		Worker worker = new Worker("John", "3401372678", OrderCategory.PLUMBER);
 
 		Worker savedWorker = workerRepository.save(worker);
 		List<Thread> threads = IntStream.range(0, 10).mapToObj(i -> new Thread(() -> {

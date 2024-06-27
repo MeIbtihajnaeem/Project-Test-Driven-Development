@@ -24,6 +24,11 @@
  * @see OrderRepository
  * @see WorkerRepository
  * @see OrderSwingView
+ * @see ExtendedValidationConfigurations
+ * @see DatabaseConfig
+ * @see DBConfig
+ * @see MavenContainerConfig
+ * @see TestContainerConfig
  */
 
 package com.mycompany.orderassignmentsystem.mvc;
