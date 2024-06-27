@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validateDescription method in the ValidationConfigurations interface.
  *
  * These tests ensure that the validateDescription method correctly handles various

@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validateAddress method in the ValidationConfigurations interface.
  *
  * These tests ensure that the validateAddress method correctly handles various

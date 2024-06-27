@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validatePhoneNumber method in the ValidationConfigurations interface.
  *
  * These tests ensure that the validatePhoneNumber method correctly handles various

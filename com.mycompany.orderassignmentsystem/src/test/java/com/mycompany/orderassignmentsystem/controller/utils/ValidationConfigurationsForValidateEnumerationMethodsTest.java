@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validateCategory, validateStatus and validateEnum methods in the ValidationConfigurations interface.
  *
  * These tests ensure that the enumeration validation methods correctly handle various edge cases.

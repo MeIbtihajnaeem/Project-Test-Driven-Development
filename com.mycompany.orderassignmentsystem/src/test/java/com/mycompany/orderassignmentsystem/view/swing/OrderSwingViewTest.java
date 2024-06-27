@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the OrderSwingView class with AssertJ-Swing for GUI testing.
  *
  * These tests ensure that the OrderSwingView class correctly interacts with the user 

@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validateName method in the ValidationConfigurations interface.
  *
  * These tests ensure that the validateName method correctly handles various

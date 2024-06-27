@@ -1,4 +1,4 @@
-/**
+/*
  * Integration tests for the OrderModelViewControllerIT class.
  *
  * These tests verify the integration between the OrderController, OrderSwingView,

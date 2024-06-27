@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the WorkerSwingView class with AssertJ-Swing for GUI testing.
  *
  * These tests ensure that the WorkerSwingView class correctly interacts with the user 

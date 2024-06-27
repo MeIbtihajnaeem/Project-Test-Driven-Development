@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validateSearchString method in the ValidationConfigurations interface.
  *
  * These tests ensure that the validateSearchString method correctly handles various

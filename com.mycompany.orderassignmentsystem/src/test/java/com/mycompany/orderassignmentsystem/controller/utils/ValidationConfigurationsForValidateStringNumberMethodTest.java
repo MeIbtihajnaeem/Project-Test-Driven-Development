@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validateStringNumber method in the ValidationConfigurations interface.
  *
  * These tests ensure that the validateStringNumber method correctly handles various

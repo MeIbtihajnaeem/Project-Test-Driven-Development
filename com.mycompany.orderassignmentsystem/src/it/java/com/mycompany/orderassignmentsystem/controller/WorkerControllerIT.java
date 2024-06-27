@@ -1,4 +1,4 @@
-/**
+/*
  * Integration tests for the WorkerController class.
  *
  * These tests verify the integration between the WorkerController and its 

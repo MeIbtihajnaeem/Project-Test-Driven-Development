@@ -1,4 +1,4 @@
-/**
+/*
  * Unit tests for the validateStringDate method in the ValidationConfigurations interface.
  *
  * These tests ensure that the validateStringDate method correctly handles various

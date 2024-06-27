@@ -1,4 +1,4 @@
-/**
+/*
  * Integration tests for the OrderController class.
  *
  * These tests verify the integration between the OrderController and its 

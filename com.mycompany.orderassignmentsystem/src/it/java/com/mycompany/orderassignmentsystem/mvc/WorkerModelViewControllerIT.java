@@ -1,4 +1,4 @@
-/**
+/*
  * Integration tests for the WorkerModelViewControllerIT class.
  *
  * These tests verify the integration between the WorkerController, WorkerSwingView,
