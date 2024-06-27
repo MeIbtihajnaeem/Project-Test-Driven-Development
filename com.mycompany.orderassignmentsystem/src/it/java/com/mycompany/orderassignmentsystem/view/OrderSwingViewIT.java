@@ -1,3 +1,25 @@
+/*
+ * Integration tests for the OrderSwingView class.
+ * 
+ * These tests cover the following functionalities:
+ * 
+ * - Setting up and tearing down the test environment using Docker containers and database configurations.
+ * - Creating, updating, fetching, searching, and deleting customer orders through the graphical user interface.
+ * - Verifying successful and failed operations for adding, updating, fetching, searching, and deleting orders.
+ * - Ensuring correct validation and error handling for invalid input data.
+ * - Using the AssertJSwingJUnitTestCase framework for GUI testing and Awaitility for asynchronous operations.
+ * 
+ * The databaseConfig variable is responsible for starting the Docker container.
+ * If the test is run from Eclipse, it runs the Docker container using Testcontainers.
+ * If the test is run using a Maven command, it starts a real Docker container.
+ * 
+ * @see OrderController
+ * @see OrderRepository
+ * @see WorkerRepository
+ * @see OrderView
+ * @see ValidationConfigurations
+ */
+
 package com.mycompany.orderassignmentsystem.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,20 +56,32 @@ import com.mycompany.orderassignmentsystem.repository.postgres.OrderDatabaseRepo
 import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
 import com.mycompany.orderassignmentsystem.view.swing.OrderSwingView;
 
+/**
+ * The Class OrderSwingViewIT.
+ */
 @RunWith(GUITestRunner.class)
 
 public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
+	/** The order repository. */
 	private OrderRepository orderRepository;
 
+	/** The order swing view. */
 	private OrderSwingView orderSwingView;
 
+	/** The worker repository. */
 	private WorkerRepository workerRepository;
+
+	/** The validated config. */
 	private ValidationConfigurations validatedConfig;
 
+	/** The order controller. */
 	private OrderController orderController;
 
+	/** The window. */
 	private FrameFixture window;
+
+	/** The entity manager factory. */
 	private EntityManagerFactory entityManagerFactory;
 
 	/**
@@ -57,6 +91,78 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 	 */
 	private static DBConfig databaseConfig;
 
+	/** The worker name 1. */
+	private String WORKER_NAME_1 = "Bob";
+
+	/** The worker phone 1. */
+	private String WORKER_PHONE_1 = "3401372678";
+
+	/** The worker category 1. */
+	private OrderCategory WORKER_CATEGORY_1 = OrderCategory.PLUMBER;
+
+	/** The order id 1. */
+	private long ORDER_ID_1 = 1l;
+
+	/** The order id 2. */
+	private long ORDER_ID_2 = 2l;
+
+	/** The customer name 1. */
+	private String CUSTOMER_NAME_1 = "Jhon";
+
+	/** The customer phone 1. */
+	private String CUSTOMER_PHONE_1 = "3401372671";
+
+	/** The customer address 1. */
+	private String CUSTOMER_ADDRESS_1 = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+	/** The order appointment date 1. */
+	private String ORDER_APPOINTMENT_DATE_1 = "12-12-2024";
+
+	/** The order description 1. */
+	private String ORDER_DESCRIPTION_1 = "Please be on time";
+
+	/** The order category 1. */
+	private OrderCategory ORDER_CATEGORY_1 = OrderCategory.PLUMBER;
+
+	/** The order status 1. */
+	private OrderStatus ORDER_STATUS_1 = OrderStatus.PENDING;
+
+	/** The customer name 2. */
+	private String CUSTOMER_NAME_2 = "Alic";
+
+	/** The customer phone 2. */
+	private String CUSTOMER_PHONE_2 = "3401372672";
+
+	/** The customer address 2. */
+	private String CUSTOMER_ADDRESS_2 = "1234 Main Street , Apt 101, Springfield, USA 12345";
+
+	/** The order appointment date 2. */
+	private String ORDER_APPOINTMENT_DATE_2 = "12-12-2024";
+
+	/** The order description 2. */
+	private String ORDER_DESCRIPTION_2 = "Please bring tape";
+
+	/** The order category 2. */
+	private OrderCategory ORDER_CATEGORY_2 = OrderCategory.PLUMBER;
+
+	/** The order status 2. */
+	private OrderStatus ORDER_STATUS_2 = OrderStatus.PENDING;
+
+	/** The selecting category index. */
+	private int SELECTING_CATEGORY_INDEX = 0;
+
+	/** The selecting status index. */
+	private int SELECTING_STATUS_INDEX = 0;
+
+	/** The selecting worker index. */
+	private int SELECTING_WORKER_INDEX = 0;
+
+	/** The worker. */
+	private Worker worker;
+
+	/**
+	 * Setup server.
+	 */
 	@BeforeClass
 	public static void setupServer() {
 		databaseConfig = DatabaseConfig.getDatabaseConfig();
@@ -64,6 +170,11 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		databaseConfig.testAndStartDatabaseConnection();
 	}
 
+	/**
+	 * On set up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Override
 	protected void onSetUp() throws Exception {
 		entityManagerFactory = databaseConfig.getEntityManagerFactory();
@@ -81,89 +192,81 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		window = new FrameFixture(robot(), orderSwingView);
 		window.show();
 
+		worker = new Worker(WORKER_NAME_1, WORKER_PHONE_1, WORKER_CATEGORY_1);
+		worker = workerRepository.save(worker);
+
 	}
 
+	/**
+	 * On tear down.
+	 */
 	@Override
 	protected void onTearDown() {
 		entityManagerFactory.close();
 	}
 
-	// show all orders
+	/**
+	 * Test all orders.
+	 */
 	@Test
 	public void testAllOrders() {
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
-		CustomerOrder order1 = new CustomerOrder("Jhon", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
-		CustomerOrder order2 = new CustomerOrder("Alic", "address", "phone", "12-12-2024", "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+
+		CustomerOrder order2 = new CustomerOrder(CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker);
+
 		order1 = orderRepository.save(order1);
 		order2 = orderRepository.save(order2);
 		GuiActionRunner.execute(() -> orderController.allOrders());
 		assertThat(window.list().contents()).containsExactly(order1.toString(), order2.toString());
 	}
 
-	// add button success
+	/**
+	 * Test add success.
+	 */
 	@Test
 	public void testAddSuccess() {
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		workerRepository.save(worker);
+
 		GuiActionRunner.execute(() -> orderController.allWorkers());
 
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
-
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 		window.button(JButtonMatcher.withName("btnAdd")).click();
+
 		CustomerOrder createdOrder = orderRepository.findAll().get(0);
+
 		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
 			assertThat(window.list().contents()).containsExactly(createdOrder.toString());
 		});
 	}
-	// add button failure
 
+	/**
+	 * Test add failure.
+	 */
 	@Test
 	public void testAddFailure() {
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
+
 		GuiActionRunner.execute(() -> orderController.allWorkers());
-
-		String customerName = "Ibtihaj";
-		String customerAddress = "Piazza Luigi";
 		String customerPhone = "4401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		int categoryIndex = 0;
-		int statusIndex = 0;
-		int workerIndex = 0;
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
 		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(categoryIndex);
-		window.comboBox("cmbOrderStatus").selectItem(statusIndex);
-		window.comboBox("cmbWorker").selectItem(workerIndex);
-
-		OrderCategory category = (OrderCategory) window.comboBox("cmbOrderCategory").target().getItemAt(categoryIndex);
-		OrderStatus status = (OrderStatus) window.comboBox("cmbOrderStatus").target().getItemAt(categoryIndex);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 
 		window.button(JButtonMatcher.withName("btnAdd")).click();
-		CustomerOrder order = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, category, status, worker);
+		CustomerOrder order = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, customerPhone,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 
 		assertThat(window.list().contents()).isEmpty();
 		window.label("showError")
@@ -171,94 +274,76 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	}
 
-	// update button susscess
+	/**
+	 * Test update success.
+	 */
 	@Test
 	public void testUpdateSuccess() {
 
-		String customerName = "Ibtihaj Naeem";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 
-		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
 		GuiActionRunner.execute(() -> {
 			orderController.createOrUpdateOrder(order1, OperationType.ADD);
 			orderController.allWorkers();
 		});
-		Long orderId = 1l;
 		String updatedName = "Ibtihaj";
-		window.textBox("txtOrderId").enterText(orderId.toString());
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
 		window.textBox("txtCustomerName").enterText(updatedName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtCustomerPhone").enterText(customerPhone);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(0);
-		window.comboBox("cmbOrderStatus").selectItem(0);
-		window.comboBox("cmbWorker").selectItem(0);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtCustomerPhone").enterText(CUSTOMER_PHONE_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 
 		window.button(JButtonMatcher.withName("btnUpdate")).click();
 
-		order1.setOrderId(orderId);
+		order1.setOrderId(ORDER_ID_1);
 		order1.setCustomerName(updatedName);
 		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
 			assertThat(window.list().contents()).containsExactly(order1.toString());
 		});
 	}
 
+	/**
+	 * Test fetch success.
+	 */
 	@Test
 	public void testFetchSuccess() {
 
-		String customerName = "Ibtihaj Naeem";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		OrderCategory category = OrderCategory.PLUMBER;
-		Worker worker = new Worker("Jhon", "123456789", category);
-		worker = workerRepository.save(worker);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 
-		OrderStatus status = OrderStatus.PENDING;
-		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, category, status, worker);
 		GuiActionRunner.execute(() -> {
 			orderController.createOrUpdateOrder(order1, OperationType.ADD);
 			orderController.allWorkers();
 		});
-		Long orderId = 1l;
 
-		window.textBox("txtOrderId").enterText(orderId.toString());
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 
-		assertEquals(customerName, window.textBox("txtCustomerName").text());
-		assertEquals(customerPhone, window.textBox("txtCustomerPhone").text());
-		assertEquals(customerAddress, window.textBox("txtCustomerAddress").text());
-		assertEquals(orderDescription, window.textBox("txtOrderDescription").text());
-		assertEquals(appointmentDate, window.textBox("txtSelectedDate").text());
+		assertEquals(CUSTOMER_NAME_1, window.textBox("txtCustomerName").text());
+		assertEquals(CUSTOMER_PHONE_1, window.textBox("txtCustomerPhone").text());
+		assertEquals(CUSTOMER_ADDRESS_1, window.textBox("txtCustomerAddress").text());
+		assertEquals(ORDER_DESCRIPTION_1, window.textBox("txtOrderDescription").text());
+		assertEquals(ORDER_APPOINTMENT_DATE_1, window.textBox("txtSelectedDate").text());
 
-		assertEquals(category.name(), window.comboBox("cmbOrderCategory").selectedItem());
-		assertEquals(status.name(), window.comboBox("cmbOrderStatus").selectedItem());
+		assertEquals(ORDER_CATEGORY_1.name(), window.comboBox("cmbOrderCategory").selectedItem());
+		assertEquals(ORDER_STATUS_1.name(), window.comboBox("cmbOrderStatus").selectedItem());
 		assertEquals(worker.toString(), window.comboBox("cmbWorker").selectedItem());
 
 	}
 
-	// update button failure
+	/**
+	 * Test update failure.
+	 */
 	@Test
 	public void testUpdateFailure() {
-		String customerName = "Ibtihaj Naeem";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
 
-		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 
 		GuiActionRunner.execute(() -> {
 			orderController.allWorkers();
@@ -266,14 +351,14 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		});
 		Long orderId = 1l;
 		order1.setOrderId(orderId);
-		window.textBox("txtOrderId").enterText(orderId.toString());
-		window.textBox("txtCustomerName").enterText(customerName);
-		window.textBox("txtCustomerAddress").enterText(customerAddress);
-		window.textBox("txtOrderDescription").enterText(orderDescription);
-		window.textBox("txtSelectedDate").enterText(appointmentDate);
-		window.comboBox("cmbOrderCategory").selectItem(0);
-		window.comboBox("cmbOrderStatus").selectItem(0);
-		window.comboBox("cmbWorker").selectItem(0);
+		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
+		window.textBox("txtCustomerName").enterText(CUSTOMER_NAME_1);
+		window.textBox("txtCustomerAddress").enterText(CUSTOMER_ADDRESS_1);
+		window.textBox("txtOrderDescription").enterText(ORDER_DESCRIPTION_1);
+		window.textBox("txtSelectedDate").enterText(ORDER_APPOINTMENT_DATE_1);
+		window.comboBox("cmbOrderCategory").selectItem(SELECTING_CATEGORY_INDEX);
+		window.comboBox("cmbOrderStatus").selectItem(SELECTING_STATUS_INDEX);
+		window.comboBox("cmbWorker").selectItem(SELECTING_WORKER_INDEX);
 
 		String updatedPhone = "4401372678";
 		window.textBox("txtCustomerPhone").enterText(updatedPhone);
@@ -286,26 +371,29 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 				.requireText("The phone number must start with 3. Please provide a valid phone number.: " + order1);
 
 	}
-	// search button success
 
+	/**
+	 * Test search success.
+	 */
 	@Test
 	public void testSearchSuccess() {
-		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
-		CustomerOrder order1 = new CustomerOrder("Jhon", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
-		CustomerOrder order2 = new CustomerOrder("Alic", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
+
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		CustomerOrder order2 = new CustomerOrder(CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker);
 		order1 = orderRepository.save(order1);
 		orderRepository.save(order2);
+
 		GuiActionRunner.execute(() -> {
 			orderController.allWorkers();
 			orderController.allOrders();
 		});
-		String searchText = "Jhon";
-		window.textBox("txtSearchOrder").enterText(searchText);
+
+		String searchText = CUSTOMER_NAME_1;
 		int searchOptionIndex = 2;
+
+		window.textBox("txtSearchOrder").enterText(searchText);
 		window.comboBox("cmbSearchBy").selectItem(searchOptionIndex);
 		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
 
@@ -313,75 +401,74 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	}
 
-	// search button failure
+	/**
+	 * Test search failure.
+	 */
 	@Test
 	public void testSearchFailure() {
-		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
-		CustomerOrder order1 = new CustomerOrder("Jhon", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
-		CustomerOrder order2 = new CustomerOrder("Alic", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		CustomerOrder order2 = new CustomerOrder(CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker);
 		order1 = orderRepository.save(order1);
 		order2 = orderRepository.save(order2);
+
 		GuiActionRunner.execute(() -> {
 			orderController.allWorkers();
 			orderController.allOrders();
 		});
-		String searchText = "Bob";
+
+		String searchText = "Samad";
+		int searchOptionIndex = 2;
+
 		window.textBox("txtSearchOrder").deleteText();
 		window.textBox("txtSearchOrder").enterText(searchText);
-		int searchOptionIndex = 2;
 		window.comboBox("cmbSearchBy").selectItem(searchOptionIndex);
 		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
-		assertThat(window.list().contents()).containsExactly(order1.toString(), order2.toString());
 
+		assertThat(window.list().contents()).containsExactly(order1.toString(), order2.toString());
 		window.label("showSearchErrorLbl")
 				.requireText("No orders found with customer name: " + searchText + ": " + searchText);
 	}
-	// clear button success
 
+	/**
+	 * Test clear search.
+	 */
 	@Test
 	public void testClearSearch() {
-		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
-		CustomerOrder order1 = new CustomerOrder("Jhon", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
-		CustomerOrder order2 = new CustomerOrder("Alic", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.COMPLETED, worker);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+		CustomerOrder order2 = new CustomerOrder(CUSTOMER_NAME_2, CUSTOMER_ADDRESS_2, CUSTOMER_PHONE_2,
+				ORDER_APPOINTMENT_DATE_2, ORDER_DESCRIPTION_2, ORDER_CATEGORY_2, ORDER_STATUS_2, worker);
 		order1 = orderRepository.save(order1);
 		order2 = orderRepository.save(order2);
 		GuiActionRunner.execute(() -> {
 			orderController.allWorkers();
 			orderController.allOrders();
 		});
-		String searchText = "Jhon";
+		String searchText = CUSTOMER_NAME_1;
 		int searchOptionIndex = 2;
+
 		window.textBox("txtSearchOrder").enterText(searchText);
 		window.comboBox("cmbSearchBy").selectItem(searchOptionIndex);
 		window.button(JButtonMatcher.withName("btnSearchOrder")).click();
+
 		assertThat(window.list().contents()).containsExactly(order1.toString());
+
 		window.button(JButtonMatcher.withName("btnClearSearch")).click();
+
 		assertThat(window.list().contents()).containsExactly(order1.toString(), order2.toString());
 
 	}
 
-	// delete button sucess
-
+	/**
+	 * Test delete button success.
+	 */
 	@Test
 	public void testDeleteButtonSuccess() {
-		String customerName = "Ibtihaj Naeem";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
 
-		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
+		CustomerOrder order1 = new CustomerOrder(CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 
 		GuiActionRunner.execute(() -> {
 
@@ -393,15 +480,15 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 			assertThat(window.list().contents()).isEmpty();
 		});
 	}
-	// delete button failure
 
+	/**
+	 * Test delete button error.
+	 */
 	@Test
 	public void testDeleteButtonError() {
-		String appointmentDate = "12-12-2024";
-		Worker worker = new Worker("Jhon", "123456789", OrderCategory.PLUMBER);
-		worker = workerRepository.save(worker);
-		CustomerOrder order1 = new CustomerOrder(1l, "Jhon", "address", "phone", appointmentDate, "description",
-				OrderCategory.PLUMBER, OrderStatus.PENDING, worker);
+		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
+
 		GuiActionRunner.execute(() -> {
 			orderController.allWorkers();
 			orderSwingView.getOrderListModel().addElement(order1);
@@ -413,28 +500,20 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 				.requireText("No order found with ID: " + order1.getOrderId() + ": " + order1);
 	}
 
-	// fetch button failure
-
+	/**
+	 * Test fetch failure.
+	 */
 	@Test
 	public void testFetchFailure() {
 
-		String customerName = "Ibtihaj Naeem";
-		String customerAddress = "Piazza Luigi";
-		String customerPhone = "3401372678";
-		String orderDescription = "Plumber Required";
-		String appointmentDate = "12-12-2024";
-		OrderCategory category = OrderCategory.PLUMBER;
-		Worker worker = new Worker(1l, "Jhon", "123456789", category);
-		worker = workerRepository.save(worker);
+		CustomerOrder order1 = new CustomerOrder(ORDER_ID_1, CUSTOMER_NAME_1, CUSTOMER_ADDRESS_1, CUSTOMER_PHONE_1,
+				ORDER_APPOINTMENT_DATE_1, ORDER_DESCRIPTION_1, ORDER_CATEGORY_1, ORDER_STATUS_1, worker);
 
-		OrderStatus status = OrderStatus.PENDING;
-		CustomerOrder order1 = new CustomerOrder(customerName, customerAddress, customerPhone, appointmentDate,
-				orderDescription, category, status, worker);
 		GuiActionRunner.execute(() -> {
-			orderController.createOrUpdateOrder(order1, OperationType.ADD);
+			orderRepository.save(order1);
 			orderController.allOrders();
 		});
-		Long orderId = 2l;
+		Long orderId = ORDER_ID_2;
 
 		window.textBox("txtOrderId").enterText(orderId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
