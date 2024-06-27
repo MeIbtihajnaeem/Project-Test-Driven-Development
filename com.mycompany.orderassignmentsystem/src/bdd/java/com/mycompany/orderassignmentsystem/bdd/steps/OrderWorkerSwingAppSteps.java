@@ -88,8 +88,8 @@ public class OrderWorkerSwingAppSteps extends ConfigSteps {
 	@When("The Order View is shown")
 	public void the_Order_View_is_shown() {
 		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
-				.withArgs("--postgres-host=" + host, "--postgres-database=" + database, "--postgres-user=" + user,
-						"--postgres-pass=" + password, "--postgres-port=" + port)
+				.withArgs("--postgres-host=" + HOST, "--postgres-database=" + DATABASE, "--postgres-user=" + USER,
+						"--postgres-pass=" + PASSWORD, "--postgres-port=" + PORT)
 				.start();
 
 		orderViewWindow = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {

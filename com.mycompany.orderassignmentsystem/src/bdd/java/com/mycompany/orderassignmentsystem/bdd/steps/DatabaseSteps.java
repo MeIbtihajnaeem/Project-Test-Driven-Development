@@ -106,10 +106,10 @@ public class DatabaseSteps extends ConfigSteps {
 	@Before
 	public void setUp() {
 		String persistenceUnitName = "OriginalPersistenceUnit";
-		String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
+		String jdbcUrl = "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DATABASE;
 		properties.put("javax.persistence.jdbc.url", jdbcUrl);
-		properties.put("javax.persistence.jdbc.user", user);
-		properties.put("javax.persistence.jdbc.password", password);
+		properties.put("javax.persistence.jdbc.user", USER);
+		properties.put("javax.persistence.jdbc.password", PASSWORD);
 		properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
 		properties.put("hibernate.hbm2ddl.auto", "create-drop");
 

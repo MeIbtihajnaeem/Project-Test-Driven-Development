@@ -75,19 +75,19 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	private static final long RETRY_DELAY_SECONDS = 10;
 
 	/** The Constant host. */
-	private static final String host = "localhost";
+	private static final String HOST = "localhost";
 
 	/** The Constant port. */
-	private static final String port = "5432";
+	private static final String PORT = "5432";
 
 	/** The Constant database. */
-	private static final String database = System.getProperty("postgres.dbName");
+	private static final String DATABASE = System.getProperty("postgres.dbName");
 
 	/** The Constant user. */
-	private static final String user = System.getProperty("postgres.user");
+	private static final String USER = System.getProperty("postgres.user");
 
 	/** The Constant password. */
-	private static final String password = System.getProperty("postgres.password");
+	private static final String PASSWORD = System.getProperty("postgres.password");
 
 	/** The order view window. */
 	private FrameFixture orderViewWindow;
@@ -245,8 +245,8 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		addTestWorkerToDatabase(worker3);
 
 		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
-				.withArgs("--postgres-host=" + host, "--postgres-database=" + database, "--postgres-user=" + user,
-						"--postgres-pass=" + password, "--postgres-port=" + port)
+				.withArgs("--postgres-host=" + HOST, "--postgres-database=" + DATABASE, "--postgres-user=" + USER,
+						"--postgres-pass=" + PASSWORD, "--postgres-port=" + PORT)
 				.start();
 
 		orderViewWindow = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {

@@ -26,19 +26,19 @@ package com.mycompany.orderassignmentsystem.bdd.steps;
 public class ConfigSteps {
 
 	/** The Constant host. */
-	protected static final String host = "localhost";
+	protected static final String HOST = "localhost";
 
 	/** The Constant port. */
-	protected static final String port = "5432";
+	protected static final String PORT = "5432";
 
 	/** The Constant database. */
-	protected static final String database = System.getProperty("postgres.dbName");
+	protected static final String DATABASE = System.getProperty("postgres.dbName");
 
 	/** The Constant user. */
-	protected static final String user = System.getProperty("postgres.user");
+	protected static final String USER = System.getProperty("postgres.user");
 
 	/** The Constant password. */
-	protected static final String password = System.getProperty("postgres.password");
+	protected static final String PASSWORD = System.getProperty("postgres.password");
 
 	/** The Constant PERSISTENCE_UNIT_NAME. */
 	protected static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
