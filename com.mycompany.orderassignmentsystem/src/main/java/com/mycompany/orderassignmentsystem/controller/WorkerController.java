@@ -1,5 +1,27 @@
 /*
- * WorkerController: Controller class responsible for handling worker-related operations.
+ * The WorkerController class is responsible for managing worker-related operations within the system.
+ * 
+ * This class provides methods to:
+ * - Retrieve all workers from the repository and display them.
+ * - Create or update workers with validation.
+ * - Fetch workers by ID.
+ * - Delete workers from the repository.
+ * - Search for workers based on various criteria.
+ * 
+ * 
+ * Key functionalities include:
+ * - Adding new workers while ensuring no worker ID is pre-assigned and no duplicate phone numbers exist.
+ * - Updating existing workers with validation and checking for orders assigned to the worker.
+ * - Deleting workers and handling non-existing worker scenarios, ensuring no workers with orders are deleted.
+ * - Searching for workers by ID, phone number, name, and category.
+ * - Validating worker details such as name, phone number, and category.
+ * 
+ * The class ensures proper logging for operations and handles exceptions by displaying appropriate error messages in the view.
+ * 
+ * @see WorkerRepository
+ * @see WorkerView
+ * @see ValidationConfigurations
+ * @see ExtendedValidationConfigurations
  */
 package com.mycompany.orderassignmentsystem.controller;
 
@@ -25,6 +47,7 @@ import com.mycompany.orderassignmentsystem.view.WorkerView;
  */
 public class WorkerController {
 
+	/** The Constant ERROR_FINDING_WORKER. */
 	private static final String ERROR_FINDING_WORKER = "Error finding worker: {}";
 
 	/** The Constant LOGGER. */
@@ -43,8 +66,8 @@ public class WorkerController {
 	 * Instantiates a new worker controller.
 	 *
 	 * @param workerRepository         the worker repository
-	 * @param validationConfigurations the input validation configuration
 	 * @param workerView               the worker view
+	 * @param validationConfigurations the input validation configuration
 	 */
 	public WorkerController(WorkerRepository workerRepository, WorkerView workerView,
 			ValidationConfigurations validationConfigurations) {
@@ -55,6 +78,8 @@ public class WorkerController {
 
 	/**
 	 * Retrieves all workers from the repository and displays them.
+	 *
+	 * @return the all workers
 	 */
 	public synchronized void getAllWorkers() {
 		LOGGER.info("Retrieving all workers");
@@ -62,47 +87,11 @@ public class WorkerController {
 		workerView.showAllWorkers(workerRepository.findAll());
 	}
 
-	private synchronized void add(Worker worker) {
-		if (worker.getWorkerId() != null) {
-			throw new IllegalArgumentException("Unable to assign a worker ID during worker creation.");
-		}
-		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
-		if (existingWorker != null) {
-			throw new IllegalArgumentException(
-					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
-		}
-		worker = workerRepository.save(worker);
-		workerView.workerAdded(worker);
-		LOGGER.info("New worker created: {}", worker);
-	}
-
-	private synchronized void update(Worker worker) {
-		validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
-
-		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
-		if (existingWorker != null && !Objects.equals(existingWorker.getWorkerId(), worker.getWorkerId())) {
-			throw new IllegalArgumentException(
-					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
-		}
-
-		Worker savedWorker = workerRepository.findById(worker.getWorkerId());
-		if (savedWorker == null) {
-			throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
-		}
-		if (!savedWorker.getOrders().isEmpty()) {
-			throw new IllegalArgumentException(
-					"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
-		}
-
-		worker = workerRepository.save(worker);
-		workerView.workerModified(worker);
-		LOGGER.info("Worker Updated: {}", worker);
-	}
-
 	/**
 	 * Creates a new worker and adds it to the repository.
 	 *
-	 * @param worker the worker to be added
+	 * @param worker    the worker to be added
+	 * @param operation the operation
 	 */
 	public synchronized void createOrUpdateWorker(Worker worker, OperationType operation) {
 		try {
@@ -232,6 +221,53 @@ public class WorkerController {
 			workerView.showSearchError(e.getMessage(), searchText);
 
 		}
+	}
+
+	/**
+	 * Adds the.
+	 *
+	 * @param worker the worker
+	 */
+	private synchronized void add(Worker worker) {
+		if (worker.getWorkerId() != null) {
+			throw new IllegalArgumentException("Unable to assign a worker ID during worker creation.");
+		}
+		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
+		if (existingWorker != null) {
+			throw new IllegalArgumentException(
+					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
+		}
+		worker = workerRepository.save(worker);
+		workerView.workerAdded(worker);
+		LOGGER.info("New worker created: {}", worker);
+	}
+
+	/**
+	 * Update.
+	 *
+	 * @param worker the worker
+	 */
+	private synchronized void update(Worker worker) {
+		validationConfigurations.validateStringNumber(worker.getWorkerId().toString());
+
+		Worker existingWorker = workerRepository.findByPhoneNumber(worker.getWorkerPhoneNumber());
+		if (existingWorker != null && !Objects.equals(existingWorker.getWorkerId(), worker.getWorkerId())) {
+			throw new IllegalArgumentException(
+					"Worker with phone number " + worker.getWorkerPhoneNumber() + " Already Exists");
+		}
+
+		Worker savedWorker = workerRepository.findById(worker.getWorkerId());
+		if (savedWorker == null) {
+			throw new NoSuchElementException("No Worker found with id: " + worker.getWorkerId());
+		}
+		if (!savedWorker.getOrders().isEmpty()) {
+			throw new IllegalArgumentException(
+					"Cannot update worker " + worker.getWorkerCategory() + " because of existing orders");
+		}
+
+		worker = workerRepository.save(worker);
+		workerView.workerModified(worker);
+		LOGGER.info("Worker Updated: {}", worker);
 	}
 
 	/**
