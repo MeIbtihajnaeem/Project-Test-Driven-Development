@@ -85,7 +85,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 	private JButton btnSearchOrder;
 
 	/** The btn delete. */
-	private JButton btnDelete;
+	private JButton btnDeleteOrder;
 
 	/** The show error not found lbl. */
 	private JLabel showErrorNotFoundLbl;
@@ -666,26 +666,26 @@ public class OrderSwingView extends JFrame implements OrderView {
 		listOrders.setName("listOrders");
 		scrollPane.setViewportView(listOrders);
 
-		btnDelete = new JButton("Delete");
-		btnDelete.setName("btnDelete");
-		btnDelete.setEnabled(false);
-		btnDelete.addActionListener(e -> deleteOrderMethod());
-		listOrders.addListSelectionListener(e -> btnDelete.setEnabled(listOrders.getSelectedIndex() != -1));
+		btnDeleteOrder = new JButton("Delete");
+		btnDeleteOrder.setName("btnDelete");
+		btnDeleteOrder.setEnabled(false);
+		btnDeleteOrder.addActionListener(e -> deleteOrderMethod());
+		listOrders.addListSelectionListener(e -> btnDeleteOrder.setEnabled(listOrders.getSelectedIndex() != -1));
 
-		btnDelete.setForeground(Color.WHITE);
-		btnDelete.setOpaque(true);
-		btnDelete.setFont(new Font(ARIAL, Font.BOLD, 16));
-		btnDelete.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnDelete.setBackground(new Color(59, 89, 182));
-		btnDelete.setFocusPainted(false);
-		btnDelete.setPreferredSize(new Dimension(150, 40));
+		btnDeleteOrder.setForeground(Color.WHITE);
+		btnDeleteOrder.setOpaque(true);
+		btnDeleteOrder.setFont(new Font(ARIAL, Font.BOLD, 16));
+		btnDeleteOrder.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnDeleteOrder.setBackground(new Color(59, 89, 182));
+		btnDeleteOrder.setFocusPainted(false);
+		btnDeleteOrder.setPreferredSize(new Dimension(150, 40));
 		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
 		gbcBtnDelete.ipady = 10;
 		gbcBtnDelete.ipadx = 20;
 		gbcBtnDelete.insets = new Insets(0, 0, 5, 5);
 		gbcBtnDelete.gridx = 1;
 		gbcBtnDelete.gridy = 15;
-		contentPane.add(btnDelete, gbcBtnDelete);
+		contentPane.add(btnDeleteOrder, gbcBtnDelete);
 
 		showErrorNotFoundLbl = new JLabel("");
 		showErrorNotFoundLbl.setName("showErrorNotFoundLbl");

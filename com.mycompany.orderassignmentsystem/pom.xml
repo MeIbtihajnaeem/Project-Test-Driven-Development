@@ -36,7 +36,7 @@
 
         <cucumber.version>5.5.0</cucumber.version>
         <sonar.issue.ignore.multicriteria>
-            e11,e12,e13,e14,e15,e16</sonar.issue.ignore.multicriteria>
+            e11,e12,e13,e14,e15,e16,e17</sonar.issue.ignore.multicriteria>
         <!-- Use static access with "javax.swing.WindowConstants" for
         "EXIT_ON_CLOSE".-->
         <sonar.issue.ignore.multicriteria.e11.ruleKey>
@@ -55,39 +55,45 @@
             **/*.java
         </sonar.issue.ignore.multicriteria.e12.resourceKey>
 
-
+        <!-- Add at least one assertion to this test case.-->
         <sonar.issue.ignore.multicriteria.e13.ruleKey>
             squid:S2699
         </sonar.issue.ignore.multicriteria.e13.ruleKey>
         <sonar.issue.ignore.multicriteria.e13.resourceKey>
-            **/OrderSwingViewTest.java, **/WorkerSwingViewTest.java
+            **/OrderSwingViewTest.java
         </sonar.issue.ignore.multicriteria.e13.resourceKey>
+        <sonar.issue.ignore.multicriteria.e14.ruleKey>
+            squid:S2699
+        </sonar.issue.ignore.multicriteria.e14.ruleKey>
+        <sonar.issue.ignore.multicriteria.e14.resourceKey>
+            **/WorkerSwingViewTest.java
+        </sonar.issue.ignore.multicriteria.e14.resourceKey>
 
         <!-- Rename this fields like "CUSTOMER_PHONE_1" to match the regular
         expression -->
-        <sonar.issue.ignore.multicriteria.e14.ruleKey>
+        <sonar.issue.ignore.multicriteria.e15.ruleKey>
             java:S116
-        </sonar.issue.ignore.multicriteria.e14.ruleKey>
-        <sonar.issue.ignore.multicriteria.e14.resourceKey>
+        </sonar.issue.ignore.multicriteria.e15.ruleKey>
+        <sonar.issue.ignore.multicriteria.e15.resourceKey>
             **/*.java
-        </sonar.issue.ignore.multicriteria.e14.resourceKey>
+        </sonar.issue.ignore.multicriteria.e15.resourceKey>
 
         <!-- Rename class "OrderWorkerSwingAppE2E" to match the regular
         expression:-->
-        <sonar.issue.ignore.multicriteria.e15.ruleKey>
-            java:S3577
-        </sonar.issue.ignore.multicriteria.e15.ruleKey>
-        <sonar.issue.ignore.multicriteria.e15.resourceKey>
-            **/OrderWorkerSwingAppE2E.*
-        </sonar.issue.ignore.multicriteria.e15.resourceKey>
-
-        <!-- Replace these 3 tests with a single Parameterized one-->
         <sonar.issue.ignore.multicriteria.e16.ruleKey>
-            java:S5976
+            java:S3577
         </sonar.issue.ignore.multicriteria.e16.ruleKey>
         <sonar.issue.ignore.multicriteria.e16.resourceKey>
-            **/utils/*.*
+            **/OrderWorkerSwingAppE2E.*
         </sonar.issue.ignore.multicriteria.e16.resourceKey>
+
+        <!-- Replace these 3 tests with a single Parameterized one-->
+        <sonar.issue.ignore.multicriteria.e17.ruleKey>
+            java:S5976
+        </sonar.issue.ignore.multicriteria.e17.ruleKey>
+        <sonar.issue.ignore.multicriteria.e17.resourceKey>
+            **/utils/*.*
+        </sonar.issue.ignore.multicriteria.e17.resourceKey>
 
         <sonar.coverage.exclusions>
             **/model/*.*,

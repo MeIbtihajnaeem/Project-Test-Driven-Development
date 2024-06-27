@@ -97,7 +97,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	private JScrollPane scrollPane;
 
 	/** The btn delete. */
-	private JButton btnDelete;
+	private JButton btnDeleteWorker;
 
 	/** The worker list model. */
 	private DefaultListModel<Worker> workerListModel;
@@ -140,7 +140,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		btnAdd = new JButton("Add");
 		btnSearchWorker = new JButton("Search Worker");
 		btnClearSearchWorker = new JButton("Clear");
-		btnDelete = new JButton("Delete");
+		btnDeleteWorker = new JButton("Delete");
 		for (OrderCategory category : OrderCategory.values()) {
 			cmbWorkerCategory.addItem(category);
 		}
@@ -485,28 +485,28 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 		listWorkers = new JList<>(workerListModel);
 		listWorkers.setName("listWorkers");
-		listWorkers.addListSelectionListener(e -> btnDelete.setEnabled(listWorkers.getSelectedIndex() != -1));
+		listWorkers.addListSelectionListener(e -> btnDeleteWorker.setEnabled(listWorkers.getSelectedIndex() != -1));
 		listWorkers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane.setViewportView(listWorkers);
 
-		btnDelete.setEnabled(false);
+		btnDeleteWorker.setEnabled(false);
 
-		btnDelete.setName("btnDelete");
-		btnDelete.setForeground(Color.WHITE);
-		btnDelete.setOpaque(true);
-		btnDelete.setFont(new Font(ARIAL, Font.BOLD, 16));
-		btnDelete.setBorder(new LineBorder(new Color(0, 0, 0)));
-		btnDelete.setBackground(new Color(59, 89, 182));
-		btnDelete.setFocusPainted(false);
-		btnDelete.setPreferredSize(new Dimension(150, 40));
-		btnDelete.addActionListener(e -> workerController.deleteWorker(listWorkers.getSelectedValue()));
+		btnDeleteWorker.setName("btnDelete");
+		btnDeleteWorker.setForeground(Color.WHITE);
+		btnDeleteWorker.setOpaque(true);
+		btnDeleteWorker.setFont(new Font(ARIAL, Font.BOLD, 16));
+		btnDeleteWorker.setBorder(new LineBorder(new Color(0, 0, 0)));
+		btnDeleteWorker.setBackground(new Color(59, 89, 182));
+		btnDeleteWorker.setFocusPainted(false);
+		btnDeleteWorker.setPreferredSize(new Dimension(150, 40));
+		btnDeleteWorker.addActionListener(e -> workerController.deleteWorker(listWorkers.getSelectedValue()));
 		GridBagConstraints gbcBtnDelete = new GridBagConstraints();
 		gbcBtnDelete.ipady = 10;
 		gbcBtnDelete.ipadx = 20;
 		gbcBtnDelete.insets = new Insets(0, 0, 5, 5);
 		gbcBtnDelete.gridx = 1;
 		gbcBtnDelete.gridy = 14;
-		contentPane.add(btnDelete, gbcBtnDelete);
+		contentPane.add(btnDeleteWorker, gbcBtnDelete);
 
 		showErrorNotFoundLbl = new JLabel("");
 		showErrorNotFoundLbl.setName("showErrorNotFoundLbl");
