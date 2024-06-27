@@ -1,5 +1,28 @@
 /*
- * This class represents the controller responsible for managing orders within the system.
+ * The OrderController class is responsible for managing customer orders within the system.
+ * 
+ * This class provides methods to:
+ * - Retrieve all orders and workers.
+ * - Create or update orders with validation.
+ * - Fetch orders by ID.
+ * - Delete orders.
+ * - Search for orders based on various criteria.
+ * 
+ * 
+ * Key functionalities include:
+ * - Adding new orders while ensuring the initial status is 'pending' and no order ID is pre-assigned.
+ * - Updating existing orders with validation and checking for category alignment between orders and workers.
+ * - Deleting orders and handling non-existing order scenarios.
+ * - Searching for orders by ID, worker ID, customer phone number, date, category, status, and customer name.
+ * - Validating order details such as customer name, phone number, address, date, description, category, and status.
+ * 
+ * The class ensures proper logging for operations and handles exceptions by displaying appropriate error messages in the view.
+ * 
+ * @see OrderRepository
+ * @see WorkerRepository
+ * @see OrderView
+ * @see ValidationConfigurations
+ * @see ExtendedValidationConfigurations
  */
 package com.mycompany.orderassignmentsystem.controller;
 
@@ -28,6 +51,7 @@ import com.mycompany.orderassignmentsystem.view.OrderView;
  */
 public class OrderController {
 
+	/** The Constant ERROR_FINDING. */
 	private static final String ERROR_FINDING = "Error Finding: {}";
 
 	/** The Constant LOGGER. */
@@ -50,8 +74,8 @@ public class OrderController {
 	 *
 	 * @param orderRepository          the order repository
 	 * @param orderView                the order view
-	 * @param validationConfigurations the input validation configuration
 	 * @param workerRepository         the worker repository
+	 * @param validationConfigurations the input validation configuration
 	 */
 	public OrderController(OrderRepository orderRepository, OrderView orderView, WorkerRepository workerRepository,
 			ValidationConfigurations validationConfigurations) {
@@ -77,37 +101,11 @@ public class OrderController {
 		orderView.showAllWorkers(workerRepository.findAll());
 	}
 
-	private synchronized void add(CustomerOrder order) {
-		if (order.getOrderId() != null) {
-			throw new IllegalArgumentException("Unable to assign an order ID during order creation.");
-		}
-		if (order.getOrderStatus() != OrderStatus.PENDING) {
-			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
-		}
-		Worker worker = getValidWorker(order);
-		checkForPendingOrders(worker.getOrders());
-		order = orderRepository.save(order);
-		orderView.orderAdded(order);
-		LOGGER.info("New order created: {}", order);
-	}
-
-	private synchronized void update(CustomerOrder order) {
-		validationConfigurations.validateStringNumber(order.getOrderId().toString());
-		Worker worker = getValidWorker(order);
-		CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
-		if (!Objects.equals(worker.getWorkerId(), savedOrder.getWorker().getWorkerId())) {
-			checkForPendingOrders(worker.getOrders());
-		}
-		order = orderRepository.save(order);
-
-		orderView.orderModified(order);
-		LOGGER.info("Order Updated: {}", order);
-	}
-
 	/**
 	 * Creates a new order.
 	 *
-	 * @param order the order
+	 * @param order     the order
+	 * @param operation the operation
 	 */
 	public synchronized void createOrUpdateOrder(CustomerOrder order, OperationType operation) {
 		try {
@@ -246,6 +244,43 @@ public class OrderController {
 	}
 
 	/**
+	 * Adds the.
+	 *
+	 * @param order the customer order
+	 */
+	private synchronized void add(CustomerOrder order) {
+		if (order.getOrderId() != null) {
+			throw new IllegalArgumentException("Unable to assign an order ID during order creation.");
+		}
+		if (order.getOrderStatus() != OrderStatus.PENDING) {
+			throw new IllegalArgumentException("The order status should be initiated with 'pending' status.");
+		}
+		Worker worker = getValidWorker(order);
+		checkForPendingOrders(worker.getOrders());
+		order = orderRepository.save(order);
+		orderView.orderAdded(order);
+		LOGGER.info("New order created: {}", order);
+	}
+
+	/**
+	 * Update.
+	 *
+	 * @param order the customer order
+	 */
+	private synchronized void update(CustomerOrder order) {
+		validationConfigurations.validateStringNumber(order.getOrderId().toString());
+		Worker worker = getValidWorker(order);
+		CustomerOrder savedOrder = orderRepository.findById(order.getOrderId());
+		if (!Objects.equals(worker.getWorkerId(), savedOrder.getWorker().getWorkerId())) {
+			checkForPendingOrders(worker.getOrders());
+		}
+		order = orderRepository.save(order);
+
+		orderView.orderModified(order);
+		LOGGER.info("Order Updated: {}", order);
+	}
+
+	/**
 	 * Searches for orders by date.
 	 *
 	 * @param searchText the search text
@@ -332,7 +367,7 @@ public class OrderController {
 	 * @return the list of orders
 	 */
 	private synchronized List<CustomerOrder> searchByWorkerId(String searchText) {
-		Long workerId = validateId(searchText);
+		Long workerId = validationConfigurations.validateStringNumber(searchText);
 		Worker worker = workerRepository.findById(workerId);
 		if (worker == null) {
 			throw new NoSuchElementException("No result found with ID: " + workerId);
@@ -351,22 +386,12 @@ public class OrderController {
 	 * @return the customer order
 	 */
 	private synchronized CustomerOrder searchByOrderId(String searchText) {
-		Long orderId = validateId(searchText);
+		Long orderId = validationConfigurations.validateStringNumber(searchText);
 		CustomerOrder order = orderRepository.findById(orderId);
 		if (order == null) {
 			throw new NoSuchElementException("No result found with ID: " + orderId);
 		}
 		return order;
-	}
-
-	/**
-	 * Validates an ID.
-	 *
-	 * @param searchText the search text
-	 * @return the ID as a Long
-	 */
-	private Long validateId(String searchText) {
-		return validationConfigurations.validateStringNumber(searchText);
 	}
 
 	/**
