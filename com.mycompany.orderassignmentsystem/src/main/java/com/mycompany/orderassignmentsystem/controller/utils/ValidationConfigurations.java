@@ -59,7 +59,7 @@ public interface ValidationConfigurations {
 	/**
 	 * Validates a date.
 	 *
-	 * @param dateTime the date to validate
+	 * @param dateString the date string
 	 * @return the validated date
 	 * @throws IllegalArgumentException if validation fails
 	 */

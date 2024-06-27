@@ -15,16 +15,9 @@ import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
 import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 
 public class ExtendedValidationConfigurations implements ValidationConfigurations {
-	/** The Constant LOGGER. */
+
 	private static final Logger LOGGER = LogManager.getLogger(ExtendedValidationConfigurations.class);
 
-	/**
-	 * Validate name.
-	 *
-	 * @param name the name
-	 * @return the string
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public String validateName(String name) {
 		if (name == null || name.equals("")) {
 			LOGGER.info("The name field cannot be empty.");
@@ -65,13 +58,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return name;
 	}
 
-	/**
-	 * Validates a numeric string.
-	 * 
-	 * @param str the string to validate
-	 * @return the validated numeric value
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public Long validateStringNumber(String str) {
 		if (str == null || str.equals("")) {
 			LOGGER.info("The text cannot be empty.");
@@ -99,13 +85,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 
 	}
 
-	/**
-	 * Validates an address.
-	 *
-	 * @param address the address to validate
-	 * @return the validated address
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public String validateAddress(String address) {
 		if (address == null || address.equals("")) {
 			LOGGER.info("The address field cannot be empty.");
@@ -134,13 +113,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return address;
 	}
 
-	/**
-	 * Validates a description.
-	 *
-	 * @param description the description to validate
-	 * @return the validated description
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public String validateDescription(String description) {
 		if (description == null || description.equals("")) {
 			LOGGER.info("The description field cannot be empty.");
@@ -169,13 +141,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return description;
 	}
 
-	/**
-	 * Validates a phone number.
-	 *
-	 * @param phoneNumber the phone number to validate
-	 * @return the validated phone number
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public String validatePhoneNumber(String phoneNumber) {
 		if (phoneNumber == null || phoneNumber.equals("")) {
 			LOGGER.info("The phone number field cannot be empty.");
@@ -204,13 +169,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return phoneNumber;
 	}
 
-	/**
-	 * Validates a string date.
-	 *
-	 * @param dateString the string date to validate
-	 * @return the validated date
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public String validateStringDate(String dateString) {
 
 		String pattern = "dd-MM-yyyy";
@@ -237,13 +195,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 
 	}
 
-	/**
-	 * Validates an order category.
-	 *
-	 * @param category the category to validate
-	 * @return the validated category
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public OrderCategory validateCategory(OrderCategory category) {
 		if (category == null) {
 			LOGGER.info("The category field cannot be empty.");
@@ -253,13 +204,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return category;
 	}
 
-	/**
-	 * Validates an order status.
-	 *
-	 * @param status the status to validate
-	 * @return the validated status
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public OrderStatus validateStatus(OrderStatus status) {
 		if (status == null) {
 			LOGGER.info("The status field cannot be empty.");
@@ -269,15 +213,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return status;
 	}
 
-	/**
-	 * Validates an enum value.
-	 *
-	 * @param <T>      the generic type of the enum
-	 * @param value    the value to validate
-	 * @param enumType the enum type
-	 * @return the validated enum value
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public <T extends Enum<T>> T validateEnum(String value, Class<T> enumType) {
 		String message = "status";
 		if (enumType == OrderCategory.class) {
@@ -312,13 +247,6 @@ public class ExtendedValidationConfigurations implements ValidationConfiguration
 		return Enum.valueOf(enumType, value);
 	}
 
-	/**
-	 * Validates a search string.
-	 *
-	 * @param searchString the search string to validate
-	 * @return the validated search string
-	 * @throws IllegalArgumentException if validation fails
-	 */
 	public String validateSearchString(String searchString) {
 		if (searchString == null || searchString.equals("")) {
 			LOGGER.info("The search Text field cannot be empty.");
