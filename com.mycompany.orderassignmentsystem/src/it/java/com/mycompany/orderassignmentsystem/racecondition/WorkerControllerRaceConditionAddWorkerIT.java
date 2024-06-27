@@ -1,3 +1,26 @@
+/*
+ * Integration tests for the WorkerController class focused on race conditions.
+ *
+ * These tests verify the functionality of the WorkerController in concurrent
+ * environments, ensuring that the application handles race conditions properly
+ * when multiple threads are accessing and adding worker data simultaneously.
+ * The tests utilise Awaitility for handling asynchronous operations.
+ *
+ * The methods tested include:
+ * - createOrUpdateWorker() for concurrent addition of workers.
+ * 
+ * The setup and teardown methods handle the initialisation and cleanup of mock objects.
+ *
+ * The databaseConfig variable is responsible for starting the Docker container.
+ * If the test is run from Eclipse, it runs the Docker container using Testcontainers.
+ * If the test is run using a Maven command, it starts a real Docker container.
+ *
+ * @see WorkerController
+ * @see WorkerRepository
+ * @see WorkerView
+ * @see ValidationConfigurations
+ */
+
 package com.mycompany.orderassignmentsystem.racecondition;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,19 +52,29 @@ import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
 import com.mycompany.orderassignmentsystem.repository.postgres.WorkerDatabaseRepository;
 import com.mycompany.orderassignmentsystem.view.WorkerView;
 
+/**
+ * The Class WorkerControllerRaceConditionAddWorkerIT.
+ */
 public class WorkerControllerRaceConditionAddWorkerIT {
 
+	/** The worker view. */
 	@Mock
 	private WorkerView workerView;
 
+	/** The worker repository. */
 	private WorkerRepository workerRepository;
 
+	/** The validation config. */
 	private ValidationConfigurations validationConfig;
 
+	/** The closeable. */
 	private AutoCloseable closeable;
 
+	/** The entity manager factory. */
 	private EntityManagerFactory entityManagerFactory;
-	private Worker worker = new Worker();
+
+	/** The worker. */
+	private Worker worker = new Worker("John", "3401372678", OrderCategory.PLUMBER);
 
 	/**
 	 * This variable is responsible for starting the Docker container. If the test
@@ -50,6 +83,9 @@ public class WorkerControllerRaceConditionAddWorkerIT {
 	 */
 	private static DBConfig databaseConfig;
 
+	/**
+	 * Setup.
+	 */
 	@BeforeClass
 	public static void setup() {
 		databaseConfig = DatabaseConfig.getDatabaseConfig();
@@ -57,24 +93,31 @@ public class WorkerControllerRaceConditionAddWorkerIT {
 		databaseConfig.testAndStartDatabaseConnection();
 	}
 
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 		entityManagerFactory = databaseConfig.getEntityManagerFactory();
 		workerRepository = new WorkerDatabaseRepository(entityManagerFactory);
 		validationConfig = new ExtendedValidationConfigurations();
-
-		worker.setWorkerName("Alic");
-		worker.setWorkerCategory(OrderCategory.PLUMBER);
-		worker.setWorkerPhoneNumber("3401372678");
 	}
 
+	/**
+	 * Release mocks.
+	 *
+	 * @throws Exception the exception
+	 */
 	@After
 	public void releaseMocks() throws Exception {
 		entityManagerFactory.close();
 		closeable.close();
 	}
 
+	/**
+	 * Test create worker concurrent.
+	 */
 	@Test
 	public void testCreateWorkerConcurrent() {
 
