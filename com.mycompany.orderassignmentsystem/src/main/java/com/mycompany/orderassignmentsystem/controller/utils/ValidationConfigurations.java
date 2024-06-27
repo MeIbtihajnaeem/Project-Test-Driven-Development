@@ -57,15 +57,6 @@ public interface ValidationConfigurations {
 	public String validatePhoneNumber(String phoneNumber);
 
 	/**
-	 * Validates a date.
-	 *
-	 * @param dateString the date string
-	 * @return the validated date
-	 * @throws IllegalArgumentException if validation fails
-	 */
-//	public LocalDate validateDate(LocalDate dateTime);
-
-	/**
 	 * Validates a string date.
 	 *
 	 * @param dateString the string date to validate

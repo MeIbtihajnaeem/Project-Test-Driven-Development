@@ -29,8 +29,6 @@ package com.mycompany.orderassignmentsystem.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -329,15 +327,15 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtOrderId").enterText(Long.toString(ORDER_ID_1));
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 
-		assertEquals(CUSTOMER_NAME_1, window.textBox("txtCustomerName").text());
-		assertEquals(CUSTOMER_PHONE_1, window.textBox("txtCustomerPhone").text());
-		assertEquals(CUSTOMER_ADDRESS_1, window.textBox("txtCustomerAddress").text());
-		assertEquals(ORDER_DESCRIPTION_1, window.textBox("txtOrderDescription").text());
-		assertEquals(ORDER_APPOINTMENT_DATE_1, window.textBox("txtSelectedDate").text());
+		assertThat(window.textBox("txtCustomerName").text()).isEqualTo(CUSTOMER_NAME_1);
+		assertThat(window.textBox("txtCustomerPhone").text()).isEqualTo(CUSTOMER_PHONE_1);
+		assertThat(window.textBox("txtCustomerAddress").text()).isEqualTo(CUSTOMER_ADDRESS_1);
+		assertThat(window.textBox("txtOrderDescription").text()).isEqualTo(ORDER_DESCRIPTION_1);
+		assertThat(window.textBox("txtSelectedDate").text()).isEqualTo(ORDER_APPOINTMENT_DATE_1);
 
-		assertEquals(ORDER_CATEGORY_1.name(), window.comboBox("cmbOrderCategory").selectedItem());
-		assertEquals(ORDER_STATUS_1.name(), window.comboBox("cmbOrderStatus").selectedItem());
-		assertEquals(worker.toString(), window.comboBox("cmbWorker").selectedItem());
+		assertThat(window.comboBox("cmbOrderCategory").selectedItem()).isEqualTo(ORDER_CATEGORY_1.name());
+		assertThat(window.comboBox("cmbOrderStatus").selectedItem()).isEqualTo(ORDER_STATUS_1.name());
+		assertThat(window.comboBox("cmbWorker").selectedItem()).isEqualTo(worker.toString());
 
 	}
 
@@ -522,15 +520,17 @@ public class OrderSwingViewIT extends AssertJSwingJUnitTestCase {
 
 		window.textBox("txtOrderId").enterText(orderId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
-		assertEquals("", window.textBox("txtCustomerName").text());
-		assertEquals("", window.textBox("txtCustomerPhone").text());
-		assertEquals("", window.textBox("txtCustomerAddress").text());
-		assertEquals("", window.textBox("txtOrderDescription").text());
-		assertEquals("", window.textBox("txtSelectedDate").text());
 
-		assertNull(window.comboBox("cmbOrderCategory").selectedItem());
-		assertNull(window.comboBox("cmbOrderStatus").selectedItem());
-		assertNull(window.comboBox("cmbWorker").selectedItem());
+		assertThat(window.textBox("txtCustomerName").text()).isEmpty();
+		assertThat(window.textBox("txtCustomerPhone").text()).isEmpty();
+		assertThat(window.textBox("txtCustomerAddress").text()).isEmpty();
+		assertThat(window.textBox("txtOrderDescription").text()).isEmpty();
+		assertThat(window.textBox("txtSelectedDate").text()).isEmpty();
+
+		assertThat(window.comboBox("cmbOrderCategory").selectedItem()).isNull();
+		assertThat(window.comboBox("cmbOrderStatus").selectedItem()).isNull();
+		assertThat(window.comboBox("cmbWorker").selectedItem()).isNull();
+
 		CustomerOrder newOrder = new CustomerOrder();
 		newOrder.setOrderId(orderId);
 		window.label("showErrorNotFoundLbl").requireText("Order with ID " + orderId + " not found.: " + newOrder);

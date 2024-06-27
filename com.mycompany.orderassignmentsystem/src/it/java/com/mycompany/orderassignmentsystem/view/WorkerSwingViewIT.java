@@ -28,8 +28,6 @@ package com.mycompany.orderassignmentsystem.view;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -263,9 +261,10 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 		window.comboBox("cmbWorkerCategory").selectItem(WORKER_CATEGORY_1.name());
 
-		assertEquals(WORKER_PHONE_1, window.textBox("txtWorkerPhone").text());
-		assertEquals(WORKER_NAME_1, window.textBox("txtWorkerName").text());
-		assertEquals(WORKER_CATEGORY_1.name(), window.comboBox("cmbWorkerCategory").selectedItem());
+		assertThat(window.textBox("txtWorkerPhone").text()).isEqualTo(WORKER_PHONE_1);
+		assertThat(window.textBox("txtWorkerName").text()).isEqualTo(WORKER_NAME_1);
+		assertThat(window.comboBox("cmbWorkerCategory").selectedItem()).isEqualTo(WORKER_CATEGORY_1.name());
+
 	}
 
 	/**
@@ -282,9 +281,9 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("txtWorkerId").enterText(workerId.toString());
 		window.button(JButtonMatcher.withName("btnFetch")).click();
 
-		assertEquals("", window.textBox("txtWorkerPhone").text());
-		assertEquals("", window.textBox("txtWorkerName").text());
-		assertNull(window.comboBox("cmbWorkerCategory").selectedItem());
+		assertThat(window.textBox("txtWorkerPhone").text()).isEmpty();
+		assertThat(window.textBox("txtWorkerName").text()).isEmpty();
+		assertThat(window.comboBox("cmbWorkerCategory").selectedItem()).isNull();
 
 		Worker newWorker = new Worker();
 		newWorker.setWorkerId(workerId);
