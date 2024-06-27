@@ -33,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManagerFactory;
 
-import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
