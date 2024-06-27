@@ -1,5 +1,5 @@
 /**
- * Unit tests for the OrderDatabaseRepository and WorkerDatabaseRepository classes with H2 in-memory database.
+ * Unit tests for the OrderDatabaseRepository class with H2 in-memory database.
  *
  * These tests ensure that the repository methods for managing CustomerOrder entity 
  * function correctly. The tests cover various CRUD operations and querying methods using an 
