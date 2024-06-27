@@ -1,3 +1,32 @@
+/*
+ * BDD steps for interacting with the database in the OrderWorkerSwingApp.
+ * 
+ * These steps define the behavior of database operations during Cucumber BDD tests.
+ * 
+ * The steps include:
+ * 
+ * - Setting up and tearing down the database environment:
+ *   - Initializing EntityManager and EntityManagerFactory with the required properties.
+ *   - Handling retries for establishing database connections.
+ *   - Cleaning up database connections after each test scenario.
+ * 
+ * - Interactions with the database:
+ *   - Adding, updating, and deleting CustomerOrder and Worker entities.
+ *   - Ensuring the database contains specific orders and workers based on given values.
+ *   - Verifying the deletion of specific orders and workers from the database.
+ * 
+ * - Use of testing frameworks and tools:
+ *   - Awaitility for handling retries and waiting conditions.
+ *   - JPA for managing persistence and transactions.
+ * 
+ * The steps simulate real-world database operations by:
+ * - Creating and persisting CustomerOrder and Worker entities based on test data.
+ * - Managing transactions to ensure data consistency during tests.
+ * - Handling detached entity instances by merging them before deletion.
+ * 
+ * These BDD steps ensure the application's database interactions are robust and reliable in various scenarios.
+ */
+
 package com.mycompany.orderassignmentsystem.bdd.steps;
 
 import static org.awaitility.Awaitility.await;
@@ -24,14 +53,29 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
+/**
+ * The Class DatabaseSteps.
+ */
 public class DatabaseSteps extends ConfigSteps {
+
+	/** The entity manager factory. */
 	private static EntityManagerFactory entityManagerFactory;
+
+	/** The entity manager. */
 	private static EntityManager entityManager;
+
+	/** The properties. */
 	private static Map<String, String> properties = new HashMap<>();
 
+	/** The Constant MAX_RETRIES. */
 	private static final int MAX_RETRIES = 3;
+
+	/** The Constant RETRY_DELAY_SECONDS. */
 	private static final long RETRY_DELAY_SECONDS = 10;
 
+	/**
+	 * Setup.
+	 */
 	@BeforeClass
 	public static void setup() {
 
@@ -56,6 +100,9 @@ public class DatabaseSteps extends ConfigSteps {
 		}
 	}
 
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		String persistenceUnitName = "OriginalPersistenceUnit";
@@ -70,12 +117,20 @@ public class DatabaseSteps extends ConfigSteps {
 		entityManager = entityManagerFactory.createEntityManager();
 	}
 
+	/**
+	 * Tear down.
+	 */
 	@After
 	public void tearDown() {
 		entityManagerFactory.close();
 		entityManager.close();
 	}
 
+	/**
+	 * The database contains the order with the following values.
+	 *
+	 * @param values the values
+	 */
 	@Given("The database contains the order with the following values")
 	public void the_database_contains_the_order_with_the_following_values(List<List<String>> values) {
 		values.forEach(orderValue -> {
@@ -106,6 +161,11 @@ public class DatabaseSteps extends ConfigSteps {
 
 	}
 
+	/**
+	 * The database contains worker with the following values.
+	 *
+	 * @param values the values
+	 */
 	@Given("The database contains worker with the following values")
 	public void the_database_contains_worker_with_the_following_values(List<List<String>> values) {
 		values.forEach(workerValue -> {
@@ -122,6 +182,11 @@ public class DatabaseSteps extends ConfigSteps {
 
 	}
 
+	/**
+	 * The database deletes the order with the following values.
+	 *
+	 * @param values the values
+	 */
 	@Then("The database deletes the order with the following values")
 	public void the_database_deletes_the_order_with_the_following_values(List<List<String>> values) {
 		values.forEach(orderValue -> {
@@ -152,6 +217,11 @@ public class DatabaseSteps extends ConfigSteps {
 		});
 	}
 
+	/**
+	 * The database deletes the worker with the following values.
+	 *
+	 * @param values the values
+	 */
 	@Then("The database deletes the worker with the following values")
 	public void the_database_deletes_the_worker_with_the_following_values(List<List<String>> values) {
 		try {
