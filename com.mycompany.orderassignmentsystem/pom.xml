@@ -12,6 +12,11 @@
     <url>http://maven.apache.org</url>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+
         <logback-classic-version>1.2.6</logback-classic-version>
         <slf4j-api-version>1.7.32</slf4j-api-version>
         <postgres.user>mavenUser</postgres.user>
@@ -19,21 +24,16 @@
         <postgres.dbName>orderWorkerTestDb</postgres.dbName>
         <postgres.server>testContainer</postgres.server>
         <testcontainers-version>1.19.8</testcontainers-version>
-        <docker-java-version>3.3.6</docker-java-version>
         <picocli-version>4.6.1</picocli-version>
         <h2-version46>2.2.224</h2-version46>
         <awaitility-version>4.0.2</awaitility-version>
         <hibernate-core-version46>5.4.32.Final</hibernate-core-version46>
         <javax.persistence-api-version>2.2</javax.persistence-api-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <lang3.version>3.0</lang3.version>
         <mockito.version>3.12.4</mockito.version>
         <log4j.version>2.13.0</log4j.version>
         <postgresql.version>42.7.2</postgresql.version>
         <assertj-swing-junit-version>3.17.1</assertj-swing-junit-version>
-
         <cucumber.version>5.5.0</cucumber.version>
         <sonar.issue.ignore.multicriteria>
             e11,e12,e13,e14,e15,e16,e17</sonar.issue.ignore.multicriteria>
