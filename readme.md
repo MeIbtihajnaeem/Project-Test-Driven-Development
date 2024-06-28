@@ -43,6 +43,8 @@ The Order Assignment System is a Java-based application designed to manage and a
 
 - `mutation-testing-with-coverage`: This profile when activate only runs unit tests along with coverage using jacoco plugin & mutation testing using PIT Mutation plugin also with this profile we can upload the coverage report to coversall.
 
-Here is the rephrased text:
+- `integration-test-profile`: When activated, this profile skips unit tests executed by the maven-surefire-plugin and instead starts a PostgreSQL Docker container using the docker-maven-plugin for running integration tests, end-to-end tests, and end-to-end tests with Cucumber via the maven-failsafe-plugin. To activate this profile, use the following command: 
 
-- `integration-test-profile`: When activated, this profile skips unit tests executed by the maven-surefire-plugin and instead starts a PostgreSQL Docker container using the docker-maven-plugin for running integration tests, end-to-end tests, and end-to-end tests with Cucumber via the maven-failsafe-plugin. To activate this profile, use the following command: `mvn verify -Pintegration-test-profile -Dpostgres.user=$USER -Dpostgres.password=$PASSWORD -Dpostgres.dbName=$DATABASE -Dpostgres.server=maven`. Ensure that `postgres.server` is set to `maven`; otherwise, the Docker container will fail to establish a connection, and the tests will start Testcontainers in parallel for testing.
+    `mvn verify -Pintegration-test-profile -Dpostgres.user=$USER -Dpostgres.password=$PASSWORD -Dpostgres.dbName=$DATABASE -Dpostgres.server=maven`. 
+
+Ensure that `postgres.server` is set to `maven`; otherwise, the Docker container will fail to establish a connection, and the tests will start Testcontainers in parallel for testing.
