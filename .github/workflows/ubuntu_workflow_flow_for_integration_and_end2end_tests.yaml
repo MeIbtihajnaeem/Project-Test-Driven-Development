@@ -2,7 +2,7 @@
 # Java Versions: Java 8 
 # Tests: All tests (Integration, End-to-End and End-to-End with cucumber)
 # Reports: FailSafeReport
-name: JAVA IT with Maven in Linux
+name: JAVA IT, E2E tests and E2E with cucumber with Maven in Linux
 
 on:
   push:

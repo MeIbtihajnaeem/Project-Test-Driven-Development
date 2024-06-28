@@ -3,7 +3,7 @@
 # Coverage and Mutation is tested only on java 8 
 # Tests: All tests (Unit)
 # Reports: Unit test report , Coverage coversall and Mutation Testing
-name: JAVA CI with Maven in Linux
+name: JAVA CI Unit tests, Mutation tests and Coveralls with Maven in Linux
 on:
  pull_request:
  push:
