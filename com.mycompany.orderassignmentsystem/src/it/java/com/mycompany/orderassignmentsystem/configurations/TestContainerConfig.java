@@ -1,6 +1,7 @@
 
 package com.mycompany.orderassignmentsystem.configurations;
 
+import static org.assertj.swing.launcher.ApplicationLauncher.application;
 import static org.awaitility.Awaitility.await;
 
 import java.util.Properties;
@@ -112,6 +113,15 @@ public class TestContainerConfig implements DBConfig {
 		properties.put("javax.persistence.jdbc.user", USER);
 		properties.put("javax.persistence.jdbc.password", PASSWORD);
 		return Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
+	}
+
+	@Override
+	public void startApplication() {
+
+		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp").withArgs(
+				"--postgres-host=" + postgress.getHost(), "--postgres-database=" + DB, "--postgres-user=" + USER,
+				"--postgres-pass=" + PASSWORD, "--postgres-port=" + postgress.getMappedPort(5432)).start();
+
 	}
 
 }

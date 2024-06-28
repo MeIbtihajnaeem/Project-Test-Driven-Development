@@ -35,7 +35,6 @@
 package com.mycompany.orderassignmentsystem.bdd.steps;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,11 +86,7 @@ public class OrderWorkerSwingAppSteps extends ConfigSteps {
 	 */
 	@When("The Order View is shown")
 	public void the_Order_View_is_shown() {
-		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
-				.withArgs("--postgres-host=" + HOST, "--postgres-database=" + DATABASE, "--postgres-user=" + USER,
-						"--postgres-pass=" + PASSWORD, "--postgres-port=" + PORT)
-				.start();
-
+		databaseConfig.startApplication();
 		orderViewWindow = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override
 			protected boolean isMatching(JFrame frame) {

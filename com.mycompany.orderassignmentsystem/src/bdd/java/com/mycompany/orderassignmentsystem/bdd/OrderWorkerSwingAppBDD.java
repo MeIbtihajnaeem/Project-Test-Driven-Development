@@ -40,6 +40,8 @@ import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import com.mycompany.orderassignmentsystem.DatabaseConfig;
+
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
 
@@ -47,7 +49,7 @@ import io.cucumber.junit.CucumberOptions;
  * The Class OrderWorkerSwingAppBDD.
  */
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "src/bdd/resources", monochrome = true)
+@CucumberOptions(features = "src/bdd/resources", monochrome = true, strict = true)
 public class OrderWorkerSwingAppBDD {
 
 	/**
@@ -57,5 +59,6 @@ public class OrderWorkerSwingAppBDD {
 	public static void setUpOnce() {
 		// Checks that all access to Swing components is performed in the EDT.
 		FailOnThreadViolationRepaintManager.install();
+		DatabaseConfig.getDatabaseConfig().testAndStartDatabaseConnection();
 	}
 }

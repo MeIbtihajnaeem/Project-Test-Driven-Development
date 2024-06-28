@@ -1,6 +1,7 @@
 
 package com.mycompany.orderassignmentsystem.configurations;
 
+import static org.assertj.swing.launcher.ApplicationLauncher.application;
 import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
@@ -74,5 +75,16 @@ public class MavenContainerConfig implements DBConfig {
 	@Override
 	public EntityManagerFactory getEntityManagerFactory() {
 		return Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+	}
+
+	@Override
+	public void startApplication() {
+		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
+				.withArgs("--postgres-host=" + "localhost",
+						"--postgres-database=" + System.getProperty("postgres.dbName"),
+						"--postgres-user=" + System.getProperty("postgres.user"),
+						"--postgres-pass=" + System.getProperty("postgres.password"), "--postgres-port=" + 5432)
+				.start();
+
 	}
 }

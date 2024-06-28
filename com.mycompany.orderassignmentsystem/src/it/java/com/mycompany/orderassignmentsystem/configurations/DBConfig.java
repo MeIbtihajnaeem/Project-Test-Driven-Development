@@ -34,4 +34,6 @@ public interface DBConfig {
 	 * @return the entity manager factory
 	 */
 	public EntityManagerFactory getEntityManagerFactory();
+
+	public void startApplication();
 }

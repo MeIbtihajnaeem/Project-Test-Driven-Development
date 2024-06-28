@@ -20,27 +20,22 @@
 
 package com.mycompany.orderassignmentsystem.bdd.steps;
 
+import org.junit.BeforeClass;
+
+import com.mycompany.orderassignmentsystem.configurations.DBConfig;
+
 /**
  * The Class ConfigSteps.
  */
 public class ConfigSteps {
 
-	/** The Constant host. */
-	protected static final String HOST = "localhost";
+	/** The database configuration instance. */
+	static DBConfig databaseConfig;
 
-	/** The Constant port. */
-	protected static final String PORT = "5432";
-
-	/** The Constant database. */
-	protected static final String DATABASE = System.getProperty("postgres.dbName");
-
-	/** The Constant user. */
-	protected static final String USER = System.getProperty("postgres.user");
-
-	/** The Constant password. */
-	protected static final String PASSWORD = System.getProperty("postgres.password");
-
-	/** The Constant PERSISTENCE_UNIT_NAME. */
-	protected static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+	@BeforeClass
+	public static void setup() {
+		// Check for database connection
+		databaseConfig.testAndStartDatabaseConnection();
+	}
 
 }

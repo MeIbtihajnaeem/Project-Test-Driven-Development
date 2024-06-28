@@ -32,15 +32,10 @@
 package com.mycompany.orderassignmentsystem;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.swing.launcher.ApplicationLauncher.application;
-import static org.awaitility.Awaitility.await;
-
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.swing.JFrame;
 
 import org.assertj.swing.annotation.GUITest;
@@ -54,6 +49,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.mycompany.orderassignmentsystem.configurations.DBConfig;
 import com.mycompany.orderassignmentsystem.enumerations.OrderCategory;
 import com.mycompany.orderassignmentsystem.enumerations.OrderStatus;
 import com.mycompany.orderassignmentsystem.model.CustomerOrder;
@@ -65,29 +61,36 @@ import com.mycompany.orderassignmentsystem.model.Worker;
 @RunWith(GUITestRunner.class)
 public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 
-	/** The Constant PERSISTENCE_UNIT_NAME. */
-	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+//	/** The Constant PERSISTENCE_UNIT_NAME. */
+//	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
+//
+//	/** The Constant MAX_RETRIES. */
+//	private static final int MAX_RETRIES = 3;
+//
+//	/** The Constant RETRY_DELAY_SECONDS. */
+//	private static final long RETRY_DELAY_SECONDS = 10;
 
-	/** The Constant MAX_RETRIES. */
-	private static final int MAX_RETRIES = 3;
+//	/** The Constant host. */
+//	private static final String HOST = "localhost";
+//
+//	/** The Constant port. */
+//	private static final String PORT = "5432";
+//
+//	/** The Constant database. */
+//	private static final String DATABASE = System.getProperty("postgres.dbName");
+//
+//	/** The Constant user. */
+//	private static final String USER = System.getProperty("postgres.user");
+//
+//	/** The Constant password. */
+//	private static final String PASSWORD = System.getProperty("postgres.password");
 
-	/** The Constant RETRY_DELAY_SECONDS. */
-	private static final long RETRY_DELAY_SECONDS = 10;
-
-	/** The Constant host. */
-	private static final String HOST = "localhost";
-
-	/** The Constant port. */
-	private static final String PORT = "5432";
-
-	/** The Constant database. */
-	private static final String DATABASE = System.getProperty("postgres.dbName");
-
-	/** The Constant user. */
-	private static final String USER = System.getProperty("postgres.user");
-
-	/** The Constant password. */
-	private static final String PASSWORD = System.getProperty("postgres.password");
+	/**
+	 * This variable is responsible for starting the Docker container. If the test
+	 * is run from Eclipse, it runs the Docker container using Testcontainers. If
+	 * the test is run using a Maven command, it starts a real Docker container.
+	 */
+	private static DBConfig databaseConfig;
 
 	/** The order view window. */
 	private FrameFixture orderViewWindow;
@@ -209,25 +212,8 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	@BeforeClass
 	public static void setupServer() {
 
-		int attempt = 0;
-		while (attempt < MAX_RETRIES) {
-			try {
-				EntityManagerFactory entityManagerFactory = Persistence
-						.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-				if (entityManager != null && entityManager.isOpen()) {
-					entityManager.close();
-					break;
-				}
-			} catch (Exception i) {
-				attempt++;
-				if (attempt < MAX_RETRIES) {
-					await().atMost(RETRY_DELAY_SECONDS, TimeUnit.SECONDS);
-				}
-			}
-
-		}
+		databaseConfig = DatabaseConfig.getDatabaseConfig();
+		databaseConfig.testAndStartDatabaseConnection();
 	}
 
 	/**
@@ -237,17 +223,15 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	 */
 	@Override
 	protected void onSetUp() throws Exception {
-		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		entityManagerFactory = databaseConfig.getEntityManagerFactory();
 		entityManager = entityManagerFactory.createEntityManager();
 
 		addTestOrderAndWorkerToDatabase(worker1, order1);
 		addTestOrderAndWorkerToDatabase(worker2, order2);
 		addTestWorkerToDatabase(worker3);
 
-		application("com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp")
-				.withArgs("--postgres-host=" + HOST, "--postgres-database=" + DATABASE, "--postgres-user=" + USER,
-						"--postgres-pass=" + PASSWORD, "--postgres-port=" + PORT)
-				.start();
+		// responsible for starting application
+		databaseConfig.startApplication();
 
 		orderViewWindow = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
 			@Override
