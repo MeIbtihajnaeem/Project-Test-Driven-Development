@@ -42,7 +42,7 @@ public class TestContainerConfig implements DBConfig {
 
 	/** The Constant MAX_RETRIES. */
 	// The maximum number of retry attempts for establishing a database connection
-	private static final int MAX_RETRIES = 3;
+	private static final int MAX_RETRIES = 6;
 
 	/** The Constant RETRY_DELAY_SECONDS. */
 	// The delay between each retry attempt in seconds
