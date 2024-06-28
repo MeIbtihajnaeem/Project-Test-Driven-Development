@@ -127,13 +127,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- To start postgres container from java tests-->
-        <dependency>
-            <groupId>com.github.docker-java</groupId>
-            <artifactId>docker-java</artifactId>
-            <version>${docker-java-version}</version>
-        </dependency>
-
         <!-- H2 database just to micic postgresql for unit test -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -299,8 +292,6 @@
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.7.1</version>
                 </plugin>
-
-
                 <plugin>
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
