@@ -61,30 +61,6 @@ import com.mycompany.orderassignmentsystem.model.Worker;
 @RunWith(GUITestRunner.class)
 public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 
-//	/** The Constant PERSISTENCE_UNIT_NAME. */
-//	private static final String PERSISTENCE_UNIT_NAME = "OriginalPersistenceUnit";
-//
-//	/** The Constant MAX_RETRIES. */
-//	private static final int MAX_RETRIES = 3;
-//
-//	/** The Constant RETRY_DELAY_SECONDS. */
-//	private static final long RETRY_DELAY_SECONDS = 10;
-
-//	/** The Constant host. */
-//	private static final String HOST = "localhost";
-//
-//	/** The Constant port. */
-//	private static final String PORT = "5432";
-//
-//	/** The Constant database. */
-//	private static final String DATABASE = System.getProperty("postgres.dbName");
-//
-//	/** The Constant user. */
-//	private static final String USER = System.getProperty("postgres.user");
-//
-//	/** The Constant password. */
-//	private static final String PASSWORD = System.getProperty("postgres.password");
-
 	/**
 	 * This variable is responsible for starting the Docker container. If the test
 	 * is run from Eclipse, it runs the Docker container using Testcontainers. If
