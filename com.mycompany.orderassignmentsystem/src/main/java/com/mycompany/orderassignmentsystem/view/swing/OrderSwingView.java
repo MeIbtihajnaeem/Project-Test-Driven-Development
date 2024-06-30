@@ -720,6 +720,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		SwingUtilities.invokeLater(() -> {
 			orderListModel.addElement(order);
 			resetErrorLabelAndClearComboBoxSelection();
+			resetAllFields();
 		});
 
 	}
@@ -732,6 +733,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 				orderListModel.addElement(order);
 			}
 		}
+		resetAllFields();
 		resetErrorLabelAndClearComboBoxSelection();
 
 	}
@@ -754,7 +756,6 @@ public class OrderSwingView extends JFrame implements OrderView {
 	public void showSearchResultForOrder(List<CustomerOrder> order) {
 		orderListModel.removeAllElements();
 		order.stream().forEach(orderListModel::addElement);
-
 	}
 
 	@Override
@@ -781,9 +782,8 @@ public class OrderSwingView extends JFrame implements OrderView {
 
 	}
 
-	@Override
 	public void resetAllFields() {
-		txtOrderId.setText("\b");
+		txtOrderId.setText("");
 		txtCustomerName.setText("");
 		txtCustomerAddress.setText("");
 		txtCustomerPhone.setText("");
@@ -794,9 +794,7 @@ public class OrderSwingView extends JFrame implements OrderView {
 		cmbOrderCategory.setSelectedItem(null);
 		cmbOrderStatus.setSelectedItem(null);
 		cmbWorker.setSelectedItem(null);
-
 		orderController.allOrders();
-
 	}
 
 	/**

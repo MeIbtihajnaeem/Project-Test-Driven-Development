@@ -534,6 +534,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 	@Override
 	public void workerAdded(Worker worker) {
 		workerListModel.addElement(worker);
+		resetAllStates();
 		resetErrorLabel();
 	}
 
@@ -546,6 +547,7 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 
 			}
 		}
+		resetAllStates();
 		resetErrorLabel();
 
 	}
@@ -593,6 +595,16 @@ public class WorkerSwingView extends JFrame implements WorkerView {
 		showErrorLbl.setText(" ");
 		showErrorNotFoundLbl.setText(" ");
 		showErrorLblSearchWorker.setText(" ");
+	}
+
+	/**
+	 * Reset all text fields & combo box.
+	 */
+	private void resetAllStates() {
+		txtWorkerId.setText("");
+		txtWorkerName.setText("");
+		txtWorkerPhone.setText("");
+		cmbWorkerCategory.setSelectedItem(null);
 	}
 
 	/**

@@ -21,6 +21,9 @@
         <slf4j-api-version>1.7.32</slf4j-api-version>
         <postgres.user>mavenUser</postgres.user>
         <postgres.password>maven1234</postgres.password>
+        <postgres.host>localhost</postgres.host>
+        <postgres.port>5432</postgres.port>
+
         <postgres.dbName>orderWorkerTestDb</postgres.dbName>
         <postgres.server>testContainer</postgres.server>
         <testcontainers-version>1.19.8</testcontainers-version>
@@ -272,7 +275,7 @@
                                 <archive>
                                     <manifest>
                                         <mainClass>
-                                            com.mycompany.orderassignmentsystem.app.OrderAssignmentSwingApp</mainClass>
+                                            com.mycompany.orderassignmentsystem.app.OrderWorkerAssignmentSwingApp</mainClass>
                                     </manifest>
                                 </archive>
                                 <descriptorRefs>
@@ -542,6 +545,25 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>generate_fat_jar_profile</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+
         </profile>
     </profiles>
 </project>

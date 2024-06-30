@@ -45,7 +45,7 @@ public class OrderDatabaseRepository implements OrderRepository {
 		} catch (Exception e) {
 			transaction.rollback();
 			entityManager.close();
-			throw new IllegalArgumentException("failed to create order.");
+			throw new IllegalStateException("failed to create order.");
 		}
 	}
 
@@ -65,7 +65,7 @@ public class OrderDatabaseRepository implements OrderRepository {
 		} catch (Exception e) {
 			transaction.rollback();
 			entityManager.close();
-			throw new IllegalArgumentException("failed to delete order.");
+			throw new IllegalStateException("failed to delete order.");
 		}
 	}
 

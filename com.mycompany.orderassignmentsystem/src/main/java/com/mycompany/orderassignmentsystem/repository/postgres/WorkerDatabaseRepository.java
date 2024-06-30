@@ -111,7 +111,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		} catch (Exception e) {
 			transaction.rollback();
 			entityManager.close();
-			throw new IllegalArgumentException("failed to create worker.");
+			throw new IllegalStateException("failed to create worker.");
 		}
 	}
 
@@ -130,7 +130,7 @@ public class WorkerDatabaseRepository implements WorkerRepository {
 		} catch (Exception e) {
 			transaction.rollback();
 			entityManager.close();
-			throw new IllegalArgumentException("failed to delete worker.");
+			throw new IllegalStateException("failed to delete worker.");
 		}
 
 	}

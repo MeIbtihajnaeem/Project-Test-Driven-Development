@@ -24,6 +24,7 @@
 package com.mycompany.orderassignmentsystem.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -1011,7 +1012,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.comboBox("cmbSearchBy").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 
 		window.button(JButtonMatcher.withName("btnClearSearch")).click();
-		verify(orderController).allOrders();
+		verify(orderController,times(2)).allOrders();
 	}
 
 	/**

@@ -284,7 +284,7 @@ public class OrderH2RepositoryTest {
 			// Verify
 			fail("Expected an exception to be thrown");
 
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalStateException e) {
 			// Verify
 			assertThat(e.getMessage()).isEqualTo("failed to delete order.");
 

@@ -1,28 +1,4 @@
-/*
- * The WorkerController class is responsible for managing worker-related operations within the system.
- * 
- * This class provides methods to:
- * - Retrieve all workers from the repository and display them.
- * - Create or update workers with validation.
- * - Fetch workers by ID.
- * - Delete workers from the repository.
- * - Search for workers based on various criteria.
- * 
- * 
- * Key functionalities include:
- * - Adding new workers while ensuring no worker ID is pre-assigned and no duplicate phone numbers exist.
- * - Updating existing workers with validation and checking for orders assigned to the worker.
- * - Deleting workers and handling non-existing worker scenarios, ensuring no workers with orders are deleted.
- * - Searching for workers by ID, phone number, name, and category.
- * - Validating worker details such as name, phone number, and category.
- * 
- * The class ensures proper logging for operations and handles exceptions by displaying appropriate error messages in the view.
- * 
- * @see WorkerRepository
- * @see WorkerView
- * @see ValidationConfigurations
- * @see ExtendedValidationConfigurations
- */
+
 package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
@@ -43,7 +19,30 @@ import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
 import com.mycompany.orderassignmentsystem.view.WorkerView;
 
 /**
- * Controller class responsible for handling worker-related operations.
+ * The WorkerController class is responsible for managing worker-related
+ * operations within the system.
+ * 
+ * This class provides methods to: - Retrieve all workers from the repository
+ * and display them. - Create or update workers with validation. - Fetch workers
+ * by ID. - Delete workers from the repository. - Search for workers based on
+ * various criteria.
+ * 
+ * 
+ * Key functionalities include: - Adding new workers while ensuring no worker ID
+ * is pre-assigned and no duplicate phone numbers exist. - Updating existing
+ * workers with validation and checking for orders assigned to the worker. -
+ * Deleting workers and handling non-existing worker scenarios, ensuring no
+ * workers with orders are deleted. - Searching for workers by ID, phone number,
+ * name, and category. - Validating worker details such as name, phone number,
+ * and category.
+ * 
+ * The class ensures proper logging for operations and handles exceptions by
+ * displaying appropriate error messages in the view.
+ * 
+ * @see WorkerRepository
+ * @see WorkerView
+ * @see ValidationConfigurations
+ * @see ExtendedValidationConfigurations
  */
 public class WorkerController {
 

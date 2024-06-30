@@ -1,29 +1,4 @@
-/*
- * The OrderController class is responsible for managing customer orders within the system.
- * 
- * This class provides methods to:
- * - Retrieve all orders and workers.
- * - Create or update orders with validation.
- * - Fetch orders by ID.
- * - Delete orders.
- * - Search for orders based on various criteria.
- * 
- * 
- * Key functionalities include:
- * - Adding new orders while ensuring the initial status is 'pending' and no order ID is pre-assigned.
- * - Updating existing orders with validation and checking for category alignment between orders and workers.
- * - Deleting orders and handling non-existing order scenarios.
- * - Searching for orders by ID, worker ID, customer phone number, date, category, status, and customer name.
- * - Validating order details such as customer name, phone number, address, date, description, category, and status.
- * 
- * The class ensures proper logging for operations and handles exceptions by displaying appropriate error messages in the view.
- * 
- * @see OrderRepository
- * @see WorkerRepository
- * @see OrderView
- * @see ValidationConfigurations
- * @see ExtendedValidationConfigurations
- */
+
 package com.mycompany.orderassignmentsystem.controller;
 
 import static java.util.Arrays.asList;
@@ -47,7 +22,30 @@ import com.mycompany.orderassignmentsystem.repository.WorkerRepository;
 import com.mycompany.orderassignmentsystem.view.OrderView;
 
 /**
- * The Class OrderController.
+ * The OrderController class is responsible for managing customer orders within
+ * the system.
+ * 
+ * This class provides methods to: - Retrieve all orders and workers. - Create
+ * or update orders with validation. - Fetch orders by ID. - Delete orders. -
+ * Search for orders based on various criteria.
+ * 
+ * 
+ * Key functionalities include: - Adding new orders while ensuring the initial
+ * status is 'pending' and no order ID is pre-assigned. - Updating existing
+ * orders with validation and checking for category alignment between orders and
+ * workers. - Deleting orders and handling non-existing order scenarios. -
+ * Searching for orders by ID, worker ID, customer phone number, date, category,
+ * status, and customer name. - Validating order details such as customer name,
+ * phone number, address, date, description, category, and status.
+ * 
+ * The class ensures proper logging for operations and handles exceptions by
+ * displaying appropriate error messages in the view.
+ * 
+ * @see OrderRepository
+ * @see WorkerRepository
+ * @see OrderView
+ * @see ValidationConfigurations
+ * @see ExtendedValidationConfigurations
  */
 public class OrderController {
 
