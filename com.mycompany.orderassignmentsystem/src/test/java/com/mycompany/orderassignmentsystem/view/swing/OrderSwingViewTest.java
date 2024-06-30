@@ -1012,7 +1012,7 @@ public class OrderSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.comboBox("cmbSearchBy").selectItem(SELECTING_SEARCH_OPTION_INDEX);
 
 		window.button(JButtonMatcher.withName("btnClearSearch")).click();
-		verify(orderController,times(2)).allOrders();
+		verify(orderController, times(2)).allOrders();
 	}
 
 	/**
