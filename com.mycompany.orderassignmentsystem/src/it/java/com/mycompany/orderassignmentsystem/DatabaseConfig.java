@@ -14,9 +14,9 @@ import com.mycompany.orderassignmentsystem.configurations.TestContainerConfig;
  * defaults to using TestContainer for the database and starts the PostgreSQL
  * Docker test container.
  * 
- * 2. If the property is set to "maven", it uses the real container for the
- * database and starts the PostgreSQL Docker container as defined in the pom.xml
- * with the "integration-test-profile" profile.
+ * 2. If the property is set to "maven", it uses the container for the database
+ * and starts the PostgreSQL Docker container without test containers as defined
+ * in the pom.xml with the "integration-test-profile" profile.
  *
  */
 public class DatabaseConfig {
@@ -31,9 +31,9 @@ public class DatabaseConfig {
 	 * defaults to using TestContainer for the database and starts the PostgreSQL
 	 * Docker test container.
 	 * 
-	 * 2. If the property is set to "maven", it uses the real container for the
-	 * database and starts the PostgreSQL Docker container as defined in the pom.xml
-	 * with the "integration-test-profile" profile.
+	 * 2. If the property is set to "maven", it uses the container for the database
+	 * and starts the PostgreSQL Docker container without test containers as defined
+	 * in the pom.xml with the "integration-test-profile" profile.
 	 *
 	 * 
 	 * @return the database configuration

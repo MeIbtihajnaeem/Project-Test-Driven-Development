@@ -13,7 +13,7 @@ import javax.persistence.Persistence;
 /**
  * The Class MavenContainerConfig implements DBConfig interface for database
  * configurations. This class is responsible for setting up and testing the
- * database connection using real docker container. It includes retry mechanisms
+ * database connection using docker container without test containers. It includes retry mechanisms
  * to handle database connection attempts.
  */
 public class MavenContainerConfig implements DBConfig {
@@ -25,7 +25,7 @@ public class MavenContainerConfig implements DBConfig {
 
 	/** The Constant MAX_RETRIES. */
 	// The maximum number of retry attempts for establishing a database connection
-	private static final int MAX_RETRIES = 6;
+	private static final int MAX_RETRIES = 10;
 
 	/** The Constant RETRY_DELAY_SECONDS. */
 	// The delay between each retry attempt in seconds

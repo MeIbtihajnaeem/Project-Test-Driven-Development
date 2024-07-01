@@ -11,7 +11,7 @@
  * 
  * 
  * Note:
- * These tests will not run using Eclipse but are configured to run using Maven with the `integration-test-profile` profile. To execute these tests, use the following Maven command with the specified profile and arguments:
+ * These tests will run using Eclipse but are configured to run using Maven with the `integration-test-profile` profile. To execute these tests, use the following Maven command with the specified profile and arguments:
  * 
  * ```
  * mvn test -Pintegration-test-profile -Dpostgres.user=$USER -Dpostgres.password=$PASSWORD -Dpostgres.dbName=$DATABASE -Dpostgres.server=maven
@@ -64,7 +64,7 @@ public class OrderWorkerSwingAppE2E extends AssertJSwingJUnitTestCase {
 	/**
 	 * This variable is responsible for starting the Docker container. If the test
 	 * is run from Eclipse, it runs the Docker container using Testcontainers. If
-	 * the test is run using a Maven command, it starts a real Docker container.
+	 * the test is run using a Maven command, it starts a Docker container directly without test container.
 	 */
 	private static DBConfig databaseConfig;
 

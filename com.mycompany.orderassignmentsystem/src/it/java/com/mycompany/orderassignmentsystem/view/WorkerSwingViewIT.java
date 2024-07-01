@@ -11,7 +11,7 @@
  * 
  * The databaseConfig variable is responsible for starting the Docker container.
  * If the test is run from Eclipse, it runs the Docker container using Testcontainers.
- * If the test is run using a Maven command, it starts a real Docker container.
+ * If the test is run using a Maven command, it starts a Docker container without test containers.
  * 
  * @see WorkerController
  * @see WorkerRepository
@@ -82,7 +82,8 @@ public class WorkerSwingViewIT extends AssertJSwingJUnitTestCase {
 	/**
 	 * This variable is responsible for starting the Docker container. If the test
 	 * is run from Eclipse, it runs the Docker container using Testcontainers. If
-	 * the test is run using a Maven command, it starts a real Docker container.
+	 * the test is run using a Maven command, it starts a Docker container without
+	 * test containers
 	 */
 	private static DBConfig databaseConfig;
 

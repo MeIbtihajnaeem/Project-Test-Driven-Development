@@ -6,7 +6,7 @@
  * and ValidationConfigurations. The tests cover various scenarios such 
  * as creating, updating, fetching, deleting, and searching workers. The 
  * tests utilise Mockito for mocking dependencies and ensure the 
- * correctness of the OrderController implementation.
+ * correctness of the WorkerController implementation.
  *
  * Key features tested include:
  * - Retrieving all workers.
@@ -18,7 +18,7 @@
  *
  * The databaseConfig variable is responsible for starting the Docker container.
  * If the test is run from Eclipse, it runs the Docker container using Testcontainers.
- * If the test is run using a Maven command, it starts a real Docker container.
+ * If the test is run using a Maven command, it starts a Docker container without test containers.
  *
  * @see WorkerController
  * @see WorkerRepository
@@ -88,7 +88,8 @@ public class WorkerControllerIT {
 	/**
 	 * This variable is responsible for starting the Docker container. If the test
 	 * is run from Eclipse, it runs the Docker container using Testcontainers. If
-	 * the test is run using a Maven command, it starts a real Docker container.
+	 * the test is run using a Maven command, it starts a Docker container without
+	 * test containers.
 	 */
 	private static DBConfig databaseConfig;
 

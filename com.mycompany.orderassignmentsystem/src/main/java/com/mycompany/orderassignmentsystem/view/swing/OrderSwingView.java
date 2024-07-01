@@ -719,8 +719,8 @@ public class OrderSwingView extends JFrame implements OrderView {
 	public void orderAdded(CustomerOrder order) {
 		SwingUtilities.invokeLater(() -> {
 			orderListModel.addElement(order);
-			resetErrorLabelAndClearComboBoxSelection();
 			resetAllFields();
+			resetErrorLabels();
 		});
 
 	}

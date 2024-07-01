@@ -13,8 +13,8 @@ import javax.persistence.EntityManagerFactory;
  * 1. If the test is initiated via Eclipse, it defaults to using TestContainer
  * for the database and starts the PostgreSQL Docker test container.
  * 
- * 2. If the test is initiated via "maven" command, it uses the real container
- * for the database and starts the PostgreSQL Docker container as defined in the
+ * 2. If the test is initiated via "maven" command, it does not uses test containers but
+ *  container for the database and starts the PostgreSQL Docker container as defined in the
  * pom.xml with the "integration-test-profile" profile.
  *
  */

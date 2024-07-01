@@ -14,7 +14,7 @@
  *   - `FailOnThreadViolationRepaintManager.install()`: Ensures that all access to Swing components is performed in the Event Dispatch Thread (EDT), which is critical for thread safety in Swing applications.
  * 
  *  * Note:
- * These tests will not run using Eclipse but are configured to run using Maven with the `integration-test-profile` profile. To execute these tests, use the following Maven command with the specified profile and arguments:
+ * These tests will run using Eclipse but are configured to run using Maven with the `integration-test-profile` profile. To execute these tests, use the following Maven command with the specified profile and arguments:
  * ```
  * mvn test -Pintegration-test-profile -Dpostgres.user=$USER -Dpostgres.password=$PASSWORD -Dpostgres.dbName=$DATABASE -Dpostgres.server=maven
  * 

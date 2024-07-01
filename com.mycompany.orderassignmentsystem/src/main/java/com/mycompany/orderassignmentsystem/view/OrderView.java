@@ -63,11 +63,6 @@ public interface OrderView {
 	 */
 	void orderRemoved(CustomerOrder order);
 
-//	/**
-//	 * Reset all fields on the view.
-//	 */
-//	void resetAllFields();
-
 	/**
 	 * Displays an error message related to a specific customer order.
 	 *

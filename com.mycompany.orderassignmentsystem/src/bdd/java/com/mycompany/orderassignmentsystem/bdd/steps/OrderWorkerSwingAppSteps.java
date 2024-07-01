@@ -223,7 +223,7 @@ public class OrderWorkerSwingAppSteps extends ConfigSteps {
 	 */
 	@Then("The order view fields are reset")
 	public void the_order_view_fields_are_reset() {
-		orderViewWindow.textBox("txtOrderId").requireText("\b");
+		orderViewWindow.textBox("txtOrderId").requireText("");
 		orderViewWindow.textBox("txtCustomerName").requireText("");
 		orderViewWindow.textBox("txtCustomerAddress").requireText("");
 		orderViewWindow.textBox("txtCustomerPhone").requireText("");
